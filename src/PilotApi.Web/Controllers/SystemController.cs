@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PilotApi.Domain.Models.Dto;
 using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Utilities;
@@ -57,7 +58,7 @@ namespace PilotApi.Web.Controllers
 		/// </returns>
 		[HttpGet]
 		[Route("about")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType<AboutResponse>(StatusCodes.Status200OK)]
 		public IActionResult About(
 			[FromQuery(Name = "show-details")] bool showDetails = false)
 		{
@@ -66,26 +67,16 @@ namespace PilotApi.Web.Controllers
 			var buildVersion = FileUtilities.GetApplicationVersion();
 			var deployDate = Environment.GetEnvironmentVariable("DEPLOY_DATE");
 
-			if (showDetails)
-			{
-				var cleanedConfiguration = new ApplicationConfiguration(this.ApplicationConfiguration, true);
-				return this.Ok(new
-				{
-					Name = name,
-					AppVersion = appVersion,
-					BuildVersion = buildVersion,
-					DeployDate = deployDate,
-					ConfigurationSettings = cleanedConfiguration,
-				});
-			}
-
-			return this.Ok(new
+			var aboutResponse  = new AboutResponse
 			{
 				Name = name,
-				AppVersion = appVersion,
+				ApiVersion = appVersion,
 				BuildVersion = buildVersion,
 				DeployDate = deployDate,
-			});
+				ApplicationConfiguration = showDetails ? new ApplicationConfiguration(this.ApplicationConfiguration, true) : null
+			};
+
+			return this.Ok(aboutResponse);
 		}
 	}
 }

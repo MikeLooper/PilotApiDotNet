@@ -52,5 +52,13 @@
 		/// Gets or sets the result of the retrieval.
 		/// </summary>
 		public TReturn? Result { get; set; }
+
+		/// <inheritdoc/>>
+		public override string ToString()
+		{
+			return $"{nameof(this.ErrorMessage)}={this.ErrorMessage}, " +
+				$"{nameof(this.IsError)}={this.IsError}, " +
+				$"{nameof(this.Result)}=[{this.Result}]";
+		}
 	}
 }

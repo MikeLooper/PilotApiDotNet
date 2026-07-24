@@ -27,5 +27,11 @@
 		/// Gets or sets the Id of the new record, or 0 if the add failed.
 		/// </summary>
 		public long Id { get; set; }
+
+		/// <inheritdoc/>>
+		public override string ToString()
+		{
+			return $"{nameof(this.Id)}={this.Id}";
+		}
 	}
 }
