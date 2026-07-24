@@ -34,9 +34,33 @@ namespace PilotApi.Shared.Configuration
 	/// </code>
 	/// </example>
 	[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-	
+
 	public class DataConnectionConfiguration : ConfigurationBase, IDataConnectionConfiguration
 	{
+		/// <summary>
+		/// Instatiate a <see cref="DataConnectionConfiguration"/> object.
+		/// </summary>
+		public DataConnectionConfiguration()
+		{
+		}
+
+		/// <summary>
+		/// Instantiate a <see cref="DataConnectionConfiguration"/> object.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// A source configuration object to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		public DataConnectionConfiguration(
+			DataConnectionConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+			: this()
+		{
+			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+		}
+
 		/// <inheritdoc/>>
 		[JsonProperty]
 		public int ConnectTimeout { get; set; } = 0;
@@ -100,6 +124,33 @@ namespace PilotApi.Shared.Configuration
 			{
 				throw new ConfigurationException($"The {nameof(this.UserName)} value is required and cannot be null or empty ({this.GetType().Name})");
 			}
+		}
+
+		/// <summary>
+		/// Initialize the current object with values from the source configuration.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// The source <see cref="DataConnectionConfiguration"/> to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		protected void Initialize(
+			DataConnectionConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+		{
+			if (sourceConfiguration == null)
+			{
+				throw new ArgumentException($"Invalid argument: {nameof(sourceConfiguration)}");
+			}
+
+			this.Active = sourceConfiguration.Active;
+			this.ConnectTimeout = sourceConfiguration.ConnectTimeout;
+			this.DataSourceName = sourceConfiguration.DataSourceName;
+			this.Host = sourceConfiguration.Host;
+			this.Password = suppressSensitiveValues ? StringConstants.Redacted : sourceConfiguration.Password;
+			this.Port = sourceConfiguration.Port;
+			this.UserName = sourceConfiguration.UserName;
 		}
 	}
 }

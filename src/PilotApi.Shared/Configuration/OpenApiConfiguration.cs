@@ -11,6 +11,30 @@ namespace PilotApi.Shared.Configuration
 	[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
 	public class OpenApiConfiguration : ConfigurationBase, IOpenApiConfiguration
 	{
+		/// <summary>
+		/// Instatiate a <see cref="OpenApiConfiguration"/> object.
+		/// </summary>
+		public OpenApiConfiguration()
+		{
+		}
+
+		/// <summary>
+		/// Instantiate a <see cref="OpenApiConfiguration"/> object.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// A source configuration object to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		public OpenApiConfiguration(
+			OpenApiConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+			: this()
+		{
+			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+		}
+
 		/// <inheritdoc/>
 		[JsonProperty]
 		public OpenApiContactConfiguration? Contact { get; set; }
@@ -94,6 +118,33 @@ namespace PilotApi.Shared.Configuration
 				exceptions.Add(
 					new ConfigurationException($"The {nameof(this.Version)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
+		}
+
+		/// <summary>
+		/// Initialize the current object with values from the source configuration.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// The source <see cref="OpenApiConfiguration"/> to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		protected void Initialize(
+			OpenApiConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+		{
+			if (sourceConfiguration == null)
+			{
+				throw new ArgumentException($"Invalid argument: {nameof(sourceConfiguration)}");
+			}
+
+			this.Active = sourceConfiguration.Active;
+			this.Contact = sourceConfiguration.Contact;
+			this.Description = sourceConfiguration.Description;
+			this.License = sourceConfiguration.License;
+			this.Summary = sourceConfiguration.Summary;
+			this.Title = sourceConfiguration.Title;
+			this.Version = sourceConfiguration.Version;
 		}
 	}
 }

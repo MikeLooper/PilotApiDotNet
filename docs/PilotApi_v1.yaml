@@ -1089,6 +1089,26 @@ paths:
             application/json:
               schema:
                 type: string
+  /about:
+    get:
+      tags:
+        - System
+      summary: Returns application metadata and optional configuration details.
+      parameters:
+        - name: show-details
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: ApiVersion
+          in: header
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json: {}
 components:
   schemas:
     AddResponseInt:

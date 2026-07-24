@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using PilotApi.Shared.Configuration;
-using PilotApi.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +23,56 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.Null(config.Title);
 			Assert.Null(config.Version);
 			Assert.That(config.Active, Is.True);
+		}
+
+		[Test]
+		public void OpenApiConfiguration_ConstructorWithSourceConfiguration_CopiesValues_Test()
+		{
+			// Arrange
+			var sourceConfiguration = new OpenApiConfiguration
+			{
+				Active = false,
+				Contact = new OpenApiContactConfiguration
+				{
+					Name = "Support",
+					Email = "support@example.com",
+					URL = "https://example.com"
+				},
+				Description = "description",
+				License = "MIT",
+				Summary = "summary",
+				Title = "PilotApi",
+				Version = "1.2.3"
+			};
+
+			// Act
+			var result = new OpenApiConfiguration(sourceConfiguration);
+
+			// Assert
+			Assert.That(result.Active, Is.False);
+			Assert.That(result.Contact, Is.SameAs(sourceConfiguration.Contact));
+			Assert.That(result.Description, Is.EqualTo("description"));
+			Assert.That(result.License, Is.EqualTo("MIT"));
+			Assert.That(result.Summary, Is.EqualTo("summary"));
+			Assert.That(result.Title, Is.EqualTo("PilotApi"));
+			Assert.That(result.Version, Is.EqualTo("1.2.3"));
+		}
+
+		[Test]
+		public void OpenApiConfiguration_ConstructorWithSourceConfigurationNull_ThrowsArgumentException_Test()
+		{
+			// Arrange
+			OpenApiConfiguration sourceConfiguration = null;
+
+			// Act
+			TestDelegate action = () =>
+			{
+				new OpenApiConfiguration(sourceConfiguration);
+			};
+
+			// Assert
+			var exception = Assert.Throws<ArgumentException>(action);
+			Assert.That(exception?.Message, Does.Contain("sourceConfiguration"));
 		}
 
 		[Test]
@@ -86,6 +135,59 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(result, Does.Contain("Summary=Summary"));
 			Assert.That(result, Does.Contain("Title=Test API"));
 			Assert.That(result, Does.Contain("Version=1.0"));
+		}
+
+		[Test]
+		public void OpenApiConfiguration_Validate_WithEmptyFields_ShouldAddExceptions_Test()
+		{
+			// Arrange
+			var config = new OpenApiConfiguration
+			{
+				Contact = new OpenApiContactConfiguration
+				{
+					Name = "Support",
+					Email = "support@example.com",
+					URL = "https://example.com"
+				},
+				Description = "   ",
+				License = "   ",
+				Summary = "   ",
+				Title = "   ",
+				Version = "   "
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.GreaterThan(0));
+		}
+
+		[Test]
+		public void OpenApiConfiguration_Validate_WithInvalidContact_ShouldPropagateContactExceptions_Test()
+		{
+			// Arrange
+			var config = new OpenApiConfiguration
+			{
+				Contact = new OpenApiContactConfiguration
+				{
+					// Missing required fields
+					Name = "Support"
+				},
+				Description = "Test",
+				License = "MIT",
+				Summary = "Summary",
+				Title = "API",
+				Version = "1.0"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.GreaterThan(0));
 		}
 
 		[Test]
@@ -284,59 +386,6 @@ namespace PilotApi.Shared.Tests.Configuration
 
 			// Assert
 			Assert.That(exceptions.Count, Is.EqualTo(0));
-		}
-
-		[Test]
-		public void OpenApiConfiguration_Validate_WithInvalidContact_ShouldPropagateContactExceptions_Test()
-		{
-			// Arrange
-			var config = new OpenApiConfiguration
-			{
-				Contact = new OpenApiContactConfiguration
-				{
-					// Missing required fields
-					Name = "Support"
-				},
-				Description = "Test",
-				License = "MIT",
-				Summary = "Summary",
-				Title = "API",
-				Version = "1.0"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.GreaterThan(0));
-		}
-
-		[Test]
-		public void OpenApiConfiguration_Validate_WithEmptyFields_ShouldAddExceptions_Test()
-		{
-			// Arrange
-			var config = new OpenApiConfiguration
-			{
-				Contact = new OpenApiContactConfiguration
-				{
-					Name = "Support",
-					Email = "support@example.com",
-					URL = "https://example.com"
-				},
-				Description = "   ",
-				License = "   ",
-				Summary = "   ",
-				Title = "   ",
-				Version = "   "
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.GreaterThan(0));
 		}
 	}
 }

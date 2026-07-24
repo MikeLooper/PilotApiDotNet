@@ -22,6 +22,23 @@ namespace PilotApi.Shared.Configuration
 			this.OpenApi = new OpenApiConfiguration();
 		}
 
+		/// <summary>
+		/// Instantiate a <see cref="ApplicationConfiguration"/> object.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// A source configuration object to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		public ApplicationConfiguration(
+			IApplicationConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+			: this()
+		{
+			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+		}
+
 		/// <inheritdoc/>>
 		[JsonProperty]
 		public List<DataConnectionConfiguration>? DataConnections { get; set; }
@@ -104,7 +121,7 @@ namespace PilotApi.Shared.Configuration
 					{
 						exceptions.Add(
 							new ConfigurationException(
-								$"The {nameof(this.DataConnections)}[???].{nameof(dataConnection.DataSourceName)} " + 
+								$"The {nameof(this.DataConnections)}[???].{nameof(dataConnection.DataSourceName)} " +
 								$"value does not match a {nameof(this.DataSources)}[???].{nameof(dataConnection.DataSourceName)} value ({this.GetType().Name})"));
 					}
 				}
@@ -131,6 +148,34 @@ namespace PilotApi.Shared.Configuration
 		[Obsolete("The Validate() method should NOT be used with this class")]
 		public override void Validate(ref List<Exception> exceptions)
 		{
+		}
+
+		/// <summary>
+		/// Initialize the current object with values from the source configuration.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// The source <see cref="ApplicationConfiguration"/> to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		protected void Initialize(
+			IApplicationConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+		{
+			if (sourceConfiguration == null)
+			{
+				throw new ArgumentException($"Invalid argument: {nameof(sourceConfiguration)}");
+			}
+
+			this.Active = sourceConfiguration.Active;
+			this.DataConnections = sourceConfiguration.DataConnections
+				?.Select(s => new DataConnectionConfiguration(s, suppressSensitiveValues))
+				.ToList();
+			this.DataSources = sourceConfiguration.DataSources
+				?.Select(s => new DataSourceConfiguration(s, suppressSensitiveValues))
+				.ToList();
+			this.OpenApi = new OpenApiConfiguration(sourceConfiguration.OpenApi, suppressSensitiveValues);
 		}
 	}
 }

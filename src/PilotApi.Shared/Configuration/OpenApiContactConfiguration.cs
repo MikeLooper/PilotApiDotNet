@@ -11,6 +11,30 @@ namespace PilotApi.Shared.Configuration
 	[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
 	public class OpenApiContactConfiguration : ConfigurationBase, IOpenApiContactConfiguration
 	{
+		/// <summary>
+		/// Instatiate a <see cref="OpenApiContactConfiguration"/> object.
+		/// </summary>
+		public OpenApiContactConfiguration()
+		{
+		}
+
+		/// <summary>
+		/// Instantiate a <see cref="OpenApiContactConfiguration"/> object.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// A source configuration object to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		public OpenApiContactConfiguration(
+			OpenApiContactConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+			: this()
+		{
+			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+		}
+
 		/// <inheritdoc/>
 		[JsonProperty]
 		public string? Email { get; set; }
@@ -57,7 +81,30 @@ namespace PilotApi.Shared.Configuration
 				exceptions.Add(
 					new ConfigurationException($"The {nameof(this.URL)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
+		}
 
+		/// <summary>
+		/// Initialize the current object with values from the source configuration.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// The source <see cref="OpenApiContactConfiguration"/> to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		protected void Initialize(
+			OpenApiContactConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+		{
+			if (sourceConfiguration == null)
+			{
+				throw new ArgumentException($"Invalid argument: {nameof(sourceConfiguration)}");
+			}
+
+			this.Active = sourceConfiguration.Active;
+			this.Email = sourceConfiguration.Email;
+			this.Name = sourceConfiguration.Name;
+			this.URL = sourceConfiguration.URL;
 		}
 	}
 }

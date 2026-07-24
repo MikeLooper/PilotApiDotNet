@@ -10,6 +10,16 @@ namespace PilotApi.Shared.Tests.Configuration
 	public class DataConnectionConfigurationTests
 	{
 		[Test]
+		public void DataConnectionConfiguration_ConnectTimeout_DefaultsToZero_Test()
+		{
+			// Arrange & Act
+			var config = new DataConnectionConfiguration();
+
+			// Assert
+			Assert.That(config.ConnectTimeout, Is.EqualTo(0));
+		}
+
+		[Test]
 		public void DataConnectionConfiguration_Constructor_ShouldInitializeWithDefaults_Test()
 		{
 			// Arrange & Act
@@ -23,6 +33,63 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.Null(config.Port);
 			Assert.Null(config.UserName);
 			Assert.That(config.Active, Is.True);
+		}
+
+		[Test]
+		public void DataConnectionConfiguration_ConstructorWithSourceConfigurationAndSuppressSensitiveValuesTrue_RedactsPassword_Test()
+		{
+			// Arrange
+			var sourceConfiguration = new DataConnectionConfiguration
+			{
+				Active = false,
+				ConnectTimeout = 45,
+				DataSourceName = "Primary",
+				Host = "localhost",
+				Password = "MySecret",
+				Port = 5432,
+				UserName = "postgres"
+			};
+
+			// Act
+			var result = new DataConnectionConfiguration(sourceConfiguration, true);
+
+			// Assert
+			Assert.That(result.Active, Is.False);
+			Assert.That(result.ConnectTimeout, Is.EqualTo(45));
+			Assert.That(result.DataSourceName, Is.EqualTo("Primary"));
+			Assert.That(result.Host, Is.EqualTo("localhost"));
+			Assert.That(result.Password, Is.EqualTo("[Redacted]"));
+			Assert.That(result.Port, Is.EqualTo(5432));
+			Assert.That(result.UserName, Is.EqualTo("postgres"));
+		}
+
+		[Test]
+		public void DataConnectionConfiguration_ConstructorWithSourceConfigurationNull_ThrowsArgumentException_Test()
+		{
+			// Arrange
+			DataConnectionConfiguration sourceConfiguration = null;
+
+			// Act
+			TestDelegate action = () =>
+			{
+				new DataConnectionConfiguration(sourceConfiguration);
+			};
+
+			// Assert
+			var exception = Assert.Throws<ArgumentException>(action);
+			Assert.That(exception?.Message, Does.Contain("sourceConfiguration"));
+		}
+
+		[Test]
+		public void DataConnectionConfiguration_Port_CanBeNullOrSet_Test()
+		{
+			// Arrange & Act
+			var config1 = new DataConnectionConfiguration();
+			var config2 = new DataConnectionConfiguration { Port = 1433 };
+
+			// Assert
+			Assert.Null(config1.Port);
+			Assert.That(config2.Port, Is.EqualTo(1433));
 		}
 
 		[Test]
@@ -80,6 +147,25 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void DataConnectionConfiguration_ToString_WithEmptyPassword_ShouldShowEmpty_Test()
+		{
+			// Arrange
+			var config = new DataConnectionConfiguration
+			{
+				Active = true,
+				DataSourceName = "Primary",
+				Password = ""
+			};
+
+			// Act
+			var result = config.ToString();
+
+			// Assert
+			Assert.NotNull(result);
+			Assert.That(result, Does.Contain("-Empty-"));
+		}
+
+		[Test]
 		public void DataConnectionConfiguration_ToString_WithNullPassword_ShouldShowEmpty_Test()
 		{
 			// Arrange
@@ -101,24 +187,39 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.NotNull(result);
 			Assert.That(result, Does.Contain("-Empty-"));
 		}
-
 		[Test]
-		public void DataConnectionConfiguration_ToString_WithEmptyPassword_ShouldShowEmpty_Test()
+		public void DataConnectionConfiguration_Validate_WithEmptyDataSourceName_ShouldThrow_Test()
 		{
 			// Arrange
 			var config = new DataConnectionConfiguration
 			{
-				Active = true,
-				DataSourceName = "Primary",
-				Password = ""
+				DataSourceName = "   ",
+				Host = "localhost",
+				Password = "password",
+				UserName = "user"
 			};
+			var exceptions = new List<Exception>();
 
-			// Act
-			var result = config.ToString();
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
+			Assert.That(exception.Message, Does.Contain("DataSourceName"));
+		}
 
-			// Assert
-			Assert.NotNull(result);
-			Assert.That(result, Does.Contain("-Empty-"));
+		[Test]
+		public void DataConnectionConfiguration_Validate_WithMinimalValidConfiguration_ShouldNotThrow_Test()
+		{
+			// Arrange
+			var config = new DataConnectionConfiguration
+			{
+				DataSourceName = "Primary",
+				Host = "localhost",
+				Password = "password",
+				UserName = "user"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act & Assert
+			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
 		}
 
 		[Test]
@@ -149,25 +250,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
 			Assert.That(exception.Message, Does.Contain("DataSourceName"));
 		}
-
-		[Test]
-		public void DataConnectionConfiguration_Validate_WithEmptyDataSourceName_ShouldThrow_Test()
-		{
-			// Arrange
-			var config = new DataConnectionConfiguration
-			{
-				DataSourceName = "   ",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSourceName"));
-		}
-
 		[Test]
 		public void DataConnectionConfiguration_Validate_WithoutHost_ShouldThrow_Test()
 		{
@@ -237,45 +319,6 @@ namespace PilotApi.Shared.Tests.Configuration
 
 			// Act & Assert
 			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
-		}
-
-		[Test]
-		public void DataConnectionConfiguration_Validate_WithMinimalValidConfiguration_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var config = new DataConnectionConfiguration
-			{
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
-		}
-
-		[Test]
-		public void DataConnectionConfiguration_Port_CanBeNullOrSet_Test()
-		{
-			// Arrange & Act
-			var config1 = new DataConnectionConfiguration();
-			var config2 = new DataConnectionConfiguration { Port = 1433 };
-
-			// Assert
-			Assert.Null(config1.Port);
-			Assert.That(config2.Port, Is.EqualTo(1433));
-		}
-
-		[Test]
-		public void DataConnectionConfiguration_ConnectTimeout_DefaultsToZero_Test()
-		{
-			// Arrange & Act
-			var config = new DataConnectionConfiguration();
-
-			// Assert
-			Assert.That(config.ConnectTimeout, Is.EqualTo(0));
 		}
 	}
 }

@@ -13,6 +13,30 @@ namespace PilotApi.Shared.Configuration
 	
 	public class DataSourceConfiguration : ConfigurationBase, IDataSourceConfiguration
 	{
+		/// <summary>
+		/// Instatiate a <see cref="DataSourceConfiguration"/> object.
+		/// </summary>
+		public DataSourceConfiguration()
+		{
+		}
+
+		/// <summary>
+		/// Instantiate a <see cref="DataSourceConfiguration"/> object.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// A source configuration object to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		public DataSourceConfiguration(
+			DataSourceConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+			: this()
+		{
+			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+		}
+
 		/// <inheritdoc/>>
 		[JsonProperty]
 		public string? DataSource { get; set; }
@@ -79,6 +103,32 @@ namespace PilotApi.Shared.Configuration
 			{
 				throw new ConfigurationException($"The {nameof(this.Schema)} value is required and cannot be null or empty ({this.GetType().Name})");
 			}
+		}
+
+		/// <summary>
+		/// Initialize the current object with values from the source configuration.
+		/// </summary>
+		/// <param name="sourceConfiguration">
+		/// The source <see cref="DataSourceConfiguration"/> to copy values from.
+		/// </param>
+		/// <param name="suppressSensitiveValues">
+		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
+		/// </param>
+		protected void Initialize(
+			DataSourceConfiguration sourceConfiguration,
+			bool suppressSensitiveValues = false)
+		{
+			if (sourceConfiguration == null)
+			{
+				throw new ArgumentException($"Invalid argument: {nameof(sourceConfiguration)}");
+			}
+
+			this.Active = sourceConfiguration.Active;
+			this.DataSource = sourceConfiguration.DataSource;
+			this.DataSourceEnum = sourceConfiguration.DataSourceEnum;
+			this.DataSourceName = sourceConfiguration.DataSourceName;
+			this.DataSourceType = sourceConfiguration.DataSourceType;
+			this.Schema = sourceConfiguration.Schema;
 		}
 	}
 }
