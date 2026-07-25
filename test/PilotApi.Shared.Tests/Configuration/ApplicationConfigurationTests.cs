@@ -2,13 +2,22 @@ using NUnit.Framework;
 using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Exceptions;
 using System;
-using System.Collections.Generic;
 
 namespace PilotApi.Shared.Tests.Configuration
 {
 	[TestFixture]
 	public class ApplicationConfigurationTests
 	{
+		[Test]
+		public void ApplicationConfiguration_Active_ShouldHaveDefaultValueOfTrue_Test()
+		{
+			// Arrange & Act
+			var config = new ApplicationConfiguration();
+
+			// Assert
+			Assert.That(config.Active, Is.True);
+		}
+
 		[Test]
 		public void ApplicationConfiguration_Constructor_ShouldInitializeProperties_Test()
 		{
@@ -23,51 +32,80 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.NotNull(config.OpenApi);
 			Assert.That(config.Active, Is.True);
 		}
-
 		[Test]
-		public void ApplicationConfiguration_Active_ShouldHaveDefaultValueOfTrue_Test()
-		{
-			// Arrange & Act
-			var config = new ApplicationConfiguration();
-
-			// Assert
-			Assert.That(config.Active, Is.True);
-		}
-
-		[Test]
-		public void ApplicationConfiguration_GetDataSource_WithValidDataSourceName_ShouldReturnDataSource_Test()
+		public void ApplicationConfiguration_ConstructorWithSourceConfigurationAndSuppressSensitiveValuesTrue_RedactsNestedPassword_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
-			var dataSource = new DataSourceConfiguration
+			var sourceConfiguration = new ApplicationConfiguration
+			{
+				Active = false,
+				OpenApi = new OpenApiConfiguration
+				{
+					Active = true,
+					Title = "PilotApi",
+					Version = "1.0.0",
+					Description = "description",
+					Summary = "summary",
+					License = "MIT",
+					Contact = new OpenApiContactConfiguration
+					{
+						Active = true,
+						Name = "Support",
+						Email = "support@example.com",
+						URL = "https://example.com"
+					}
+				}
+			};
+			sourceConfiguration.DataConnections.Add(new DataConnectionConfiguration
 			{
 				Active = true,
-				DataSourceName = "TestSource",
-				DataSource = "TestDB",
+				DataSourceName = "Primary",
+				Host = "localhost",
+				Password = "VerySecret",
+				UserName = "sa",
+				Port = 1433,
+				ConnectTimeout = 15
+			});
+			sourceConfiguration.DataSources.Add(new DataSourceConfiguration
+			{
+				Active = true,
+				DataSource = "MainDB",
+				DataSourceName = "Primary",
 				DataSourceType = "SqlServer",
 				Schema = "dbo"
-			};
-			config.DataSources.Add(dataSource);
+			});
 
 			// Act
-			var result = config.GetDataSource("TestSource");
+			var result = new ApplicationConfiguration(sourceConfiguration, true);
 
 			// Assert
-			Assert.NotNull(result);
-			Assert.That(result.DataSourceName, Is.EqualTo("TestSource"));
+			Assert.That(result.Active, Is.False);
+			Assert.That(result.DataConnections, Is.Not.Null);
+			Assert.That(result.DataSources, Is.Not.Null);
+			Assert.That(result.OpenApi, Is.Not.Null);
+			Assert.That(result.DataConnections.Count, Is.EqualTo(1));
+			Assert.That(result.DataConnections[0].Password, Is.EqualTo("[Redacted]"));
+			Assert.That(result.DataSources.Count, Is.EqualTo(1));
+			Assert.That(result.OpenApi.Title, Is.EqualTo("PilotApi"));
+			Assert.That(result.DataConnections[0], Is.Not.SameAs(sourceConfiguration.DataConnections[0]));
+			Assert.That(result.DataSources[0], Is.Not.SameAs(sourceConfiguration.DataSources[0]));
 		}
 
 		[Test]
-		public void ApplicationConfiguration_GetDataSource_WithNonExistentDataSourceName_ShouldReturnNull_Test()
+		public void ApplicationConfiguration_ConstructorWithSourceConfigurationNull_ThrowsArgumentException_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			ApplicationConfiguration sourceConfiguration = null;
 
 			// Act
-			var result = config.GetDataSource("NonExistent");
+			TestDelegate action = () =>
+			{
+				new ApplicationConfiguration(sourceConfiguration);
+			};
 
 			// Assert
-			Assert.Null(result);
+			var exception = Assert.Throws<ArgumentException>(action);
+			Assert.That(exception?.Message, Does.Contain("sourceConfiguration"));
 		}
 
 		[Test]
@@ -93,6 +131,41 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void ApplicationConfiguration_GetDataSource_WithNonExistentDataSourceName_ShouldReturnNull_Test()
+		{
+			// Arrange
+			var config = new ApplicationConfiguration();
+
+			// Act
+			var result = config.GetDataSource("NonExistent");
+
+			// Assert
+			Assert.Null(result);
+		}
+
+		[Test]
+		public void ApplicationConfiguration_GetDataSource_WithValidDataSourceName_ShouldReturnDataSource_Test()
+		{
+			// Arrange
+			var config = new ApplicationConfiguration();
+			var dataSource = new DataSourceConfiguration
+			{
+				Active = true,
+				DataSourceName = "TestSource",
+				DataSource = "TestDB",
+				DataSourceType = "SqlServer",
+				Schema = "dbo"
+			};
+			config.DataSources.Add(dataSource);
+
+			// Act
+			var result = config.GetDataSource("TestSource");
+
+			// Assert
+			Assert.NotNull(result);
+			Assert.That(result.DataSourceName, Is.EqualTo("TestSource"));
+		}
+		[Test]
 		public void ApplicationConfiguration_ToString_ShouldReturnFormattedString_Test()
 		{
 			// Arrange
@@ -111,7 +184,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
-		public void ApplicationConfiguration_Validate_WithValidConfiguration_ShouldNotThrow_Test()
+		public void ApplicationConfiguration_Validate_CalledMultipleTimes_ShouldSucceed_Test()
 		{
 			// Arrange
 			var config = new ApplicationConfiguration();
@@ -122,9 +195,7 @@ namespace PilotApi.Shared.Tests.Configuration
 				DataSourceName = "Primary",
 				Host = "localhost",
 				Password = "password",
-				UserName = "user",
-				Port = 1433,
-				ConnectTimeout = 30
+				UserName = "user"
 			};
 			config.DataConnections.Add(dataConnection);
 
@@ -155,8 +226,87 @@ namespace PilotApi.Shared.Tests.Configuration
 				}
 			};
 
-			// Act & Assert
+			// Act & Assert - calling validate twice should not throw
 			Assert.DoesNotThrow(() => config.Validate());
+			Assert.DoesNotThrow(() => config.Validate());
+		}
+
+		[Test]
+		public void ApplicationConfiguration_Validate_WithMismatchedDataSourceName_ShouldThrow_Test()
+		{
+			// Arrange
+			var config = new ApplicationConfiguration();
+
+			var dataConnection = new DataConnectionConfiguration
+			{
+				Active = true,
+				DataSourceName = "Primary",
+				Host = "localhost",
+				Password = "password",
+				UserName = "user"
+			};
+			config.DataConnections.Add(dataConnection);
+
+			var dataSource = new DataSourceConfiguration
+			{
+				Active = true,
+				DataSourceName = "Secondary",
+				DataSource = "MainDB",
+				DataSourceType = "SqlServer",
+				Schema = "dbo"
+			};
+			config.DataSources.Add(dataSource);
+
+			config.OpenApi = new OpenApiConfiguration
+			{
+				Active = true,
+				Title = "API",
+				Version = "1.0",
+				Description = "Test",
+				Summary = "Test API",
+				License = "MIT",
+				Contact = new OpenApiContactConfiguration
+				{
+					Active = true,
+					Name = "Support",
+					Email = "support@example.com",
+					URL = "https://example.com"
+				}
+			};
+
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			Assert.That(exception.Message, Does.Contain("does not match"));
+		}
+
+		[Test]
+		public void ApplicationConfiguration_Validate_WithMultipleActiveDataConnections_ShouldThrow_Test()
+		{
+			// Arrange
+			var config = new ApplicationConfiguration();
+
+			var connection1 = new DataConnectionConfiguration
+			{
+				Active = true,
+				DataSourceName = "Primary",
+				Host = "localhost",
+				Password = "password",
+				UserName = "user"
+			};
+			var connection2 = new DataConnectionConfiguration
+			{
+				Active = true,
+				DataSourceName = "Secondary",
+				Host = "localhost",
+				Password = "password",
+				UserName = "user"
+			};
+			config.DataConnections.Add(connection1);
+			config.DataConnections.Add(connection2);
+
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			Assert.That(exception.Message, Does.Contain("one active item"));
 		}
 
 		[Test]
@@ -226,37 +376,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
-		public void ApplicationConfiguration_Validate_WithMultipleActiveDataConnections_ShouldThrow_Test()
-		{
-			// Arrange
-			var config = new ApplicationConfiguration();
-
-			var connection1 = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			var connection2 = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Secondary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			config.DataConnections.Add(connection1);
-			config.DataConnections.Add(connection2);
-
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
-			Assert.That(exception.Message, Does.Contain("one active item"));
-		}
-
-		[Test]
-		public void ApplicationConfiguration_Validate_WithMismatchedDataSourceName_ShouldThrow_Test()
+		public void ApplicationConfiguration_Validate_WithValidConfiguration_ShouldNotThrow_Test()
 		{
 			// Arrange
 			var config = new ApplicationConfiguration();
@@ -267,55 +387,9 @@ namespace PilotApi.Shared.Tests.Configuration
 				DataSourceName = "Primary",
 				Host = "localhost",
 				Password = "password",
-				UserName = "user"
-			};
-			config.DataConnections.Add(dataConnection);
-
-			var dataSource = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSourceName = "Secondary",
-				DataSource = "MainDB",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			config.DataSources.Add(dataSource);
-
-			config.OpenApi = new OpenApiConfiguration
-			{
-				Active = true,
-				Title = "API",
-				Version = "1.0",
-				Description = "Test",
-				Summary = "Test API",
-				License = "MIT",
-				Contact = new OpenApiContactConfiguration
-				{
-					Active = true,
-					Name = "Support",
-					Email = "support@example.com",
-					URL = "https://example.com"
-				}
-			};
-
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
-			Assert.That(exception.Message, Does.Contain("does not match"));
-		}
-
-		[Test]
-		public void ApplicationConfiguration_Validate_CalledMultipleTimes_ShouldSucceed_Test()
-		{
-			// Arrange
-			var config = new ApplicationConfiguration();
-
-			var dataConnection = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
+				UserName = "user",
+				Port = 1433,
+				ConnectTimeout = 30
 			};
 			config.DataConnections.Add(dataConnection);
 
@@ -346,8 +420,7 @@ namespace PilotApi.Shared.Tests.Configuration
 				}
 			};
 
-			// Act & Assert - calling validate twice should not throw
-			Assert.DoesNotThrow(() => config.Validate());
+			// Act & Assert
 			Assert.DoesNotThrow(() => config.Validate());
 		}
 	}

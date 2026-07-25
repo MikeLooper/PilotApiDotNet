@@ -1,5 +1,7 @@
 # Docker - Setup - API
 
+Before starting the build steps below, be sure that the currentl application version is reflected in the image version noted in steps 13, 14, 17, and 18.  (e.g. pilot-api-dotnet-mssql:1.0)
+
 ## Publish
 
 Publish the API by following the commands:
@@ -77,7 +79,9 @@ Run the standard command from your application's root directory:
 13. Build the docker image (for SQL Server):
 	
   ```
-  docker build -t pilot-api-dotnet-mssql:1.0 .
+  FOR /F "usebackq tokens=*" %i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%i"
+  ECHO Current Date=%CURRENT_DATE%
+  docker build --build-arg DEPLOY_DATE="%CURRENT_DATE%" -t pilot-api-dotnet-mssql:1.0 .
   ```
 
 14. Create and start the container (for SQL Server):
@@ -104,7 +108,9 @@ Run the standard command from your application's root directory:
 17. build the docker image (for PostgreSQL):
 	
   ```
-  docker build -t pilot-api-dotnet-postgres:1.0 .
+  FOR /F "usebackq tokens=*" %i IN (`powershell -NoProfile -Command "Get-Date -Format u"`) DO SET "CURRENT_DATE=%i"
+  ECHO Current Date=%CURRENT_DATE%
+  docker build --build-arg DEPLOY_DATE="%CURRENT_DATE%" -t pilot-api-dotnet-postgres:1.0 .
   ```
 
 18. Create and start the container (for PostgreSQL):

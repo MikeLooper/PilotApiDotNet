@@ -26,6 +26,59 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void DataSourceConfiguration_ConstructorWithSourceConfiguration_CopiesValues_Test()
+		{
+			// Arrange
+			var sourceConfiguration = new DataSourceConfiguration
+			{
+				Active = false,
+				DataSource = "MainDB",
+				DataSourceEnum = DataSourceTypes.SqlServer,
+				DataSourceName = "Primary",
+				DataSourceType = "SqlServer",
+				Schema = "dbo"
+			};
+
+			// Act
+			var result = new DataSourceConfiguration(sourceConfiguration);
+
+			// Assert
+			Assert.That(result.Active, Is.False);
+			Assert.That(result.DataSource, Is.EqualTo("MainDB"));
+			Assert.That(result.DataSourceEnum, Is.EqualTo(DataSourceTypes.SqlServer));
+			Assert.That(result.DataSourceName, Is.EqualTo("Primary"));
+			Assert.That(result.DataSourceType, Is.EqualTo("SqlServer"));
+			Assert.That(result.Schema, Is.EqualTo("dbo"));
+		}
+
+		[Test]
+		public void DataSourceConfiguration_ConstructorWithSourceConfigurationNull_ThrowsArgumentException_Test()
+		{
+			// Arrange
+			DataSourceConfiguration sourceConfiguration = null;
+
+			// Act
+			TestDelegate action = () =>
+			{
+				new DataSourceConfiguration(sourceConfiguration);
+			};
+
+			// Assert
+			var exception = Assert.Throws<ArgumentException>(action);
+			Assert.That(exception?.Message, Does.Contain("sourceConfiguration"));
+		}
+
+		[Test]
+		public void DataSourceConfiguration_DataSourceEnum_StartsAsUnrecognized_Test()
+		{
+			// Arrange & Act
+			var config = new DataSourceConfiguration();
+
+			// Assert
+			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.Unrecognized));
+		}
+
+		[Test]
 		public void DataSourceConfiguration_Properties_CanBeSet_Test()
 		{
 			// Arrange
@@ -76,6 +129,62 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void DataSourceConfiguration_Validate_WithCaseInsensitiveDataSourceType_ShouldResolve_Test()
+		{
+			// Arrange
+			var config = new DataSourceConfiguration
+			{
+				DataSource = "MainDB",
+				DataSourceName = "Primary",
+				DataSourceType = "sqlserver",
+				Schema = "dbo"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.SqlServer));
+		}
+
+		[Test]
+		public void DataSourceConfiguration_Validate_WithEmptyDataSource_ShouldThrow_Test()
+		{
+			// Arrange
+			var config = new DataSourceConfiguration
+			{
+				DataSource = "   ",
+				DataSourceName = "Primary",
+				DataSourceType = "SqlServer",
+				Schema = "dbo"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
+			Assert.That(exception.Message, Does.Contain("DataSource"));
+		}
+
+		[Test]
+		public void DataSourceConfiguration_Validate_WithInvalidDataSourceType_ShouldThrow_Test()
+		{
+			// Arrange
+			var config = new DataSourceConfiguration
+			{
+				DataSource = "MainDB",
+				DataSourceName = "Primary",
+				DataSourceType = "InvalidType",
+				Schema = "dbo"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
+			Assert.That(exception.Message, Does.Contain("not valid"));
+		}
+
+		[Test]
 		public void DataSourceConfiguration_Validate_WithNullExceptions_ShouldThrowArgumentException_Test()
 		{
 			// Arrange
@@ -103,25 +212,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
 			Assert.That(exception.Message, Does.Contain("DataSource"));
 		}
-
-		[Test]
-		public void DataSourceConfiguration_Validate_WithEmptyDataSource_ShouldThrow_Test()
-		{
-			// Arrange
-			var config = new DataSourceConfiguration
-			{
-				DataSource = "   ",
-				DataSourceName = "Primary",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSource"));
-		}
-
 		[Test]
 		public void DataSourceConfiguration_Validate_WithoutDataSourceName_ShouldThrow_Test()
 		{
@@ -155,25 +245,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
 			Assert.That(exception.Message, Does.Contain("DataSourceType"));
 		}
-
-		[Test]
-		public void DataSourceConfiguration_Validate_WithInvalidDataSourceType_ShouldThrow_Test()
-		{
-			// Arrange
-			var config = new DataSourceConfiguration
-			{
-				DataSource = "MainDB",
-				DataSourceName = "Primary",
-				DataSourceType = "InvalidType",
-				Schema = "dbo"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("not valid"));
-		}
-
 		[Test]
 		public void DataSourceConfiguration_Validate_WithoutSchema_ShouldThrow_Test()
 		{
@@ -189,64 +260,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Act & Assert
 			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
 			Assert.That(exception.Message, Does.Contain("Schema"));
-		}
-
-		[Test]
-		public void DataSourceConfiguration_Validate_WithValidSqlServerConfiguration_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var config = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSource = "MainDB",
-				DataSourceName = "Primary",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
-			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.SqlServer));
-		}
-
-		[Test]
-		public void DataSourceConfiguration_Validate_WithValidPostgreSqlConfiguration_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var config = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSource = "maindb",
-				DataSourceName = "Primary",
-				DataSourceType = "PostgreSQL",
-				Schema = "public"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
-			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.PostgreSQL));
-		}
-
-		[Test]
-		public void DataSourceConfiguration_Validate_WithCaseInsensitiveDataSourceType_ShouldResolve_Test()
-		{
-			// Arrange
-			var config = new DataSourceConfiguration
-			{
-				DataSource = "MainDB",
-				DataSourceName = "Primary",
-				DataSourceType = "sqlserver",
-				Schema = "dbo"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.SqlServer));
 		}
 
 		[Test]
@@ -270,13 +283,41 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
-		public void DataSourceConfiguration_DataSourceEnum_StartsAsUnrecognized_Test()
+		public void DataSourceConfiguration_Validate_WithValidPostgreSqlConfiguration_ShouldNotThrow_Test()
 		{
-			// Arrange & Act
-			var config = new DataSourceConfiguration();
+			// Arrange
+			var config = new DataSourceConfiguration
+			{
+				Active = true,
+				DataSource = "maindb",
+				DataSourceName = "Primary",
+				DataSourceType = "PostgreSQL",
+				Schema = "public"
+			};
+			var exceptions = new List<Exception>();
 
-			// Assert
-			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.Unrecognized));
+			// Act & Assert
+			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
+			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.PostgreSQL));
+		}
+
+		[Test]
+		public void DataSourceConfiguration_Validate_WithValidSqlServerConfiguration_ShouldNotThrow_Test()
+		{
+			// Arrange
+			var config = new DataSourceConfiguration
+			{
+				Active = true,
+				DataSource = "MainDB",
+				DataSourceName = "Primary",
+				DataSourceType = "SqlServer",
+				Schema = "dbo"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act & Assert
+			Assert.DoesNotThrow(() => config.Validate(ref exceptions));
+			Assert.That(config.DataSourceEnum, Is.EqualTo(DataSourceTypes.SqlServer));
 		}
 	}
 }

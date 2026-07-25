@@ -2,6 +2,12 @@
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 
+# Declare the build-time argument
+ARG DEPLOY_DATE
+
+# Map it to an environment variable so it persists in the image
+ENV DEPLOY_DATE=$DEPLOY_DATE
+
 # Copy all the pre-published files from the local directory into the container
 COPY . .
 

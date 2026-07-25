@@ -24,6 +24,45 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void OpenApiContactConfiguration_ConstructorWithSourceConfiguration_CopiesValues_Test()
+		{
+			// Arrange
+			var sourceConfiguration = new OpenApiContactConfiguration
+			{
+				Active = false,
+				Email = "support@example.com",
+				Name = "Support",
+				URL = "https://example.com"
+			};
+
+			// Act
+			var result = new OpenApiContactConfiguration(sourceConfiguration);
+
+			// Assert
+			Assert.That(result.Active, Is.False);
+			Assert.That(result.Email, Is.EqualTo("support@example.com"));
+			Assert.That(result.Name, Is.EqualTo("Support"));
+			Assert.That(result.URL, Is.EqualTo("https://example.com"));
+		}
+
+		[Test]
+		public void OpenApiContactConfiguration_ConstructorWithSourceConfigurationNull_ThrowsArgumentException_Test()
+		{
+			// Arrange
+			OpenApiContactConfiguration sourceConfiguration = null;
+
+			// Act
+			TestDelegate action = () =>
+			{
+				new OpenApiContactConfiguration(sourceConfiguration);
+			};
+
+			// Assert
+			var exception = Assert.Throws<ArgumentException>(action);
+			Assert.That(exception?.Message, Does.Contain("sourceConfiguration"));
+		}
+
+		[Test]
 		public void OpenApiContactConfiguration_Properties_CanBeSet_Test()
 		{
 			// Arrange
@@ -66,6 +105,124 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void OpenApiContactConfiguration_Validate_ExceptionMessages_ShouldContainFieldNames_Test()
+		{
+			// Arrange
+			var config = new OpenApiContactConfiguration
+			{
+				Email = null,
+				Name = null,
+				URL = null
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			var exceptionMessages = string.Join(" ", exceptions.Select(e => e.Message));
+			Assert.That(exceptionMessages, Does.Contain("Email"));
+			Assert.That(exceptionMessages, Does.Contain("Name"));
+			Assert.That(exceptionMessages, Does.Contain("URL"));
+		}
+
+		[Test]
+		public void OpenApiContactConfiguration_Validate_WithAllFieldsMissing_ShouldAddThreeExceptions_Test()
+		{
+			// Arrange
+			var config = new OpenApiContactConfiguration
+			{
+				Email = null,
+				Name = null,
+				URL = null
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.EqualTo(3));
+			Assert.That(exceptions[0], Is.TypeOf<ConfigurationException>());
+			Assert.That(exceptions[1], Is.TypeOf<ConfigurationException>());
+			Assert.That(exceptions[2], Is.TypeOf<ConfigurationException>());
+		}
+
+		[Test]
+		public void OpenApiContactConfiguration_Validate_WithEmptyEmail_ShouldAddException_Test()
+		{
+			// Arrange
+			var config = new OpenApiContactConfiguration
+			{
+				Email = "   ",
+				Name = "Support",
+				URL = "https://example.com"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.GreaterThan(0));
+			Assert.That(exceptions.Any(e => e.Message.Contains("Email")), Is.True);
+		}
+
+		[Test]
+		public void OpenApiContactConfiguration_Validate_WithEmptyName_ShouldAddException_Test()
+		{
+			// Arrange
+			var config = new OpenApiContactConfiguration
+			{
+				Email = "support@example.com",
+				Name = "   ",
+				URL = "https://example.com"
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.GreaterThan(0));
+			Assert.That(exceptions.Any(e => e.Message.Contains("Name")), Is.True);
+		}
+
+		[Test]
+		public void OpenApiContactConfiguration_Validate_WithEmptyURL_ShouldAddException_Test()
+		{
+			// Arrange
+			var config = new OpenApiContactConfiguration
+			{
+				Email = "support@example.com",
+				Name = "Support",
+				URL = "   "
+			};
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.GreaterThan(0));
+			Assert.That(exceptions.Any(e => e.Message.Contains("URL")), Is.True);
+		}
+
+		[Test]
+		public void OpenApiContactConfiguration_Validate_WithMultipleMissingFields_ShouldAddMultipleExceptions_Test()
+		{
+			// Arrange
+			var config = new OpenApiContactConfiguration();
+			var exceptions = new List<Exception>();
+
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions.Count, Is.EqualTo(3)); // Email, Name, URL all missing
+		}
+
+		[Test]
 		public void OpenApiContactConfiguration_Validate_WithNullExceptions_ShouldThrowArgumentException_Test()
 		{
 			// Arrange
@@ -95,27 +252,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(exceptions.Count, Is.GreaterThan(0));
 			Assert.That(exceptions.Any(e => e.Message.Contains("Email")), Is.True);
 		}
-
-		[Test]
-		public void OpenApiContactConfiguration_Validate_WithEmptyEmail_ShouldAddException_Test()
-		{
-			// Arrange
-			var config = new OpenApiContactConfiguration
-			{
-				Email = "   ",
-				Name = "Support",
-				URL = "https://example.com"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.GreaterThan(0));
-			Assert.That(exceptions.Any(e => e.Message.Contains("Email")), Is.True);
-		}
-
 		[Test]
 		public void OpenApiContactConfiguration_Validate_WithoutName_ShouldAddException_Test()
 		{
@@ -134,27 +270,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(exceptions.Count, Is.GreaterThan(0));
 			Assert.That(exceptions.Any(e => e.Message.Contains("Name")), Is.True);
 		}
-
-		[Test]
-		public void OpenApiContactConfiguration_Validate_WithEmptyName_ShouldAddException_Test()
-		{
-			// Arrange
-			var config = new OpenApiContactConfiguration
-			{
-				Email = "support@example.com",
-				Name = "   ",
-				URL = "https://example.com"
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.GreaterThan(0));
-			Assert.That(exceptions.Any(e => e.Message.Contains("Name")), Is.True);
-		}
-
 		[Test]
 		public void OpenApiContactConfiguration_Validate_WithoutURL_ShouldAddException_Test()
 		{
@@ -173,27 +288,6 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(exceptions.Count, Is.GreaterThan(0));
 			Assert.That(exceptions.Any(e => e.Message.Contains("URL")), Is.True);
 		}
-
-		[Test]
-		public void OpenApiContactConfiguration_Validate_WithEmptyURL_ShouldAddException_Test()
-		{
-			// Arrange
-			var config = new OpenApiContactConfiguration
-			{
-				Email = "support@example.com",
-				Name = "Support",
-				URL = "   "
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.GreaterThan(0));
-			Assert.That(exceptions.Any(e => e.Message.Contains("URL")), Is.True);
-		}
-
 		[Test]
 		public void OpenApiContactConfiguration_Validate_WithValidConfiguration_ShouldNotAddExceptions_Test()
 		{
@@ -212,64 +306,6 @@ namespace PilotApi.Shared.Tests.Configuration
 
 			// Assert
 			Assert.That(exceptions.Count, Is.EqualTo(0));
-		}
-
-		[Test]
-		public void OpenApiContactConfiguration_Validate_WithMultipleMissingFields_ShouldAddMultipleExceptions_Test()
-		{
-			// Arrange
-			var config = new OpenApiContactConfiguration();
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.EqualTo(3)); // Email, Name, URL all missing
-		}
-
-		[Test]
-		public void OpenApiContactConfiguration_Validate_WithAllFieldsMissing_ShouldAddThreeExceptions_Test()
-		{
-			// Arrange
-			var config = new OpenApiContactConfiguration
-			{
-				Email = null,
-				Name = null,
-				URL = null
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			Assert.That(exceptions.Count, Is.EqualTo(3));
-			Assert.That(exceptions[0], Is.TypeOf<ConfigurationException>());
-			Assert.That(exceptions[1], Is.TypeOf<ConfigurationException>());
-			Assert.That(exceptions[2], Is.TypeOf<ConfigurationException>());
-		}
-
-		[Test]
-		public void OpenApiContactConfiguration_Validate_ExceptionMessages_ShouldContainFieldNames_Test()
-		{
-			// Arrange
-			var config = new OpenApiContactConfiguration
-			{
-				Email = null,
-				Name = null,
-				URL = null
-			};
-			var exceptions = new List<Exception>();
-
-			// Act
-			config.Validate(ref exceptions);
-
-			// Assert
-			var exceptionMessages = string.Join(" ", exceptions.Select(e => e.Message));
-			Assert.That(exceptionMessages, Does.Contain("Email"));
-			Assert.That(exceptionMessages, Does.Contain("Name"));
-			Assert.That(exceptionMessages, Does.Contain("URL"));
 		}
 	}
 }
