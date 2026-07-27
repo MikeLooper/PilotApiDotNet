@@ -22,7 +22,7 @@ namespace PilotApi.Web.Tests.Controllers
 			var result = controller.About(false) as OkObjectResult;
 			var valueType = result?.Value?.GetType();
 			var nameProperty = valueType?.GetProperty("Name");
-			var appVersionProperty = valueType?.GetProperty("AppVersion");
+			var appVersionProperty = valueType?.GetProperty("ApiVersion");
 			var buildVersionProperty = valueType?.GetProperty("BuildVersion");
 			var deployDateProperty = valueType?.GetProperty("DeployDate");
 			var configurationSettingsProperty = valueType?.GetProperty("ConfigurationSettings");
@@ -63,7 +63,7 @@ namespace PilotApi.Web.Tests.Controllers
 			// Act
 			var result = controller.About(true) as OkObjectResult;
 			var valueType = result?.Value?.GetType();
-			var configurationSettingsProperty = valueType?.GetProperty("ConfigurationSettings");
+			var configurationSettingsProperty = valueType?.GetProperty("ApplicationConfiguration");
 			var configurationSettingsValue = configurationSettingsProperty?.GetValue(result?.Value);
 			var cleanedConfiguration = configurationSettingsValue as ApplicationConfiguration;
 
