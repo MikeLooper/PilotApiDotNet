@@ -82,6 +82,7 @@ A proof of concept API to explore best-practices and new ideas
 
 * [![Bruno][bruno-badge]][bruno-url]
 * [![C#][csharp-badge]][csharp-url]
+* [![Docker][docker-badge]][docker-url]
 * [![GitHub Copilot][githubcopilot-badge]][githubcopilot-url]
 * [![Microsoft SQL Server][mssql-badge]][mssql-url]
 * [![OpenAPI][openapi-badge]][openapi-url]
@@ -96,6 +97,10 @@ A proof of concept API to explore best-practices and new ideas
 <!-- GETTING STARTED -->
 ## Getting Started
 
+This application depends on Docker for databases and an API deployment location.
+
+Docker install and setup details can be found here: [Local Docker](https://github.com/MikeLooper/Docker)
+
 ### Prerequisites
 
 - [Visual Studio 2026](https://visualstudio.microsoft.com/vs/)
@@ -103,7 +108,7 @@ A proof of concept API to explore best-practices and new ideas
 ### Installation
 
 1. Clone the repo
-   ```sh
+   ```
    git clone https://github.com/MikeLooper/PilotApi.git
    ```
 2. Open the .sln file in Visual Studio.
@@ -300,9 +305,9 @@ This name will match A DataSources.DataSourceName setting.
 
 The name of the host for the data source.
 
-When running locally for development, this value would tyipcally be "localhost".
+When running locally for development, this value would typically be "localhost".
 
-When deployed to a Docker container, this value would ttyipcally be the name of the data source container.
+When deployed to a Docker container, this value would typically be the name of the data source container.
 
 Examples: "local_mssql", "local_postgres"
 
@@ -414,7 +419,6 @@ You can also interact with the API using the Swagger UI by navigating to `https:
 ## Roadmap
 
 - [x] API (.NET)
-    - [ ] Deploy API to a Docker container
 - [ ] Angular Frontend User Interface
 - [ ] Java Version of the API
 
@@ -499,6 +503,8 @@ Project Link: [https://github.com/MikeLooper/PilotApi](https://github.com/MikeLo
 [bruno-url]: https://www.usebruno.com/
 [csharp-badge]: https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white
 [csharp-url]: https://learn.microsoft.com/en-us/dotnet/csharp/
+[docker-badge]: https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff
+[docker-url]: https://www.docker.com/
 [githubcopilot-badge]: https://img.shields.io/badge/GitHub%20Copilot-000?logo=githubcopilot&logoColor=fff
 [githubcopilot-url]: https://github.com/copilot
 [mssql-badge]: https://custom-icon-badges.demolab.com/badge/Microsoft%20SQL%20Server-CC2927?logo=mssqlserver-white&logoColor=white
