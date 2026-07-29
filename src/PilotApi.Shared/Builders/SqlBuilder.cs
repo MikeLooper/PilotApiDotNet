@@ -62,7 +62,7 @@ namespace PilotApi.Shared.Handlers
 		/// </summary>
 		protected ILogger Logger { get; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string? BuildConnectionString(OpenApiConfiguration? openApi)
 		{
 			if (openApi == null)
@@ -70,6 +70,9 @@ namespace PilotApi.Shared.Handlers
 				throw new ArgumentException(
 					$"The {nameof(openApi)} argument cannot be null or empty ({this.GetType().Name})");
 			}
+
+			this.Logger.LogInformation($"1 - Building connection string for OpenApi: {openApi.Title}");
+			this.Logger.LogInformation($"2 - Building connection string for OpenApi: {openApi.Title}");
 
 			string? connectionString = null;
 			if (this.IsSqlServer)
@@ -105,7 +108,7 @@ namespace PilotApi.Shared.Handlers
 			return connectionString;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildCount(string tableName)
 		{
 			if (string.IsNullOrWhiteSpace(tableName))
@@ -125,7 +128,7 @@ namespace PilotApi.Shared.Handlers
 			return querySql.ToString();
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildDelete(
 			string tableName,
 			List<string> keyColumnNames)
@@ -159,7 +162,7 @@ namespace PilotApi.Shared.Handlers
 			return querySql.ToString();
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildGetNextId(string tableName, string keyColumnName, string keyDataType)
 		{
 			if (string.IsNullOrWhiteSpace(tableName))
@@ -221,7 +224,7 @@ namespace PilotApi.Shared.Handlers
 			return querySql;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildInsert(
 			string tableName,
 			List<string> columnNames,
@@ -352,7 +355,7 @@ namespace PilotApi.Shared.Handlers
 			return querySql.ToString();
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildSelect(
 			string tableName,
 			List<string> columnNames,
@@ -403,7 +406,7 @@ namespace PilotApi.Shared.Handlers
 			return querySql.ToString();
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildUpdate(
 			string tableName,
 			List<string> columnNames,
@@ -470,7 +473,7 @@ namespace PilotApi.Shared.Handlers
 			return querySql.ToString();
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string BuildWhereClause(List<string> keyColumnNames)
 		{
 			if (keyColumnNames == null ||
