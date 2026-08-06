@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PilotApi.Shared.Api.Middleware;
 using PilotApi.Shared.Handlers;
 using PilotApi.Shared.Logging.Extensions;
 using PilotApi.Shared.OpenApi.Extensions;
@@ -102,6 +103,9 @@ namespace PilotApi.Shared.Api.Extensions
 			webApp.LoggingWebApplication();
 			webApp.SwaggerWebApplication();
 
+			webApp.UseMiddleware<UnhandledExceptionMiddleware>();
+
+
 			// standard
 			webApp.UseSecurity();
 			try
@@ -145,6 +149,7 @@ namespace PilotApi.Shared.Api.Extensions
 
 			// custom
 			builder.LoggingWebApplicationBuilder();
+			builder.OpenTelemetryWebApplicationBuilder();
 			builder.OpenApiWebApplicationBuilder();
 
 			// services

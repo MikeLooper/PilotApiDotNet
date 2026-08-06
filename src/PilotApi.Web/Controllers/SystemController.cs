@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PilotApi.Domain.Models.Dto;
@@ -14,6 +15,7 @@ namespace PilotApi.Web.Controllers
 	/// A controller for system processing.
 	/// </summary>
 	[ApiVersionNeutral]
+	[AllowAnonymous]
 
 	public class SystemController : SimpleControllerBase
 	{

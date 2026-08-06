@@ -12,20 +12,23 @@ try
 {
 	Log.Information("Starting server.");
 
-	// app: create
+	// ** app: create
 	var webAppBuilder = WebApplication.CreateBuilder(args);
 
-	// shared: setup
-	webAppBuilder.ApiWebApplicationBuilder();
+	// ** shared: setup
+	// configuration and services registrations
 	webAppBuilder.ApplicationRegistration();
+	// controllers, security, versioning, logging, OpenTelemetry, OpenAPI
+	webAppBuilder.ApiWebApplicationBuilder();
 
-	// app: build
+	// ** app: build
 	var webApp = webAppBuilder.Build();
 
-	// shared: setup
+	// ** shared: setup
+	// logging, OpenAPI, Swagger, security, middleware
 	webApp.ApiWebApplication();
 
-	// app: run
+	// ** app: run
 	webApp.Run();
 }
 catch (Exception ex)

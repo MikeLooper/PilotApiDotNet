@@ -61,6 +61,7 @@
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#copilot-customization">Copilot Customization</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -77,12 +78,10 @@ A proof of concept API to explore best-practices and new ideas
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 ### Built With
 
 * [![Bruno][bruno-badge]][bruno-url]
 * [![C#][csharp-badge]][csharp-url]
-* [![Docker][docker-badge]][docker-url]
 * [![GitHub Copilot][githubcopilot-badge]][githubcopilot-url]
 * [![Microsoft SQL Server][mssql-badge]][mssql-url]
 * [![OpenAPI][openapi-badge]][openapi-url]
@@ -101,19 +100,43 @@ This application depends on Docker for databases and an API deployment location.
 
 Docker install and setup details can be found here: [Local Docker](https://github.com/MikeLooper/Docker)
 
+The design of this application was based upon the OpenAPI specification, found in the shared\PilotSharedSource directory (which is a submodule of [PilotSharedSource](https://github.com/MikeLooper/PilotSharedSource)).
+
 ### Prerequisites
 
 - [Visual Studio 2026](https://visualstudio.microsoft.com/vs/)
 
 ### Installation
 
-1. Clone the repo
+1. Clone the repo (including submodules)
    ```
-   git clone https://github.com/MikeLooper/PilotApi.git
+    git clone --recurse-submodules https://github.com/MikeLooper/PilotApiDotNet.git
    ```
-2. Open the .sln file in Visual Studio.
+2. If the repository was cloned without submodules, initialize them:
+    ```
+    git submodule update --init --recursive
+    ```
 
-3. Press F5 to build and run the application.
+3. Open the .sln file in Visual Studio.
+
+4. Press F5 to build and run the application.
+
+### Submodule Management
+
+This repository includes `PilotSharedSource` as a Git submodule at `shared/PilotSharedSource/`.
+
+To pull the latest submodule changes from its tracked branch:
+
+```
+git submodule update --remote --recursive shared/PilotSharedSource
+```
+
+After updating, commit the changed submodule pointer in this repository:
+
+```
+git add shared/PilotSharedSource .gitmodules
+git commit -m "Update PilotSharedSource submodule"
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -166,9 +189,9 @@ The data source values for Development are included in the local development con
 
 The data source values for Production are included in the docker-deploy config files, as noted here:
 - SQL Server:
-	- ..\docker\SqlServer\appsettings.Production.json
+    - ..\docker\SqlServer\appsettings.Production.json
 - PostgreSQL:
-	- ..\docker\PostgreSQL\appsettings.Production.json
+    - ..\docker\PostgreSQL\appsettings.Production.json
 
 #### Example configurations
 
@@ -176,77 +199,77 @@ The data source values for Production are included in the docker-deploy config f
 
 ```json
 {
-	"Application": {
-		"DataSources": [
-			{
-				"Active": true,
-				"DataSourceName": "NorthWind_SQL",
-				"DataSource": "NorthWind",
-				"DataSourceType": "SqlServer",
-				"Schema": "dbo"
-			},
-			{
-				"Active": true,
-				"DataSourceName": "NorthWind_Pgs",
-				"DataSource": "northwind",
-				"DataSourceType": "PostgreSQL",
-				"Schema": "pilot"
-			}
-		],
-		"OpenApi": {
-			"Title": "PilotApiDotNet",
-			"Contact": {
-				"Email": "MikelLooper@gmail.com",
-				"Name": "Michael Looper",
-				"URL": "https://github.com/MikeLooper/PilotApiDotNet"
-			},
-			"Description": "A proof of concept API to explore best-practices and new ideas (.NET/C#)",
-			"License": "MIT",
-			"Summary": "Proof of concept API",
-			"Version": "0.1.1"
-		}
-	},
-	"Name": "OpenTelemetry",
-	"Args": {
-		"endpoint": "http://localhost:4317",
-		"protocol": "Grpc",
-		"resourceAttributes": {
-			"service.name": "serilog-demo-api"
-		}
-	},
-	"Serilog": {
-		"MinimumLevel": {
-			"Default": "Information",
-			"Override": {
-				"Microsoft": "Warning",
-				"Microsoft.AspNetCore.Hosting.Diagnostics": "Error",
-				"Microsoft.Hosting.Lifetime": "Information",
-				"System": "Warning"
-			}
-		},
-		"WriteTo": [
-			{ "Name": "Console" },
-			{
-				"Name": "File",
-				"Args": {
-					"path": "logs/log-.json",
-					"rollingInterval": "Day",
-					"rollOnFileSizeLimit": true,
-					"fileSizeLimitBytes": 104857600,
-					"retainedFileCountLimit": 14,
-					"formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact"
-				}
-			}
-		],
-		"Enrich": [
-			"FromLogContext",
-			"WithMachineName",
-			"WithProcessId",
-			"WithThreadId",
-			"WithExceptionDetails"
-		]
-	},
-	"AllowedHosts": "*"
+    "Application": {
+        "DataSources": [
+            {
+                "Active": true,
+                "DataSourceName": "NorthWind_SQL",
+                "DataSource": "NorthWind",
+                "DataSourceType": "SqlServer",
+                "Schema": "dbo"
+            },
+            {
+                "Active": true,
+                "DataSourceName": "NorthWind_Pgs",
+                "DataSource": "northwind",
+                "DataSourceType": "PostgreSQL",
+                "Schema": "pilot"
+            }
+        ],
+        "OpenApi": {
+            "Title": "PilotApiDotNet",
+            "Contact": {
+                "Email": "MikelLooper@gmail.com",
+                "Name": "Michael Looper",
+                "URL": "https://github.com/MikeLooper/PilotApiDotNet"
+            },
+            "Description": "A proof of concept API to explore best-practices and new ideas (.NET/C#)",
+            "License": "MIT",
+            "Summary": "Proof of concept API",
+            "Version": "0.1.1"
+        }
+    },
+    "Name": "OpenTelemetry",
+    "Args": {
+        "endpoint": "http://localhost:4317",
+        "protocol": "Grpc",
+        "resourceAttributes": {
+            "service.name": "serilog-demo-api"
+        }
+    },
+    "Serilog": {
+        "MinimumLevel": {
+            "Default": "Information",
+            "Override": {
+                "Microsoft": "Warning",
+                "Microsoft.AspNetCore.Hosting.Diagnostics": "Error",
+                "Microsoft.Hosting.Lifetime": "Information",
+                "System": "Warning"
+            }
+        },
+        "WriteTo": [
+            { "Name": "Console" },
+            {
+                "Name": "File",
+                "Args": {
+                    "path": "logs/log-.json",
+                    "rollingInterval": "Day",
+                    "rollOnFileSizeLimit": true,
+                    "fileSizeLimitBytes": 104857600,
+                    "retainedFileCountLimit": 14,
+                    "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact"
+                }
+            }
+        ],
+        "Enrich": [
+            "FromLogContext",
+            "WithMachineName",
+            "WithProcessId",
+            "WithThreadId",
+            "WithExceptionDetails"
+        ]
+    },
+    "AllowedHosts": "*"
 }
 ```
 
@@ -254,28 +277,28 @@ The data source values for Production are included in the docker-deploy config f
 
 ```json
 {
-	"Application": {
-		"DataConnections": [
-			{
-				"Active": true,
-				"ConnectTimeout": 30,
-				"DataSourceName": "NorthWind_SQL",
-				"Host": "local_mssql",
-				"Password": "<DevUser password>",
-				"Port": 1433,
-				"UserName": "DevUser"
-			},
-			{
-				"Active": false,
-				"ConnectTimeout": 30,
-				"DataSourceName": "NorthWind_Pgs",
-				"Host": "local_postgres",
-				"Password": "<DevUser password>",
-				"Port": 5432,
-				"UserName": "DevUser"
-			}
-		]
-	}
+    "Application": {
+        "DataConnections": [
+            {
+                "Active": true,
+                "ConnectTimeout": 30,
+                "DataSourceName": "NorthWind_SQL",
+                "Host": "local_mssql",
+                "Password": "<DevUser password>",
+                "Port": 1433,
+                "UserName": "DevUser"
+            },
+            {
+                "Active": false,
+                "ConnectTimeout": 30,
+                "DataSourceName": "NorthWind_Pgs",
+                "Host": "local_postgres",
+                "Password": "<DevUser password>",
+                "Port": 5432,
+                "UserName": "DevUser"
+            }
+        ]
+    }
 }
 ```
 
@@ -418,9 +441,10 @@ You can also interact with the API using the Swagger UI by navigating to `https:
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] API (.NET)
-- [ ] Angular Frontend User Interface
-- [ ] Java Version of the API
+- [x] API (.NET) version of the API (this code)
+- [x] Java version of the API
+- [x] Deploy API to Docker
+- [x] Angular Frontend User Interface (UI) to consume APIs in Docker
 
 See the [open issues](https://github.com/MikeLooper/PilotApi/issues) for a full list of proposed features (and known issues).
 
@@ -449,6 +473,24 @@ Don't forget to give the project a star! Thanks again!
 <a href="https://github.com/MikeLooper/PilotApi/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=MikeLooper/PilotApi" alt="contrib.rocks image" />
 </a>
+
+
+
+<!-- COPILOT CUSTOMIZATION -->
+## Copilot Customization
+
+This repository uses two Copilot instruction layers:
+
+- Repository-wide guidance: `.github/copilot-instructions.md`
+- Unit-test-specific guidance: `.github/instructions/unit-tests.instructions.md`
+
+How to use them:
+
+- The repository-wide file is intentionally minimal and applies across all work.
+- The unit-test file is scoped to `test/**/*.cs` and applies to unit test creation and maintenance tasks.
+- For unit test work, follow the NUnit and test-structure rules in the scoped instruction file.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -503,8 +545,6 @@ Project Link: [https://github.com/MikeLooper/PilotApi](https://github.com/MikeLo
 [bruno-url]: https://www.usebruno.com/
 [csharp-badge]: https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white
 [csharp-url]: https://learn.microsoft.com/en-us/dotnet/csharp/
-[docker-badge]: https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff
-[docker-url]: https://www.docker.com/
 [githubcopilot-badge]: https://img.shields.io/badge/GitHub%20Copilot-000?logo=githubcopilot&logoColor=fff
 [githubcopilot-url]: https://github.com/copilot
 [mssql-badge]: https://custom-icon-badges.demolab.com/badge/Microsoft%20SQL%20Server-CC2927?logo=mssqlserver-white&logoColor=white

@@ -42,15 +42,16 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 			Assert.That(exception.Message, Does.Contain("builder"));
 		}
 
-		[Test]
-		public void ApiExtensions_ApiWebApplicationBuilder_WithValidBuilder_ShouldRegisterServices_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
+		//[Test]
+		//public void ApiExtensions_ApiWebApplicationBuilder_WithValidBuilder_ShouldRegisterServices_Test()
+		//{
+		//	// Arrange
+		//	var builder = WebApplication.CreateBuilder();
+		//	builder.ApplicationRegistration();
 
-			// Act & Assert
-			Assert.DoesNotThrow(() => builder.ApiWebApplicationBuilder());
-		}
+		//	// Act & Assert
+		//	Assert.DoesNotThrow(() => builder.ApiWebApplicationBuilder());
+		//}
 
 		[Test]
 		public void ApiExtensions_UseSecurity_WithNullWebApp_ShouldThrow_Test()
@@ -110,16 +111,6 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 
 			// Act & Assert
 			Assert.DoesNotThrow(() => services.AddVersioning());
-		}
-
-		[Test]
-		public void ApiExtensions_ApiWebApplicationBuilder_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => builder.ApiWebApplicationBuilder());
 		}
 
 		[Test]

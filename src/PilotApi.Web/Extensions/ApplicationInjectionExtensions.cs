@@ -34,6 +34,7 @@ namespace PilotApi.Web.Extensions
 					+ $"A valid object type of: '{typeof(IServiceCollection)}' is needed to continue. ({nameof(ApplicationInjectionExtensions)})");
 			}
 
+			builder.ServicesConfiguration();
 			builder.ServicesRegistration();
 		}
 	}

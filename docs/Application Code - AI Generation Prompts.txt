@@ -13,3 +13,7 @@ The data returned by this new endpoint should be the following:
 	- If 'show-details' is set to true, also include the following:
 		- The configuration settings, using the 'IApplicationConfiguration' interface (which should be injected into the 'SystemController' class.
 
+2.
+Include the `https://github.com/MikeLooper/PilotSharedSource` repository in this workspace as a SubModule.  Ensure the latest copy of the repository is retrieved and ready for use.
+Update the README to describe how the SubModule can be retrieved and updated when there is a change in the SubModule.  Place the SharedModule under a `shared` directory.
+
