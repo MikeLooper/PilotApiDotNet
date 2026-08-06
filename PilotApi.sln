@@ -35,7 +35,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PilotApi.Web.Tests", "test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{731B674F-12B0-48F8-8CC2-E0A79C7760DD}"
 	ProjectSection(SolutionItems) = preProject
-		docs\PilotApi_v1.yaml = docs\PilotApi_v1.yaml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -43,6 +42,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{65D1AE
 	ProjectSection(SolutionItems) = preProject
 		images\logo.png = images\logo.png
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PilotApi.Architecture.Tests", "test\PilotApi.Architecture.Tests\PilotApi.Architecture.Tests.csproj", "{76EB4039-C35F-E723-7660-8AF65B99BCD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,6 +95,10 @@ Global
 		{855C6AF3-84CA-D97C-3455-12CAED8140B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{855C6AF3-84CA-D97C-3455-12CAED8140B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{855C6AF3-84CA-D97C-3455-12CAED8140B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76EB4039-C35F-E723-7660-8AF65B99BCD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76EB4039-C35F-E723-7660-8AF65B99BCD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76EB4039-C35F-E723-7660-8AF65B99BCD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76EB4039-C35F-E723-7660-8AF65B99BCD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +111,7 @@ Global
 		{CD1A8D96-E2C3-349F-16FC-CC406AA1E446} = {ED5AA911-4308-41A1-B065-0450957B670B}
 		{855C6AF3-84CA-D97C-3455-12CAED8140B1} = {ED5AA911-4308-41A1-B065-0450957B670B}
 		{65D1AE24-AA9F-4B44-B9AD-49C6C85DB6EC} = {106CE556-96AE-4C58-90CA-7E5626ED3896}
+		{76EB4039-C35F-E723-7660-8AF65B99BCD1} = {ED5AA911-4308-41A1-B065-0450957B670B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08F10AAE-C616-4E11-AEB0-67109267F156}

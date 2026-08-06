@@ -17,11 +17,16 @@
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
 	<PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
+	<PackageReference Include="TngTech.ArchUnitNET.NUnit" Version="0.13.3" />
 </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\src\PilotApi.Domain\PilotApi.Domain.csproj" />
 	<ProjectReference Include="..\PilotApi.TestingShared\PilotApi.TestingShared.csproj" />
+	<ProjectReference Include="..\..\src\PilotApi.Domain\PilotApi.Domain.csproj" />
+	<ProjectReference Include="..\..\src\PilotApi.Repositories\PilotApi.Repositories.csproj" />
+	<ProjectReference Include="..\..\src\PilotApi.Services\PilotApi.Services.csproj" />
+	<ProjectReference Include="..\..\src\PilotApi.Shared\PilotApi.Shared.csproj" />
+	<ProjectReference Include="..\..\src\PilotApi.Web\PilotApi.Web.csproj" />
   </ItemGroup>
 
 </Project>
