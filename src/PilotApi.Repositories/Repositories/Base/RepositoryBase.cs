@@ -417,7 +417,7 @@ namespace PilotApi.Repositories.Repositories.Base
 				}
 				else if (id is string)
 				{
-					var changedString = id.ToString();
+					var changedString = id?.ToString();
 
 					if (nextIds.Count > 0)
 					{
