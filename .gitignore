@@ -4,3 +4,4 @@ logs/
 obj/
 temp/
 TestResults/
+/.vscode

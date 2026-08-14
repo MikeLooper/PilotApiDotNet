@@ -45,10 +45,14 @@ namespace PilotApi.Shared.Api.Middleware
 			{
 				await this.next(context);
 			}
-			catch (UserException)
+			catch (UserException uExc)
 			{
-				// already logged, just rethrow
-				throw;
+				// already logged, update response with error message for the user
+				context.Response.ContentType = "application/json";
+				context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+				var errorPayload = new { message = uExc.Message };
+				await context.Response.WriteAsJsonAsync(errorPayload);
 			}
 			catch (Exception exception)
 			{

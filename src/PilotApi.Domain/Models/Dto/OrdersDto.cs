@@ -32,8 +32,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the order.
 		/// </summary>
-		[Required]
-		public int OrderID { get; set; }
+		public int? OrderID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the date when the order is required to be delivered.

@@ -82,12 +82,6 @@ namespace PilotApi.Shared.Handlers
 		/// A flag that indicates whether the key in the supplied table will auto-increment during insert.
 		/// Default = True.
 		/// </param>
-		/// <param name="createKey">
-		/// A flag that indicates whether new key value(s) should be created during insert.
-		/// If False, the data in the supplied model will be used as-is, with the expectation that 
-		/// the data provider supplied valid key values in the model.
-		/// Default = True.
-		/// </param>
 		/// <returns>
 		/// An INSERT string.
 		/// </returns>
@@ -96,8 +90,7 @@ namespace PilotApi.Shared.Handlers
 			List<string> columnNames, 
 			List<string> keyColumnNames,
 			List<string> entityColumns,
-			bool keyIsAutoIncrement = true,
-			bool createKey = true);
+			bool keyIsAutoIncrement = true);
 
 		/// <summary>
 		/// Build and return a SELECT string.

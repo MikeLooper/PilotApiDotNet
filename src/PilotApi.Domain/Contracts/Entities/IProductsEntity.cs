@@ -23,7 +23,7 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// Gets or sets the ID of the product. 
 		/// This property is required and must be unique for each product.
 		/// </summary>
-		int ProductID { get; set; }
+		int? ProductID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the product. 

@@ -20,6 +20,6 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// <summary>
 		/// Gets or sets the ID of the shipper.
 		/// </summary>
-		int ShipperID { get; set; }
+		int? ShipperID { get; set; }
 	}
 }

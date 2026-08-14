@@ -10,7 +10,7 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// <summary>
 		/// Gets or sets the unique identifier for the category.
 		/// </summary>
-		int CategoryID { get; set; }
+		int? CategoryID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the category.

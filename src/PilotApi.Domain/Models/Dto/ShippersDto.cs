@@ -11,7 +11,6 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the name of the shipping company.
 		/// </summary>
-		[Required]
 		public string? CompanyName { get; set; }
 
 		/// <summary>
@@ -22,8 +21,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the shipper.
 		/// </summary>
-		[Required]
-		public int ShipperID { get; set; }
+		public int? ShipperID { get; set; }
 
 		/// <inheritdoc/>>
 		public override string ToString()

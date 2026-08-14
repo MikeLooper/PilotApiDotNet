@@ -70,7 +70,8 @@ namespace PilotApi.Repositories.Models.Entities
 		/// Gets or sets the unique identifier for the supplier.
 		/// </summary>
 		[Key]
-		public int SupplierID { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int? SupplierID { get; set; }
 
 		/// <inheritdoc/>>
 		public override string ToString()

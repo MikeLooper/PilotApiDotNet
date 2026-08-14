@@ -65,6 +65,6 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// <summary>
 		/// Gets or sets the unique identifier of the supplier.
 		/// </summary>
-		int SupplierID { get; set; }
+		int? SupplierID { get; set; }
 	}
 }

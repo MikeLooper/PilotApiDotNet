@@ -31,7 +31,7 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// <summary>
 		/// Gets or sets the unique identifier for the order.
 		/// </summary>
-		int OrderID { get; set; }
+		int? OrderID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the date the order is required to be delivered.

@@ -230,8 +230,7 @@ namespace PilotApi.Shared.Handlers
 			List<string> columnNames,
 			List<string> keyColumnNames,
 			List<string> entityColumns,
-			bool keyIsAutoIncrement = true,
-			bool createKey = true)
+			bool keyIsAutoIncrement = true)
 		{
 			if (string.IsNullOrWhiteSpace(tableName))
 			{
@@ -268,10 +267,9 @@ namespace PilotApi.Shared.Handlers
 			{
 				var minimizedColumnName = DataSourceUtilities.MinimizeName(columnName);
 				var isAutoKeyFilter = 
-					createKey && 
 					keyIsAutoIncrement &&
 					minimizedKeyColumnNames.Contains(minimizedColumnName);
-				if (isAutoKeyFilter && this.IsSqlServer)
+				if (isAutoKeyFilter)
 				{
 					// don't include key columns in update set, when autoincrement is active (SqlServer)
 					continue;
@@ -294,10 +292,9 @@ namespace PilotApi.Shared.Handlers
 			{
 				var minimizedColumnName = DataSourceUtilities.MinimizeName(columnNames[columnIndex]);
 				var isAutoKeyFilter = 
-					createKey &&
 					keyIsAutoIncrement && 
 					minimizedKeyColumnNames.Contains(minimizedColumnName);
-				if (isAutoKeyFilter && this.IsSqlServer)
+				if (isAutoKeyFilter)
 				{
 					// don't include key columns in values, when autoincrement is active (SqlServer)
 					continue;
@@ -315,8 +312,7 @@ namespace PilotApi.Shared.Handlers
 			querySql.Append(columnsString);
 			querySql.Append(") ");
 
-			if (createKey && 
-				keyIsAutoIncrement && 
+			if (keyIsAutoIncrement && 
 				keyColumnNames.Count == 1)
 			{
 				if (this.IsSqlServer)

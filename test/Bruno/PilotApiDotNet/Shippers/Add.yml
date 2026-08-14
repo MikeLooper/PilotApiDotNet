@@ -11,8 +11,7 @@ http:
     data: |-
       {
         "companyname": "Test Shipper",
-        "phone": "(503) 555-9831",
-        "shipperID": -1
+        "phone": "(503) 555-9831"
       }
   auth: inherit
 

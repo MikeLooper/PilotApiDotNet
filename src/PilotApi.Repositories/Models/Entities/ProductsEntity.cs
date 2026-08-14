@@ -26,7 +26,8 @@ namespace PilotApi.Repositories.Models.Entities
 		/// Gets or sets the ID of the product.
 		/// </summary>
 		[Key]
-		public int ProductID { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int? ProductID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the product.

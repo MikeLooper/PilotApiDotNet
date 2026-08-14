@@ -31,7 +31,7 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// <summary>
 		/// Gets or sets the unique identifier of the employee.
 		/// </summary>
-		int EmployeeID { get; set; }
+		int? EmployeeID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the extension number of the employee.

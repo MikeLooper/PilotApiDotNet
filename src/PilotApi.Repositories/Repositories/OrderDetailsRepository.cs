@@ -44,7 +44,6 @@ namespace PilotApi.Repositories.Repositories
 			: base(loggerFactory, dataStoreContext, sqlBuilder, entityUpdateHandler)
 		{
 			this.KeyIsAutoIncrement = false;
-			this.CreateKey = false;
 			this.KeyColumnDataTypes = new List<string>
 			{
 				KeyColumnDataTypeConstants.Int,
