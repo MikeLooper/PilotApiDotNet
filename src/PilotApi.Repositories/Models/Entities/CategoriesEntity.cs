@@ -16,7 +16,8 @@ namespace PilotApi.Repositories.Models.Entities
 		/// Gets or sets the ID of the category.
 		/// </summary>
 		[Key]
-		public int CategoryID { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int? CategoryID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the category.

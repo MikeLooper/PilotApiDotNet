@@ -24,7 +24,8 @@ namespace PilotApi.Repositories.Models.Base
 		/// Gets or sets the unique identifier for the shipper.
 		/// </summary>
 		[Key]
-		public int ShipperID { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int? ShipperID { get; set; }
 
 		/// <inheritdoc/>>
 		public override string ToString()

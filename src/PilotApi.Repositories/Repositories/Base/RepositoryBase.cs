@@ -49,7 +49,6 @@ namespace PilotApi.Repositories.Repositories.Base
 			this.EntityUpdateHandler = entityUpdateHandler;
 
 			// default assignments
-			this.CreateKey = true;
 			this.KeyColumnDataTypes = new List<string>
 			{
 				KeyColumnDataTypeConstants.Int
@@ -381,13 +380,13 @@ namespace PilotApi.Repositories.Repositories.Base
 				this.ColumnNames,
 				this.KeyColumnNames,
 				this.EntityColumns,
-				this.KeyIsAutoIncrement,
-				this.CreateKey);
+				this.KeyIsAutoIncrement);
 
 			// get alternate Ids for certain data source type/table/key-column conditions
+			var nextIds = new Dictionary<string, object>(); 
 			if (this.CreateKey)
 			{
-				var nextIds = await this.GetNextIdsAsync();
+				nextIds = await this.GetNextIdsAsync();
 				if (nextIds != null &&
 					nextIds.Keys.Count > 0)
 				{
@@ -419,6 +418,13 @@ namespace PilotApi.Repositories.Repositories.Base
 				else if (id is string)
 				{
 					var changedString = id.ToString();
+
+					if (nextIds.Count > 0)
+					{
+						var newIds = nextIds.Select(x => x.Value.ToString()).ToList();
+						id = (TReturn)Convert.ChangeType(string.Join(",", newIds), typeof(TReturn));
+					}
+
 					success = !string.IsNullOrEmpty(changedString);
 				}
 				else

@@ -12,8 +12,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the ID of the category.
 		/// </summary>
-		[Required]
-		public int CategoryID { get; set; }
+		public int? CategoryID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the category.

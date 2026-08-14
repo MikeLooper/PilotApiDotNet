@@ -37,7 +37,8 @@ namespace PilotApi.Repositories.Models.Entities
 		/// This property is the primary key of the entity.
 		/// </summary>
 		[Key]
-		public int OrderID { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int? OrderID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the date the order is required to be delivered.

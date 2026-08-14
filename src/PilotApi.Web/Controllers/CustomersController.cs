@@ -106,19 +106,19 @@ namespace PilotApi.Web.Controllers
 		public async Task<IActionResult> Add(
 			[Required][FromBody] CustomersDto model)
 		{
-			var retrieveResponse = await this.Service.InsertAsync<int>(model);
+			var retrieveResponse = await this.Service.InsertAsync<string>(model);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
 				return this.BadRequest();
 			}
 
-			if (retrieveResponse.Result <= 0)
+			if (string.IsNullOrEmpty(retrieveResponse.Result))
 			{
 				return this.BadRequest();
 			}
 
-			return this.Ok(new AddResponseInt(retrieveResponse.Result));
+			return this.Ok(new AddResponseString(retrieveResponse.Result));
 		}
 
 		/// <summary>

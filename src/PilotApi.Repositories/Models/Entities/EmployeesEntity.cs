@@ -37,7 +37,8 @@ namespace PilotApi.Repositories.Models.Entities
 		/// Gets or sets the unique identifier of the employee.
 		/// </summary>
 		[Key]
-		public int EmployeeID { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int? EmployeeID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the extension number of the employee.

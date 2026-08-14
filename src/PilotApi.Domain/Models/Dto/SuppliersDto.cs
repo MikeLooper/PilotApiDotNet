@@ -68,8 +68,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier of the supplier.
 		/// </summary>
-		[Required]
-		public int SupplierID { get; set; }
+		public int? SupplierID { get; set; }
 
 		/// <inheritdoc/>>
 		public override string ToString()

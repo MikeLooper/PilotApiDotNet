@@ -41,7 +41,7 @@ namespace PilotApi.Repositories.Tests.DataSource
 			public string BuildCount(string tableName) => $"SELECT COUNT(*) FROM {tableName}";
 			public string BuildDelete(string tableName, List<string> keyColumnNames) => $"DELETE FROM {tableName}";
 			public string BuildGetNextId(string tableName, string keyColumnName, string keyDataType) => $"SELECT MAX({keyColumnName}) FROM {tableName}";
-			public string BuildInsert(string tableName, List<string> columnNames, List<string> keyColumnNames, List<string> entityColumns, bool keyIsAutoIncrement = true, bool createKey = true) => $"INSERT INTO {tableName}";
+			public string BuildInsert(string tableName, List<string> columnNames, List<string> keyColumnNames, List<string> entityColumns, bool keyIsAutoIncrement = true) => $"INSERT INTO {tableName}";
 			public string BuildSelect(string tableName, List<string> columnNames, List<string>? keyColumnNames = null) => $"SELECT * FROM {tableName}";
 			public string BuildUpdate(string tableName, List<string> columnNames, List<string> keyColumnNames, List<string> entityColumns, bool keyIsAutoIncrement = true) => $"UPDATE {tableName}";
 			public string BuildWhereClause(List<string> keyColumnNames) => "WHERE 1=1";

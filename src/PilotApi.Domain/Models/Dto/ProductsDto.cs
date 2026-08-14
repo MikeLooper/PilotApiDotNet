@@ -22,8 +22,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the product.
 		/// </summary>
-		[Required]
-		public int ProductID { get; set; }
+		public int? ProductID { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the product.

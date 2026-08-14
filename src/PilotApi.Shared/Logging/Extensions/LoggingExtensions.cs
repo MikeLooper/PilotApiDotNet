@@ -67,7 +67,8 @@ namespace PilotApi.Shared.Logging.Extensions
 						.ReadFrom.Configuration(builder.Configuration)
 						.ReadFrom.Services(services)
 						.Enrich.FromLogContext()
-						.WriteTo.Console());
+						//.WriteTo.Console()
+						);
 		}
 	}
 }
