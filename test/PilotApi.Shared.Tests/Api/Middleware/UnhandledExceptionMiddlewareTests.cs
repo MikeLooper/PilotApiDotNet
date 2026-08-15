@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using PilotApi.Shared.Api.Middleware;
 using PilotApi.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -61,6 +63,25 @@ namespace PilotApi.Web.Tests.Middleware
 			Assert.That(exception?.Message, Does.StartWith("An error occurred. The details can be found in the log with the following correlation ID: "));
 			Assert.That(exception?.InnerException, Is.SameAs(originalException));
 		}
+
+		[Test]
+		public async Task UnhandledExceptionMiddleware_InvokeAsync_WhenUserExceptionAndResponseStarted_ShouldRethrowUserException_Test()
+		{
+			// Arrange
+			var originalException = new UserException("User-facing failure");
+			RequestDelegate next = context => throw originalException;
+			var logger = LoggerFactory.Create(builder => builder.AddProvider(new CapturingLoggerProvider()))
+				.CreateLogger<UnhandledExceptionMiddleware>();
+			var middleware = new UnhandledExceptionMiddleware(next, logger);
+			var context = new DefaultHttpContext();
+			context.Features.Set<IHttpResponseFeature>(new StartedHttpResponseFeature());
+
+			// Act
+			var exception = Assert.ThrowsAsync<UserException>(async () => await middleware.InvokeAsync(context));
+
+			// Assert
+			Assert.That(exception, Is.SameAs(originalException));
+		}
 		private sealed class CapturingLogger : ILogger
 		{
 			private readonly List<LogEntry> entries;
@@ -109,5 +130,22 @@ namespace PilotApi.Web.Tests.Middleware
 		}
 
 		private sealed record LogEntry(LogLevel Level, EventId EventId, string Message, Exception? Exception);
+
+		private sealed class StartedHttpResponseFeature : IHttpResponseFeature
+		{
+			public Stream Body { get; set; } = new MemoryStream();
+			public bool HasStarted { get; set; } = true;
+			public IHeaderDictionary Headers { get; set; } = new HeaderDictionary();
+			public string ReasonPhrase { get; set; } = string.Empty;
+			public int StatusCode { get; set; } = StatusCodes.Status200OK;
+
+			public void OnCompleted(Func<object, Task> callback, object state)
+			{
+			}
+
+			public void OnStarting(Func<object, Task> callback, object state)
+			{
+			}
+		}
 	}
 }
