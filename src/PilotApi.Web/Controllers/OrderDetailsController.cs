@@ -6,6 +6,7 @@ using PilotApi.Domain.Models.Dto;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PilotApi.Web.Controllers
@@ -37,15 +38,19 @@ namespace PilotApi.Web.Controllers
 		/// <summary>
 		/// Gets all DTO objects from the orderdetails table.
 		/// </summary>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// A read only list of all DTO objects from the orderdetails table, or null if no objects exist.
 		/// </returns>
 		[HttpGet]
 		[Route("get-all")]
 		[ProducesResponseType<IList<OrderDetailsDto>>(StatusCodes.Status200OK)]
-		public async Task<IActionResult?> GetAll()
+		public async Task<IActionResult?> GetAll(
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.GetAllAsync();
+			var retrieveResponse = await this.Service.GetAllAsync(cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -71,6 +76,9 @@ namespace PilotApi.Web.Controllers
 		/// <param name="orderId">
 		/// An integer representing the Order ID of the orderdetails record to delete.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// A DTO object of the given type with the specified ID, or null if no such object exists.
 		/// </returns>
@@ -79,9 +87,10 @@ namespace PilotApi.Web.Controllers
 		[ProducesResponseType<OrderDetailsDto>(StatusCodes.Status200OK)]
 		public async Task<IActionResult?> GetById(
 			[Required][FromRoute] int productId,
-			[Required][FromRoute] int orderId)
+			[Required][FromRoute] int orderId,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.GetByIdAsync(productId, orderId);
+			var retrieveResponse = await this.Service.GetByIdAsync(new[] { productId, orderId }, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -102,15 +111,19 @@ namespace PilotApi.Web.Controllers
 		/// <param name="model">
 		/// A DTO object of the orderdetails record to add.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// </returns>
 		[HttpPost]
 		[Route("add")]
 		[ProducesResponseType<AddResponseInt>(StatusCodes.Status200OK)]
 		public async Task<IActionResult> Add(
-			[Required][FromBody] OrderDetailsDto model)
+			[Required][FromBody] OrderDetailsDto model,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.InsertAsync<int>(model);
+			var retrieveResponse = await this.Service.InsertAsync<int>(model, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -131,6 +144,9 @@ namespace PilotApi.Web.Controllers
 		/// <param name="model">
 		/// A DTO object of the orderdetails record to update.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// </returns>
 		[HttpPut]
@@ -138,9 +154,10 @@ namespace PilotApi.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Update(
-			[Required][FromBody] OrderDetailsDto model)
+			[Required][FromBody] OrderDetailsDto model,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.UpdateAsync(model);
+			var retrieveResponse = await this.Service.UpdateAsync(model, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -159,6 +176,9 @@ namespace PilotApi.Web.Controllers
 		/// <param name="orderId">
 		/// An integer representing the Order ID of the orderdetails record to delete.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// </returns>
 		[HttpDelete]
@@ -167,9 +187,10 @@ namespace PilotApi.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Delete(
 			[Required][FromRoute] int productId,
-			[Required][FromRoute] int orderId)
+			[Required][FromRoute] int orderId,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.DeleteAsync(productId, orderId);
+			var retrieveResponse = await this.Service.DeleteAsync(new[] { productId, orderId }, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;

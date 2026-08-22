@@ -7,6 +7,7 @@ using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Handlers;
+using PilotApi.TestingShared.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,20 +18,6 @@ namespace PilotApi.Repositories.Tests.DataSource
 	[TestFixture]
 	public class DataSourceContextTests : TestBase
 	{
-		private class MockLogger : ILogger
-		{
-			public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-			public bool IsEnabled(LogLevel logLevel) => true;
-			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
-		}
-
-		private class MockLoggerFactory : ILoggerFactory
-		{
-			public ILogger CreateLogger(string categoryName) => new MockLogger();
-			public void AddProvider(ILoggerProvider provider) { }
-			public void Dispose() { }
-		}
-
 		private class MockSqlBuilder : ISqlBuilder
 		{
 			public string? BuildConnectionString(OpenApiConfiguration? openApi)
@@ -157,8 +144,8 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextConstructorSetsActiveConfiguration_Test()
 		{
 			// Arrange
-			var applicationConfiguration = CreateApplicationConfiguration(DataSourceTypes.SqlServer);
-			var loggerFactory = new MockLoggerFactory();
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			var loggerFactory = TestingSharedDoublesUtilities.GetMockLoggerFactory();
 			var sqlBuilder = new MockSqlBuilder();
 
 			// Act
@@ -173,7 +160,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextGetConnectionBuildsSqlConnectionAndSanitizesConnectionString_Test()
 		{
 			// Arrange
-			var dataSourceContext = new DataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new DataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 
 			// Act
 			var connection = dataSourceContext.GetConnection(false);
@@ -189,7 +178,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextGetConnectionBuildsPostgreSqlConnection_Test()
 		{
 			// Arrange
-			var dataSourceContext = new DataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.PostgreSQL), new MockSqlBuilder());
+			var dataSourceContext = new DataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.PostgreSQL), new MockSqlBuilder());
 
 			// Act
 			var connection = dataSourceContext.GetConnection(false);
@@ -203,7 +194,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextGetConnectionReturnsSameConnectionInstance_Test()
 		{
 			// Arrange
-			var dataSourceContext = new DataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new DataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 
 			// Act
 			var firstConnection = dataSourceContext.GetConnection(false);
@@ -217,7 +210,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextGetConnectionOpensInjectedConnectionAndStartsTransaction_Test()
 		{
 			// Arrange
-			var dataSourceContext = new TestableDataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new TestableDataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 			var fakeConnection = new FakeDbConnection();
 			dataSourceContext.SetDataSourceConnection(fakeConnection);
 
@@ -235,7 +230,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public async Task DataSourceContextCommitCommitsTransaction_Test()
 		{
 			// Arrange
-			var dataSourceContext = new TestableDataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new TestableDataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 			var fakeTransaction = new FakeDbTransaction(new FakeDbConnection(ConnectionState.Open));
 			dataSourceContext.DataSourceTransaction = fakeTransaction;
 
@@ -250,7 +247,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public async Task DataSourceContextRollbackRollsBackTransaction_Test()
 		{
 			// Arrange
-			var dataSourceContext = new TestableDataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new TestableDataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 			var fakeConnection = new FakeDbConnection(ConnectionState.Open);
 			var fakeTransaction = new FakeDbTransaction(fakeConnection);
 			dataSourceContext.DataSourceTransaction = fakeTransaction;
@@ -266,7 +265,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextToStringReturnsSanitizedValues_Test()
 		{
 			// Arrange
-			var dataSourceContext = new DataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new DataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 			dataSourceContext.GetConnection(false);
 
 			// Act
@@ -281,7 +282,9 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextDisposeClosesConnectionAndDisposesTransaction_Test()
 		{
 			// Arrange
-			var dataSourceContext = new TestableDataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
+			var dataSourceContext = new TestableDataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer), new MockSqlBuilder());
 			var fakeConnection = new FakeDbConnection(ConnectionState.Open);
 			var fakeTransaction = new FakeDbTransaction(fakeConnection);
 			dataSourceContext.SetDataSourceConnection(fakeConnection);
@@ -301,44 +304,15 @@ namespace PilotApi.Repositories.Tests.DataSource
 		public void DataSourceContextGetConnectionWithUnhandledDataSourceThrowsInvalidOperationException_Test()
 		{
 			// Arrange
-			var dataSourceContext = new DataSourceContext(new MockLoggerFactory(), CreateApplicationConfiguration(DataSourceTypes.Unrecognized), new MockSqlBuilder());
+			var dataSourceContext = new DataSourceContext(
+				TestingSharedDoublesUtilities.GetMockLoggerFactory(), 
+				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.Unrecognized), new MockSqlBuilder());
 
 			// Act
 			var action = () => dataSourceContext.GetConnection(false);
 
 			// Assert
 			Assert.That(action, Throws.TypeOf<InvalidOperationException>());
-		}
-
-		private static ApplicationConfiguration CreateApplicationConfiguration(DataSourceTypes dataSourceType)
-		{
-			return new ApplicationConfiguration
-			{
-				DataConnections = new List<DataConnectionConfiguration>
-				{
-					new DataConnectionConfiguration
-					{
-						Active = true,
-						DataSourceName = "NorthwindConnection",
-						Host = "localhost",
-						Password = "secret",
-						UserName = "sa"
-					}
-				},
-				DataSources = new List<DataSourceConfiguration>
-				{
-					new DataSourceConfiguration
-					{
-						Active = true,
-						DataSource = "Northwind",
-						DataSourceEnum = dataSourceType,
-						DataSourceName = "NorthwindConnection",
-						DataSourceType = dataSourceType.ToString(),
-						Schema = "dbo"
-					}
-				},
-				OpenApi = new OpenApiConfiguration()
-			};
 		}
 	}
 }

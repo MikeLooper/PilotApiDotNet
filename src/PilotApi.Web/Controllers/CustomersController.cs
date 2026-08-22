@@ -6,6 +6,7 @@ using PilotApi.Domain.Models.Dto;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PilotApi.Web.Controllers
@@ -37,15 +38,19 @@ namespace PilotApi.Web.Controllers
 		/// <summary>
 		/// Gets all DTO objects of the customer table.
 		/// </summary>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// A read only list of all DTO objects from the customer table, or null if no objects exist.
 		/// </returns>
 		[HttpGet]
 		[Route("get-all")]
 		[ProducesResponseType<IList<CustomersDto>>(StatusCodes.Status200OK)]
-		public async Task<IActionResult?> GetAll()
+		public async Task<IActionResult?> GetAll(
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.GetAllAsync();
+			var retrieveResponse = await this.Service.GetAllAsync(cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -68,6 +73,9 @@ namespace PilotApi.Web.Controllers
 		/// <param name="customerId">
 		/// The ID of the customer record to retrieve.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// A DTO object of the customer record with the specified ID, or null if no such object exists.
 		/// </returns>
@@ -75,9 +83,10 @@ namespace PilotApi.Web.Controllers
 		[Route("get/{customerId}")]
 		[ProducesResponseType<CustomersDto>(StatusCodes.Status200OK)]
 		public async Task<IActionResult?> GetById(
-			[Required][FromRoute] string customerId)
+			[Required][FromRoute] string customerId,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.GetByIdAsync(customerId);
+			var retrieveResponse = await this.Service.GetByIdAsync(new[] { customerId }, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -98,15 +107,19 @@ namespace PilotApi.Web.Controllers
 		/// <param name="model">
 		/// A DTO object of the customer record to add.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// </returns>
 		[HttpPost]
 		[Route("add")]
 		[ProducesResponseType<AddResponseInt>(StatusCodes.Status200OK)]
 		public async Task<IActionResult> Add(
-			[Required][FromBody] CustomersDto model)
+			[Required][FromBody] CustomersDto model,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.InsertAsync<string>(model);
+			var retrieveResponse = await this.Service.InsertAsync<string>(model, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -127,6 +140,9 @@ namespace PilotApi.Web.Controllers
 		/// <param name="model">
 		/// A DTO object of the customer record to update.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// </returns>
 		[HttpPut]
@@ -134,9 +150,10 @@ namespace PilotApi.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Update(
-			[Required][FromBody] CustomersDto model)
+			[Required][FromBody] CustomersDto model,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.UpdateAsync(model);
+			var retrieveResponse = await this.Service.UpdateAsync(model, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -152,6 +169,9 @@ namespace PilotApi.Web.Controllers
 		/// <param name="customerId">
 		/// An integer representing the ID of the customer record to delete.
 		/// </param>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// </returns>
 		[HttpDelete]
@@ -159,9 +179,10 @@ namespace PilotApi.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Delete(
-			[Required][FromRoute] string customerId)
+			[Required][FromRoute] string customerId,
+			CancellationToken cancellationToken)
 		{
-			var retrieveResponse = await this.Service.DeleteAsync(customerId);
+			var retrieveResponse = await this.Service.DeleteAsync(new[] { customerId }, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;

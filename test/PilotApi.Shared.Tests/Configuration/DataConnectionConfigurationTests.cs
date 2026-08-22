@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using PilotApi.Shared.Configuration;
-using PilotApi.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -200,9 +199,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSourceName"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("DataSourceName"));
 		}
 
 		[Test]
@@ -246,9 +251,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSourceName"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("DataSourceName"));
 		}
 		[Test]
 		public void DataConnectionConfiguration_Validate_WithoutHost_ShouldThrow_Test()
@@ -262,9 +273,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("Host"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("Host"));
 		}
 
 		[Test]
@@ -279,9 +296,16 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("Password"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("Password"));
+
 		}
 
 		[Test]
@@ -296,9 +320,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("UserName"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("UserName"));
 		}
 
 		[Test]

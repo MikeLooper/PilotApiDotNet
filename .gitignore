@@ -1,3 +1,4 @@
+.claude
 .vs
 bin/
 logs/
@@ -5,3 +6,4 @@ obj/
 temp/
 TestResults/
 /.vscode
+Claude.md

@@ -161,9 +161,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSource"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("DataSource"));
 		}
 
 		[Test]
@@ -208,9 +214,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSource"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("DataSource"));
 		}
 		[Test]
 		public void DataSourceConfiguration_Validate_WithoutDataSourceName_ShouldThrow_Test()
@@ -224,9 +236,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSourceName"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("DataSourceName"));
 		}
 
 		[Test]
@@ -241,9 +259,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("DataSourceType"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("DataSourceType"));
 		}
 		[Test]
 		public void DataSourceConfiguration_Validate_WithoutSchema_ShouldThrow_Test()
@@ -257,9 +281,15 @@ namespace PilotApi.Shared.Tests.Configuration
 			};
 			var exceptions = new List<Exception>();
 
-			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate(ref exceptions));
-			Assert.That(exception.Message, Does.Contain("Schema"));
+			// Act
+			config.Validate(ref exceptions);
+
+			// Assert
+			Assert.That(exceptions, Is.Not.Null);
+			Assert.That(exceptions, Has.Count.GreaterThan(0));
+			var firstException = exceptions[0];
+			Assert.That(firstException, Is.Not.Null);
+			Assert.That(firstException.Message, Does.Contain("Schema"));
 		}
 
 		[Test]

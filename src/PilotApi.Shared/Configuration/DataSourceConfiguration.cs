@@ -26,15 +26,10 @@ namespace PilotApi.Shared.Configuration
 		/// <param name="sourceConfiguration">
 		/// A source configuration object to copy values from.
 		/// </param>
-		/// <param name="suppressSensitiveValues">
-		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
-		/// </param>
-		public DataSourceConfiguration(
-			DataSourceConfiguration sourceConfiguration,
-			bool suppressSensitiveValues = false)
+		public DataSourceConfiguration(DataSourceConfiguration sourceConfiguration)
 			: this()
 		{
-			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+			this.Initialize(sourceConfiguration);
 		}
 
 		/// <inheritdoc/>>
@@ -77,17 +72,20 @@ namespace PilotApi.Shared.Configuration
 
 			if (string.IsNullOrWhiteSpace(this.DataSource))
 			{
-				throw new ConfigurationException($"The {nameof(this.DataSource)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.DataSource)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 
 			if (string.IsNullOrWhiteSpace(this.DataSourceName))
 			{
-				throw new ConfigurationException($"The {nameof(this.DataSourceName)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.DataSourceName)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 
 			if (string.IsNullOrWhiteSpace(this.DataSourceType))
 			{
-				throw new ConfigurationException($"The {nameof(this.DataSourceType)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.DataSourceType)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 			else
 			{
@@ -101,7 +99,8 @@ namespace PilotApi.Shared.Configuration
 
 			if (string.IsNullOrWhiteSpace(this.Schema))
 			{
-				throw new ConfigurationException($"The {nameof(this.Schema)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.Schema)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 		}
 
@@ -111,12 +110,7 @@ namespace PilotApi.Shared.Configuration
 		/// <param name="sourceConfiguration">
 		/// The source <see cref="DataSourceConfiguration"/> to copy values from.
 		/// </param>
-		/// <param name="suppressSensitiveValues">
-		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
-		/// </param>
-		protected void Initialize(
-			DataSourceConfiguration sourceConfiguration,
-			bool suppressSensitiveValues = false)
+		protected void Initialize(DataSourceConfiguration sourceConfiguration)
 		{
 			if (sourceConfiguration == null)
 			{

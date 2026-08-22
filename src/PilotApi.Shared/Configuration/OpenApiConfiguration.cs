@@ -24,15 +24,10 @@ namespace PilotApi.Shared.Configuration
 		/// <param name="sourceConfiguration">
 		/// A source configuration object to copy values from.
 		/// </param>
-		/// <param name="suppressSensitiveValues">
-		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
-		/// </param>
-		public OpenApiConfiguration(
-			OpenApiConfiguration sourceConfiguration,
-			bool suppressSensitiveValues = false)
+		public OpenApiConfiguration(OpenApiConfiguration sourceConfiguration)
 			: this()
 		{
-			this.Initialize(sourceConfiguration, suppressSensitiveValues);
+			this.Initialize(sourceConfiguration);
 		}
 
 		/// <inheritdoc/>
@@ -126,12 +121,7 @@ namespace PilotApi.Shared.Configuration
 		/// <param name="sourceConfiguration">
 		/// The source <see cref="OpenApiConfiguration"/> to copy values from.
 		/// </param>
-		/// <param name="suppressSensitiveValues">
-		/// A flag that indicates whether sensitive values should be suppressed when copying values from the source configuration.
-		/// </param>
-		protected void Initialize(
-			OpenApiConfiguration sourceConfiguration,
-			bool suppressSensitiveValues = false)
+		protected void Initialize(OpenApiConfiguration sourceConfiguration)
 		{
 			if (sourceConfiguration == null)
 			{

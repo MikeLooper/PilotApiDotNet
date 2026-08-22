@@ -107,22 +107,26 @@ namespace PilotApi.Shared.Configuration
 
 			if (string.IsNullOrWhiteSpace(this.DataSourceName))
 			{
-				throw new ConfigurationException($"The {nameof(this.DataSourceName)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.DataSourceName)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 
 			if (string.IsNullOrWhiteSpace(this.Host))
 			{
-				throw new ConfigurationException($"The {nameof(this.Host)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.Host)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 
 			if (string.IsNullOrWhiteSpace(this.Password))
 			{
-				throw new ConfigurationException($"The {nameof(this.Password)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.Password)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 
 			if (string.IsNullOrWhiteSpace(this.UserName))
 			{
-				throw new ConfigurationException($"The {nameof(this.UserName)} value is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException($"The {nameof(this.UserName)} value is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 		}
 

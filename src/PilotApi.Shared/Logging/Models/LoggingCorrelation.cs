@@ -35,8 +35,8 @@ namespace PilotApi.Shared.Logging.Models
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{nameof(this.CorrelationId)}={this.CorrelationId}" +
-				$"{nameof(this.UserMessage)}=: {this.UserMessage}";
+			return $"{nameof(this.CorrelationId)}={this.CorrelationId}, " +
+				$"{nameof(this.UserMessage)}={this.UserMessage}";
 		}
 	}
 }

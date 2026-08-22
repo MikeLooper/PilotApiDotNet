@@ -271,7 +271,7 @@ namespace PilotApi.Shared.Handlers
 					minimizedKeyColumnNames.Contains(minimizedColumnName);
 				if (isAutoKeyFilter)
 				{
-					// don't include key columns in update set, when autoincrement is active
+					// don't include key columns in the INSERT column list when autoincrement is active.
 					continue;
 				}
 
