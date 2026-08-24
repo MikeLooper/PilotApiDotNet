@@ -67,7 +67,7 @@ namespace PilotApi.Web.Controllers
 			var name = this.ApplicationConfiguration.OpenApi.Title;
 			var appVersion = this.ApplicationConfiguration.OpenApi.Version;
 			var buildVersion = FileUtilities.GetApplicationVersion();
-			var deployDate = Environment.GetEnvironmentVariable("DEPLOY_DATE");
+			var deployDate = Environment.GetEnvironmentVariable("APP_DEPLOY_DATE");
 
 			var aboutResponse  = new AboutResponse
 			{

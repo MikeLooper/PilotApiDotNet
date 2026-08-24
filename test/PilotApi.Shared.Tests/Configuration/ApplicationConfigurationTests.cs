@@ -305,7 +305,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			config.DataConnections.Add(connection2);
 
 			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			var exception = Assert.Throws<AggregateException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("one active item"));
 		}
 
@@ -317,7 +317,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			config.DataConnections = null;
 
 			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			var exception = Assert.Throws<AggregateException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("DataConnections"));
 		}
 
@@ -338,7 +338,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			config.DataSources = null;
 
 			// Act & Assert
-			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			var exception = Assert.Throws<AggregateException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("DataSources"));
 		}
 

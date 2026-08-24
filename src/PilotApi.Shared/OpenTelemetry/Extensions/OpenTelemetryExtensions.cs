@@ -61,13 +61,10 @@ namespace PilotApi.Shared.OpenApi.Extensions
 					.AddHttpClientInstrumentation()
 					// This prints tracing data to the console:
 					.AddConsoleExporter()
-					//.AddOtlpExporter()
 					.Build();
 
 			var meterProvider = Sdk.CreateMeterProviderBuilder()
 					.AddMeter(applicationConfiguration.OpenApi.Title)
-					// rest of config not shown here.
-					//.AddOtlpExporter()
 					.Build();
 
 			builder.Services.AddOpenTelemetry()
@@ -76,21 +73,18 @@ namespace PilotApi.Shared.OpenApi.Extensions
 						serviceVersion: applicationConfiguration.OpenApi.Version))
 					.WithLogging(logging =>	logging
 									.AddConsoleExporter()
-									//.AddOtlpExporter()
 					)
 					.WithMetrics(metrics => metrics
 									.AddAspNetCoreInstrumentation()
 									//.AddHttpClientInstrumentation()
 									.AddSqlClientInstrumentation()
 									.AddConsoleExporter()
-									//.AddOtlpExporter()
 					)
 					.WithTracing(tracing => tracing
 									.AddAspNetCoreInstrumentation()
 									//.AddHttpClientInstrumentation()
 									.AddSqlClientInstrumentation()
 									.AddConsoleExporter()
-									//.AddOtlpExporter()
 					);
 		}
 	}

@@ -74,8 +74,9 @@ namespace PilotApi.Shared.Configuration
 			if (this.DataConnections == null ||
 				this.DataConnections.Count == 0)
 			{
-				throw new ConfigurationException(
-					$"The {nameof(this.DataConnections)} property is required and cannot be null or empty ({this.GetType().Name})");
+				exceptions.Add(
+					new ConfigurationException(
+						$"The {nameof(this.DataConnections)} property is required and cannot be null or empty ({this.GetType().Name})"));
 			}
 			else
 			{
@@ -84,13 +85,12 @@ namespace PilotApi.Shared.Configuration
 					dataConnection.Validate(ref exceptions);
 				}
 
-				var activeCount = this.DataConnections
-					.Where(w => w.Active)
-					.Count();
+				var activeCount = this.DataConnections.Count(w => w.Active);
 				if (activeCount != 1)
 				{
-					throw new ConfigurationException(
-						$"The {nameof(this.DataConnections)} property should have one active item ({this.GetType().Name})");
+					exceptions.Add(
+						new ConfigurationException(
+							$"The {nameof(this.DataConnections)} property should have one active item ({this.GetType().Name})"));
 				}
 			}
 
@@ -109,7 +109,7 @@ namespace PilotApi.Shared.Configuration
 				}
 			}
 
-			if (exceptions.Count() == 0)
+			if (exceptions.Count == 0)
 			{
 				// verify relationships between sections (once other settings are valid)
 				foreach (var dataConnection in this.DataConnections)
@@ -132,6 +132,10 @@ namespace PilotApi.Shared.Configuration
 				exceptions.Add(
 					new ConfigurationException(
 						$"The {nameof(this.OpenApi)} property is required and cannot be null or empty ({this.GetType().Name})"));
+			}
+			else
+			{
+				this.OpenApi.Validate(ref exceptions);
 			}
 
 			if (exceptions.Count == 1)
@@ -173,9 +177,9 @@ namespace PilotApi.Shared.Configuration
 				?.Select(s => new DataConnectionConfiguration(s, suppressSensitiveValues))
 				.ToList();
 			this.DataSources = sourceConfiguration.DataSources
-				?.Select(s => new DataSourceConfiguration(s, suppressSensitiveValues))
+				?.Select(s => new DataSourceConfiguration(s))
 				.ToList();
-			this.OpenApi = new OpenApiConfiguration(sourceConfiguration.OpenApi, suppressSensitiveValues);
+			this.OpenApi = new OpenApiConfiguration(sourceConfiguration.OpenApi);
 		}
 	}
 }

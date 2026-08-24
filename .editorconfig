@@ -247,14 +247,17 @@ dotnet_naming_style.begins_with_i.required_suffix =
 dotnet_naming_style.begins_with_i.word_separator = 
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
-# IDE0003: Remove qualification
-dotnet_diagnostic.IDE0003.severity = none
-
-# IDE0008: Use explicit type
-dotnet_diagnostic.IDE0008.severity = none
-
 # CS8602: Dereference of a possibly null reference.
 dotnet_diagnostic.CS8602.severity = suggestion
 
 # CS8604: Possible null reference argument.
 dotnet_diagnostic.CS8604.severity = suggestion
+
+# CS0809: Obsolete member 'memberA' overrides non-obsolete member 'memberB'.
+dotnet_diagnostic.CS0809.severity = suggestion
+
+# IDE0003: Remove qualification
+dotnet_diagnostic.IDE0003.severity = none
+
+# IDE0008: Use explicit type
+dotnet_diagnostic.IDE0008.severity = none

@@ -31,7 +31,7 @@ namespace PilotApi.Shared.Tests.Logging.Models
 
 			// Assert
 			Assert.That(result, Does.Contain($"CorrelationId={correlationId}"));
-			Assert.That(result, Does.Contain("UserMessage=: An error occurred."));
+			Assert.That(result, Does.Contain("UserMessage=An error occurred."));
 			Assert.That(result, Does.Contain(correlationId));
 		}
 

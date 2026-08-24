@@ -12,6 +12,7 @@ using PilotApi.Shared.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PilotApi.Repositories.Repositories.Base
@@ -178,7 +179,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<int>> CountAllAsync()
+		public virtual async Task<RetrieveResponse<int>> CountAllAsync(CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -192,9 +193,11 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously and retrieve the results.
-				result = await connection.ExecuteAsync(
+				var command = new CommandDefinition(
 					querySql,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				result = await connection.ExecuteAsync(command);
 			}
 			catch (Exception exc)
 			{
@@ -214,18 +217,13 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<bool>> DeleteAsync<TType>(params TType[] ids)
+		public virtual async Task<RetrieveResponse<bool>> DeleteAsync<TType>(TType[] ids, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
 			if (ids.Length < 1)
 			{
 				throw new ArgumentException($"The supplied ids list ({ids} must contain at least one item ({this.GetType().Name})");
-			}
-
-			if (this.KeyColumnNames.Contains(","))
-			{
-				throw new InvalidOperationException($"This method should not be used for multi-key tables ({this.GetType().Name})");
 			}
 
 			// Construct the SQL query to delete the record from the table.
@@ -242,10 +240,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously and retrieve the result.
-				var result = await connection.ExecuteAsync(
+				var command = new CommandDefinition(
 					querySql,
 					queryParameters,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				var result = await connection.ExecuteAsync(command);
 				success = result > 0;
 				if (success)
 				{
@@ -275,7 +275,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<List<TEntity>>?> GetAllAsync()
+		public virtual async Task<RetrieveResponse<List<TEntity>>?> GetAllAsync(CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -291,9 +291,11 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously and retrieve the results.
-				result = await connection.QueryAsync<TEntity>(
+				var command = new CommandDefinition(
 					querySql,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				result = await connection.QueryAsync<TEntity>(command);
 			}
 			catch (Exception exc)
 			{
@@ -313,7 +315,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<TEntity>?> GetAsync<TType>(params TType[] ids)
+		public virtual async Task<RetrieveResponse<TEntity>?> GetAsync<TType>(TType[] ids, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -336,10 +338,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously and retrieve the result.
-				result = await connection.QuerySingleOrDefaultAsync<TEntity>(
+				var command = new CommandDefinition(
 					querySql,
 					queryParameters,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				result = await connection.QuerySingleOrDefaultAsync<TEntity>(command);
 
 			}
 			catch (Exception exc)
@@ -360,18 +364,13 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<TReturn>?> InsertAsync<TReturn>(TEntity model)
+		public virtual async Task<RetrieveResponse<TReturn>?> InsertAsync<TReturn>(TEntity model, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
 			if (model == null)
 			{
 				throw new ArgumentException($"Invalid argument: {nameof(model)} ({this.GetType().Name})");
-			}
-
-			if (this.KeyColumnNames.Contains(","))
-			{
-				throw new InvalidOperationException($"This method should not be used for multi-key tables ({this.GetType().Name})");
 			}
 
 			// Construct the SQL query to insert a new record into the table.
@@ -383,10 +382,10 @@ namespace PilotApi.Repositories.Repositories.Base
 				this.KeyIsAutoIncrement);
 
 			// get alternate Ids for certain data source type/table/key-column conditions
-			var nextIds = new Dictionary<string, object>(); 
+			var nextIds = new Dictionary<string, object>();
 			if (this.CreateKey)
 			{
-				nextIds = await this.GetNextIdsAsync();
+				nextIds = await this.GetNextIdsAsync(cancellationToken);
 				if (nextIds != null &&
 					nextIds.Keys.Count > 0)
 				{
@@ -404,10 +403,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously and retrieve the inserted ID.
-				id = await connection.QueryFirstOrDefaultAsync<TReturn>(
+				var command = new CommandDefinition(
 					querySql,
 					model,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				id = await connection.QueryFirstOrDefaultAsync<TReturn>(command);
 
 				var success = false;
 				if (id is int)
@@ -417,14 +418,13 @@ namespace PilotApi.Repositories.Repositories.Base
 				}
 				else if (id is string)
 				{
-					var changedString = id?.ToString();
-
 					if (nextIds.Count > 0)
 					{
 						var newIds = nextIds.Select(x => x.Value.ToString()).ToList();
 						id = (TReturn)Convert.ChangeType(string.Join(",", newIds), typeof(TReturn));
 					}
 
+					var changedString = id?.ToString();
 					success = !string.IsNullOrEmpty(changedString);
 				}
 				else
@@ -462,7 +462,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<IEnumerable<TEntity>>?> QueryAsync(string querySql, object? parameters = null)
+		public virtual async Task<RetrieveResponse<IEnumerable<TEntity>>?> QueryAsync(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -478,10 +478,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously
-				var taskResult = await connection.QueryAsync<TEntity>(
+				var command = new CommandDefinition(
 					querySql,
 					parameters,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				var taskResult = await connection.QueryAsync<TEntity>(command);
 				result = taskResult.ToList();
 			}
 			catch (Exception exc)
@@ -501,7 +503,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<TEntity>?> QueryFirstAsync(string querySql, object? parameters = null)
+		public virtual async Task<RetrieveResponse<TEntity>?> QueryFirstAsync(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -517,10 +519,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously
-				result = await connection.QueryFirstAsync<TEntity>(
+				var command = new CommandDefinition(
 					querySql,
 					parameters,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				result = await connection.QueryFirstAsync<TEntity>(command);
 			}
 			catch (Exception exc)
 			{
@@ -539,7 +543,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<TMethodType>?> QuerySingleAsync<TMethodType>(string querySql, object? parameters = null)
+		public virtual async Task<RetrieveResponse<TMethodType>?> QuerySingleAsync<TMethodType>(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -555,10 +559,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously
-				result = await connection.QuerySingleAsync<TMethodType>(
+				var command = new CommandDefinition(
 					querySql,
 					parameters,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				result = await connection.QuerySingleAsync<TMethodType>(command);
 			}
 			catch (Exception exc)
 			{
@@ -577,7 +583,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<TEntity>?> QuerySingleAsync(string querySql, object? parameters = null)
+		public virtual async Task<RetrieveResponse<TEntity>?> QuerySingleAsync(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -593,10 +599,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously
-				result = await connection.QuerySingleAsync<TEntity>(
+				var command = new CommandDefinition(
 					querySql,
 					parameters,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				result = await connection.QuerySingleAsync<TEntity>(command);
 			}
 			catch (Exception exc)
 			{
@@ -623,7 +631,7 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>>
-		public virtual async Task<RetrieveResponse<bool>> UpdateAsync(TEntity model)
+		public virtual async Task<RetrieveResponse<bool>> UpdateAsync(TEntity model, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
@@ -648,10 +656,12 @@ namespace PilotApi.Repositories.Repositories.Base
 			try
 			{
 				// Execute the query asynchronously and retrieve the result.
-				var result = await connection.ExecuteAsync(
+				var command = new CommandDefinition(
 					querySql,
 					model,
-					transaction: this.DataSourceContext.DataSourceTransaction);
+					transaction: this.DataSourceContext.DataSourceTransaction,
+					cancellationToken: cancellationToken);
+				var result = await connection.ExecuteAsync(command);
 
 				success = result > 0;
 				if (success)
@@ -684,10 +694,13 @@ namespace PilotApi.Repositories.Repositories.Base
 		/// <summary>
 		/// Get the next id values for the current table and key columns;
 		/// </summary>
+		/// <param name="cancellationToken">
+		/// A token that can be used to cancel the operation.
+		/// </param>
 		/// <returns>
 		/// A dictionary of: key column name and next id value.
 		/// </returns>
-		protected virtual async Task<Dictionary<string, object>> GetNextIdsAsync()
+		protected virtual async Task<Dictionary<string, object>> GetNextIdsAsync(CancellationToken cancellationToken = default)
 		{
 			var returnDict = new Dictionary<string, object>();
 
@@ -707,7 +720,7 @@ namespace PilotApi.Repositories.Repositories.Base
 						switch (keyDataType)
 						{
 							case KeyColumnDataTypeConstants.Int:
-								var queryResponseInt = await this.QuerySingleAsync<int>(querySql);
+								var queryResponseInt = await this.QuerySingleAsync<int>(querySql, cancellationToken: cancellationToken);
 								if (queryResponseInt.Result > 0)
 								{
 									returnDict.Add(keyColumnName, queryResponseInt.Result);
@@ -721,7 +734,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 								break;
 							case KeyColumnDataTypeConstants.String:
-								var queryResponseString = await this.QuerySingleAsync<string>(querySql);
+								var queryResponseString = await this.QuerySingleAsync<string>(querySql, cancellationToken: cancellationToken);
 								if (!string.IsNullOrWhiteSpace(queryResponseString.Result))
 								{
 									returnDict.Add(keyColumnName, queryResponseString.Result);
