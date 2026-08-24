@@ -87,36 +87,36 @@ namespace PilotApi.Shared.OpenApi.Extensions
 
 			webApp.UseOutputCache();
 
-			if (webApp.Environment.IsDevelopment())
-			{
-				webApp.MapOpenApi()
+			// production code would include the following check to only enable OpenApi in development environments
+			//if (webApp.Environment.IsDevelopment())
+
+			webApp.MapOpenApi()
 						.CacheOutput();
 
-				// set display to look similar to Swagger
-				webApp.MapScalarApiReference(options =>
-				{
-					//var apiDescriptions = webApp.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-					//// version switching enabling
-					//foreach (var description in apiDescriptions.ApiVersionDescriptions)
-					//{
-					//	options.AddDocument($"/v{description.ApiVersion.MajorVersion}",
-					//		$"API Version {description.ApiVersion.MajorVersion}, {description.ApiVersion.MinorVersion}",
-					//		$"/openapi/v{description.ApiVersion.MajorVersion}.json");  //, isDefault: true);
-					//}
+			// set display to look similar to Swagger
+			webApp.MapScalarApiReference(options =>
+			{
+				//var apiDescriptions = webApp.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+				//// version switching enabling
+				//foreach (var description in apiDescriptions.ApiVersionDescriptions)
+				//{
+				//	options.AddDocument($"/v{description.ApiVersion.MajorVersion}",
+				//		$"API Version {description.ApiVersion.MajorVersion}, {description.ApiVersion.MinorVersion}",
+				//		$"/openapi/v{description.ApiVersion.MajorVersion}.json");  //, isDefault: true);
+				//}
 
-					// Disables the AI "Agent" feature entirely
-					options.DisableAgent();
+				// Disables the AI "Agent" feature entirely
+				options.DisableAgent();
 
-					// Apply the classic three-column layout
-					options.Layout = ScalarLayout.Classic;
+				// Apply the classic three-column layout
+				options.Layout = ScalarLayout.Classic;
 
-					//// Inject CSS variables to match the classic Swagger UI aesthetic
-					//var uiCss = ResourceUtilities.ReturnFullyQualifiedResourceFileAsTextFromCallingAssembly(
-					// OpenApiDisplayConstants .CustomCssFolderFilePath);
-					//options.WithCustomCss{uiCss);
-					options.WithTheme(ScalarTheme.BluePlanet);
-				});
-			}
+				//// Inject CSS variables to match the classic Swagger UI aesthetic
+				//var uiCss = ResourceUtilities.ReturnFullyQualifiedResourceFileAsTextFromCallingAssembly(
+				// OpenApiDisplayConstants .CustomCssFolderFilePath);
+				//options.WithCustomCss{uiCss);
+				options.WithTheme(ScalarTheme.BluePlanet);
+			});
 		}
 	}
 }
