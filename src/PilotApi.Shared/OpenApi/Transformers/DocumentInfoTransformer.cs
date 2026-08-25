@@ -25,7 +25,7 @@ namespace PilotApi.Shared.OpenApi.Transformers
 		/// </summary>
 		public IApplicationConfiguration? ApplicationConfiguration { get; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
 		{
 			// Set the primary info section fields

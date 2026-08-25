@@ -102,7 +102,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// </summary>
 		public string? TitleOfCourtesy { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Address)}={this.Address}, " +

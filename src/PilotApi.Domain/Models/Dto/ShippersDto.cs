@@ -23,7 +23,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// </summary>
 		public int? ShipperID { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.CompanyName)}={this.CompanyName}, " +

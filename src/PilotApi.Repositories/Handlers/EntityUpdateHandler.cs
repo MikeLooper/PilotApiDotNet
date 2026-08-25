@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace PilotApi.Repositories.Handlers
 {
-	/// <inheritdoc/>>
+	/// <inheritdoc/>
 	public class EntityUpdateHandler : IEntityUpdateHandler
 	{
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public TEntity? Update<TEntity>(TEntity? entity, Dictionary<string, object> nextIds) where TEntity : EntityBase
 		{
 			if (entity == null)

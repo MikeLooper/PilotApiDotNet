@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace PilotApi.Shared.Configuration
 {
-	/// <inheritdoc/>>
+	/// <inheritdoc/>
 	[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
 	
 	public class DataSourceConfiguration : ConfigurationBase, IDataSourceConfiguration
@@ -32,26 +32,26 @@ namespace PilotApi.Shared.Configuration
 			this.Initialize(sourceConfiguration);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? DataSource { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public DataSourceTypes DataSourceEnum { get; set; } = DataSourceTypes.Unrecognized;
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? DataSourceName { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? DataSourceType { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? Schema { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Active)}={this.Active}, " +
@@ -62,7 +62,7 @@ namespace PilotApi.Shared.Configuration
 				$"{nameof(this.Schema)}={this.Schema}";
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override void Validate(ref List<Exception> exceptions)
 		{
 			if (exceptions == null)

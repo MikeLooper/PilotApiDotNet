@@ -60,7 +60,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// </summary>
 		public short UnitsOnOrder { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.CategoryID)}={this.CategoryID}, " +

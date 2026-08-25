@@ -31,7 +31,9 @@ namespace PilotApi.TestingShared.Utilities
 						DataSourceName = "NorthwindConnection",
 						Host = "localhost",
 						Password = "secret",
-						UserName = "sa"
+						UserName = "sa",
+						Port = 1433,
+						ConnectTimeout = 15
 					}
 				},
 				DataSources = new List<DataSourceConfiguration>
@@ -46,7 +48,28 @@ namespace PilotApi.TestingShared.Utilities
 						Schema = "dbo"
 					}
 				},
-				OpenApi = new OpenApiConfiguration()
+				OpenApi = new OpenApiConfiguration
+				{
+					Active = true,
+					Title = "PilotApi",
+					Version = "1.0.0",
+					Description = "description",
+					Summary = "summary",
+					License = "MIT",
+					Contact = new OpenApiContactConfiguration
+					{
+						Active = true,
+						Name = "Support",
+						Email = "support@example.com",
+						URL = "https://example.com"
+					}
+				},
+				OpenTelemetry = new OpenTelemetryConfiguration
+				{
+					Active = true,
+					Server = "localhost",
+					Port = 4318
+				}
 			};
 		}
 

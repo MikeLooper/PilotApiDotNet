@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using PilotApi.Shared.Handlers;
-using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Exceptions;
+using PilotApi.TestingShared.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -22,38 +22,7 @@ namespace PilotApi.Shared.Tests.Builders
 		{
 			loggerFactory = new LoggerFactory();
 
-			var dataConnectionConfiguration = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Port = 1433,
-				UserName = "admin",
-				Password = "password",
-				ConnectTimeout = 30
-			};
-
-			var dataSourceConfiguration = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				DataSource = "MainDB",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-
-			var openApiConfiguration = new OpenApiConfiguration
-			{
-				Title = "Test API",
-				Version = "1.0"
-			};
-
-			var config = new ApplicationConfiguration();
-			config.DataConnections.Add(dataConnectionConfiguration);
-			config.DataSources.Add(dataSourceConfiguration);
-			config.OpenApi = openApiConfiguration;
-
-			applicationConfiguration = config;
+			applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			sqlBuilder = new SqlBuilder(loggerFactory, applicationConfiguration);
 		}
 

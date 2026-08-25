@@ -42,7 +42,7 @@ namespace PilotApi.Shared.Configuration
 		[JsonProperty]
 		public string? URL { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Active)}={this.Active}, " +

@@ -105,7 +105,7 @@ namespace PilotApi.Repositories.Models.Entities
 		/// </summary>
 		public string? TitleOfCourtesy { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Address)}={this.Address}, " +

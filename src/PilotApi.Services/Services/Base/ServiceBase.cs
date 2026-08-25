@@ -61,7 +61,7 @@ namespace PilotApi.Services.Services.Base
 		/// </summary>
 		protected IRepositoryBase<TEntity> Repository { get; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<bool>> DeleteAsync<TType>(TType[] ids, CancellationToken cancellationToken = default)
 		{
 			if (ids.Length < 1)
@@ -72,7 +72,7 @@ namespace PilotApi.Services.Services.Base
 			return await this.Repository.DeleteAsync(ids, cancellationToken);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<List<TDto>>?> GetAllAsync(CancellationToken cancellationToken = default)
 		{
 			var retrieveResponse = await this.Repository.GetAllAsync(cancellationToken);
@@ -80,7 +80,7 @@ namespace PilotApi.Services.Services.Base
 			return new RetrieveResponse<List<TDto>>(mapped?.ToList(), retrieveResponse.ErrorMessage);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<TDto>?> GetByIdAsync<TType>(TType[] ids, CancellationToken cancellationToken = default)
 		{
 			if (ids.Length < 1)
@@ -93,7 +93,7 @@ namespace PilotApi.Services.Services.Base
 			return new RetrieveResponse<TDto>(mapped, retrieveResponse.ErrorMessage);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<TReturn>?> InsertAsync<TReturn>(TDto model, CancellationToken cancellationToken = default)
 		{
 			if (model == null)
@@ -106,7 +106,7 @@ namespace PilotApi.Services.Services.Base
 			return result;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<List<TDto>>?> QueryAsync(string query, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(query))
@@ -119,7 +119,7 @@ namespace PilotApi.Services.Services.Base
 			return new RetrieveResponse<List<TDto>>(mapped?.ToList(), retrieveResponse.ErrorMessage);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<TDto>?> QueryFirstAsync(string query, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(query))
@@ -132,7 +132,7 @@ namespace PilotApi.Services.Services.Base
 			return new RetrieveResponse<TDto>(mapped, retrieveResponse.ErrorMessage);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<TDto>?> QuerySingleAsync(string query, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(query))
@@ -145,7 +145,7 @@ namespace PilotApi.Services.Services.Base
 			return new RetrieveResponse<TDto>(mapped, retrieveResponse.ErrorMessage);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<RetrieveResponse<bool>> UpdateAsync(TDto model, CancellationToken cancellationToken = default)
 		{
 			if (model == null)

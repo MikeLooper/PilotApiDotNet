@@ -38,7 +38,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// </summary>
 		public string? Name { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Name)}={this.Name}, " +

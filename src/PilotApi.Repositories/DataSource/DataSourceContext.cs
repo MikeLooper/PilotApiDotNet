@@ -61,16 +61,16 @@ namespace PilotApi.Repositories.DataSource
 			this.DataSourceConfiguration = applicationConfiguration.GetDataSource(this.DataConnectionConfiguration.DataSourceName);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public string? ConnectionStringClean { get; private set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public IDataConnectionConfiguration? DataConnectionConfiguration { get; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public IDataSourceConfiguration? DataSourceConfiguration { get; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public IDbTransaction? DataSourceTransaction { get; set; }
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace PilotApi.Repositories.DataSource
 		/// </summary>
 		protected ISqlBuilder SqlBuilder { get; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task Commit()
 		{
 			if (this.DataSourceTransaction != null)
@@ -108,7 +108,7 @@ namespace PilotApi.Repositories.DataSource
 			}
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public IDbConnection GetConnection(bool autoOpen = true)
 		{
 			if (this.DataSourceConnectionInternal == null)
@@ -153,7 +153,7 @@ namespace PilotApi.Repositories.DataSource
 			return this.DataSourceConnectionInternal;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task Rollback()
 		{
 			if (this.DataSourceTransaction != null &&
@@ -163,7 +163,7 @@ namespace PilotApi.Repositories.DataSource
 			}
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.ConnectionString)}={this.ConnectionStringClean}, " +
@@ -176,14 +176,14 @@ namespace PilotApi.Repositories.DataSource
 		private bool disposed;
 
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)

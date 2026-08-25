@@ -41,6 +41,10 @@ namespace PilotApi.Shared.Contracts.Configuration
 	///			"License": "MIT",
 	///			"Summary": "Proof of concept API",
 	///			"Version":  "0.1.1"
+	///		},
+	///		"OpenTelemetry": {
+	///			"Server": "localhost",
+	///			"Port": 4318
 	///		}
 	/// }
 	/// </code>
@@ -61,6 +65,11 @@ namespace PilotApi.Shared.Contracts.Configuration
 		/// Gets or sets an object with OpenApi settings.
 		/// </summary>
 		OpenApiConfiguration? OpenApi { get; set; }
+
+		/// <summary>
+		/// Gets or sets an object with Open Telemetry settings.
+		/// </summary>
+		OpenTelemetryConfiguration? OpenTelemetry { get; set; }
 
 		/// <summary>
 		/// Return a <see cref="DataSourceConfiguration"/> object for the supplied data source name.

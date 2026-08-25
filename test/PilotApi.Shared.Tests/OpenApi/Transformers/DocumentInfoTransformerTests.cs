@@ -1,7 +1,8 @@
 using NUnit.Framework;
-using PilotApi.Shared.Configuration;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.OpenApi.Transformers;
+using PilotApi.TestingShared.Utilities;
 using System;
 
 namespace PilotApi.Shared.Tests.OpenApi.Transformers
@@ -15,23 +16,15 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 		[SetUp]
 		public void Setup()
 		{
-			applicationConfiguration = new ApplicationConfiguration
-			{
-				OpenApi = new OpenApiConfiguration
-				{
-					Title = "Test API",
-					Version = "1.0.0",
-					Description = "Test Description",
-					Summary = "Test Summary",
-					License = "MIT",
-					Contact = new OpenApiContactConfiguration
-					{
-						Name = "Support Team",
-						Email = "support@example.com",
-						URL = "https://example.com/support"
-					}
-				}
-			};
+			applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			applicationConfiguration.OpenApi.Title = "Test API";
+			applicationConfiguration.OpenApi.Version = "1.0.0";
+			applicationConfiguration.OpenApi.Description = "Test Description";
+			applicationConfiguration.OpenApi.Summary = "Test Summary";
+			applicationConfiguration.OpenApi.License = "MIT";
+			applicationConfiguration.OpenApi.Contact.Name = "Support Team";
+			applicationConfiguration.OpenApi.Contact.Email = "support@example.com";
+			applicationConfiguration.OpenApi.Contact.URL = "https://example.com/support";
 
 			transformer = new DocumentInfoTransformer(applicationConfiguration);
 		}

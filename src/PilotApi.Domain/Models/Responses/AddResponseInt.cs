@@ -28,7 +28,7 @@
 		/// </summary>
 		public long Id { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Id)}={this.Id}";

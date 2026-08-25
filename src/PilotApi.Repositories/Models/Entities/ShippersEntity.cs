@@ -27,7 +27,7 @@ namespace PilotApi.Repositories.Models.Base
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int? ShipperID { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.CompanyName)}={this.CompanyName}, " +
