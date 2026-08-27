@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PilotApi.Web.Controllers
 {
@@ -39,6 +40,8 @@ namespace PilotApi.Web.Controllers
 	[ApiController]
 	[Produces("application/json")]
 	[Consumes("application/json")]
+	[Route("v{version:apiVersion}/[controller]")]
+	[AllowAnonymous]
 	public class SimpleControllerBase : Controller
 	{
 		/// <summary>

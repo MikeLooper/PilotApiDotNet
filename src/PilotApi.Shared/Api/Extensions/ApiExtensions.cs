@@ -1,8 +1,10 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PilotApi.Shared.Api.Middleware;
+using PilotApi.Shared.Api.Transformers;
 using PilotApi.Shared.Handlers;
 using PilotApi.Shared.Logging.Extensions;
 using PilotApi.Shared.OpenApi.Extensions;
@@ -56,8 +58,13 @@ namespace PilotApi.Shared.Api.Extensions
 		{
 			services.AddApiVersioning(options =>
 			{
-				options.DefaultApiVersion = new ApiVersion(1, 0);
+				options.ApiVersionReader = ApiVersionReader.Combine(
+					new HeaderApiVersionReader("api-version"),
+					new QueryStringApiVersionReader(),
+					new UrlSegmentApiVersionReader());
 				options.AssumeDefaultVersionWhenUnspecified = true;
+				options.DefaultApiVersion = new ApiVersion(1, 0);
+				options.ReportApiVersions = true;
 			})
 			.AddApiExplorer(options =>
 			{
@@ -143,15 +150,20 @@ namespace PilotApi.Shared.Api.Extensions
 			}
 
 			// standard
-			builder.Services.AddControllers();
 			builder.Services.AddSecurity();
 			builder.Services.AddVersioning();
+			builder.Services.AddControllers(options =>
+			{
+				options.Conventions.Add(
+					new RouteTokenTransformerConvention(new LowercaseParameterTransformer()));
+			});
 
 			// custom
+			var serviceProvider = builder.Services.BuildServiceProvider();
+			builder.OpenTelemetryWebApplicationBuilder(serviceProvider);
+			builder.OpenApiWebApplicationBuilder(serviceProvider);
 			builder.LoggingWebApplicationBuilder();
-			builder.OpenTelemetryWebApplicationBuilder();
-			builder.OpenApiWebApplicationBuilder();
-
+			
 			// services
 			builder.Services.AddTransient<ISqlBuilder, SqlBuilder>();
 		}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Contracts.Configuration;
 using System;
 
@@ -25,6 +27,9 @@ namespace PilotApi.Shared.OpenApi.Extensions
 		/// <param name="builder">
 		/// A <see cref="WebApplicationBuilder"/> object.
 		/// </param>
+		/// <param name="serviceProvider">
+		/// A <see cref="IServiceProvider"/> object.
+		/// </param>
 		/// <example>
 		/// Example usage:
 		/// <code>
@@ -35,7 +40,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 		/// webAppBuilder.OpenTelemetryWebApplicationBuilder();
 		/// </code>
 		/// </example>
-		public static void OpenTelemetryWebApplicationBuilder(this WebApplicationBuilder builder)
+		public static void OpenTelemetryWebApplicationBuilder(this WebApplicationBuilder builder, IServiceProvider serviceProvider)
 		{
 			if (builder == null)
 			{
@@ -43,7 +48,6 @@ namespace PilotApi.Shared.OpenApi.Extensions
 					+ $"A valid object type of: '{typeof(WebApplicationBuilder)}' is needed to continue. ({nameof(OpenTelemetryExtensions)})");
 			}
 
-			var serviceProvider = builder.Services.BuildServiceProvider();
 			var applicationConfiguration = serviceProvider.GetRequiredService<IApplicationConfiguration>();
 
 			// Confirmed via curl: the collector's OTLP/HTTP receiver on this port serves

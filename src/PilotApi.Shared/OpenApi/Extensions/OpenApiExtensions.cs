@@ -1,10 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using PilotApi.Shared.Models;
 using PilotApi.Shared.OpenApi.Transformers;
 using Scalar.AspNetCore;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace PilotApi.Shared.OpenApi.Extensions
@@ -20,6 +26,10 @@ namespace PilotApi.Shared.OpenApi.Extensions
 		/// <param name="builder">
 		/// A <see cref="WebApplicationBuilder"/> object.
 		/// </param>
+		/// <param name="serviceProvider">
+		/// A <see cref="IServiceProvider"/> object.
+		/// </param>
+		/// <example>
 		/// <example>
 		/// Example usage:
 		/// <code>
@@ -30,7 +40,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 		/// webAppBuilder.OpenApiWebApplicationBuilder();
 		/// </code>
 		/// </example>
-		public static void OpenApiWebApplicationBuilder(this WebApplicationBuilder builder)
+		public static void OpenApiWebApplicationBuilder(this WebApplicationBuilder builder, IServiceProvider serviceProvider)
 		{
 			if (builder == null)
 			{
@@ -43,19 +53,55 @@ namespace PilotApi.Shared.OpenApi.Extensions
 				options.AddBasePolicy(policy => policy.Expire(TimeSpan.FromMinutes(10)));
 			});
 
-			builder.Services.AddOpenApi(options =>
+			var apiDescriptions = serviceProvider.GetRequiredService<IApiVersionDescriptionProvider>();
+			var actionDescriptorCollectionProvider = serviceProvider.GetRequiredService<IActionDescriptorCollectionProvider>();
+			var controllerDescriptors = actionDescriptorCollectionProvider.ActionDescriptors.Items
+												.OfType<ControllerActionDescriptor>()
+												.ToList();
+			var controllerClasses = controllerDescriptors
+				.Select(descriptor => descriptor.ControllerTypeInfo.AsType())
+				.Distinct()
+				.Select(type => new ControllerAttributes
+				{
+					Name = type.Name,
+					FullName = type.FullName,
+					AssemblyName = type.Assembly.GetName().Name,
+					Type = type
+				})
+				.ToList();
+
+			// register each discovered API version
+			if (apiDescriptions.ApiVersionDescriptions.Count > 0)
 			{
-				// Specify the OpenAPI version to use
-				options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
+				foreach (var description in apiDescriptions.ApiVersionDescriptions)
+				{
+					// get list of controllers for this version
+					var versionControllers = new List<ControllerAttributes>();
+					foreach (var controller in controllerClasses)
+					{
+						var apiVersionAttribute = controller.Type?.GetCustomAttribute<ApiVersionAttribute>();
+						if (apiVersionAttribute != null && 
+							apiVersionAttribute.Versions.Any(v => v.MajorVersion == description.ApiVersion.MajorVersion))
+						{
+							versionControllers.Add(controller);
+						}
+					}
 
-				// transformers
-				options.AddOperationTransformer<GlobalOperationTransformer>();
-				options.AddDocumentTransformer<DocumentInfoTransformer>();
+					builder.Services.AddOpenApi($"v{description.ApiVersion.MajorVersion}", options =>
+					{
+						// Specify the OpenAPI version to use
+						options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
 
-				var xmlFilename = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
-				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
-				options.AddOperationTransformer(new ManualXmlCommentsOperationTransformer(xmlPath));
-			});
+						// transformers
+						options.AddOperationTransformer<GlobalOperationTransformer>();
+						options.AddDocumentTransformer(new DocumentInfoTransformer(serviceProvider, description.ApiVersion));
+
+						var xmlFilename = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
+						var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+						options.AddOperationTransformer(new ManualXmlCommentsOperationTransformer(xmlPath));
+					});
+				}
+			}
 		}
 
 		/// <summary>

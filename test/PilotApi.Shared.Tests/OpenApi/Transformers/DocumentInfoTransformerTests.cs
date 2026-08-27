@@ -1,72 +1,81 @@
+using Asp.Versioning;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.OpenApi.Transformers;
 using PilotApi.TestingShared.Utilities;
-using System;
 
 namespace PilotApi.Shared.Tests.OpenApi.Transformers
 {
 	[TestFixture]
-	public class DocumentInfoTransformerTests
+	public class DocumentInfoTransformerTests : TestBase
 	{
-		private IApplicationConfiguration applicationConfiguration;
-		private DocumentInfoTransformer transformer;
-
-		[SetUp]
-		public void Setup()
-		{
-			applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
-			applicationConfiguration.OpenApi.Title = "Test API";
-			applicationConfiguration.OpenApi.Version = "1.0.0";
-			applicationConfiguration.OpenApi.Description = "Test Description";
-			applicationConfiguration.OpenApi.Summary = "Test Summary";
-			applicationConfiguration.OpenApi.License = "MIT";
-			applicationConfiguration.OpenApi.Contact.Name = "Support Team";
-			applicationConfiguration.OpenApi.Contact.Email = "support@example.com";
-			applicationConfiguration.OpenApi.Contact.URL = "https://example.com/support";
-
-			transformer = new DocumentInfoTransformer(applicationConfiguration);
-		}
-
 		[Test]
 		public void DocumentInfoTransformer_Constructor_WithValidApplicationConfiguration_ShouldInitialize_Test()
 		{
-			// Arrange & Act - constructor called in Setup
+			// Arrange
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			var services = new ServiceCollection();
+			services.AddSingleton<IApplicationConfiguration>(applicationConfiguration);
+			var serviceProvider = services.BuildServiceProvider();
+			var apiVersion = new ApiVersion(1, 0);
+
+			// Act
+			var transformer = new DocumentInfoTransformer(serviceProvider, apiVersion);
 
 			// Assert
 			Assert.NotNull(transformer);
-			Assert.NotNull(transformer.ApplicationConfiguration);
+			Assert.That(transformer.ServiceProvider, Is.EqualTo(serviceProvider));
+			Assert.That(transformer.ApiVersion, Is.EqualTo(apiVersion));
 		}
 
 		[Test]
 		public void DocumentInfoTransformer_Constructor_WithNullApplicationConfiguration_ShouldInitializeWithNull_Test()
 		{
-			// Arrange & Act
-			var transformerWithNull = new DocumentInfoTransformer(null);
+			// Arrange
+			var apiVersion = new ApiVersion(1, 0);
+
+			// Act
+			var transformerWithNull = new DocumentInfoTransformer(null, apiVersion);
 
 			// Assert
 			Assert.NotNull(transformerWithNull);
-			Assert.Null(transformerWithNull.ApplicationConfiguration);
+			Assert.That(transformerWithNull.ServiceProvider, Is.Null);
+			Assert.That(transformerWithNull.ApiVersion, Is.EqualTo(apiVersion));
 		}
 
 		[Test]
 		public void DocumentInfoTransformer_ApplicationConfiguration_ShouldBeAccessible_Test()
 		{
-			// Arrange & Act
-			var config = transformer.ApplicationConfiguration;
+			// Arrange
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			var services = new ServiceCollection();
+			services.AddSingleton<IApplicationConfiguration>(applicationConfiguration);
+			var serviceProvider = services.BuildServiceProvider();
+			var apiVersion = new ApiVersion(2, 0);
+			var transformer = new DocumentInfoTransformer(serviceProvider, apiVersion);
+
+			// Act
+			var resolvedConfiguration = transformer.ServiceProvider.GetService<IApplicationConfiguration>();
 
 			// Assert
-			Assert.NotNull(config);
-			Assert.That(config.OpenApi.Title, Is.EqualTo("Test API"));
-			Assert.That(config.OpenApi.Version, Is.EqualTo("1.0.0"));
-			Assert.That(config.OpenApi.Description, Is.EqualTo("Test Description"));
+			Assert.NotNull(resolvedConfiguration);
+			Assert.That(transformer.ApiVersion.MajorVersion, Is.EqualTo(2));
 		}
 
 		[Test]
 		public void DocumentInfoTransformer_Transformer_IsIOpenApiDocumentTransformer_Test()
 		{
-			// Arrange & Act
+			// Arrange
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			var services = new ServiceCollection();
+			services.AddSingleton<IApplicationConfiguration>(applicationConfiguration);
+			var serviceProvider = services.BuildServiceProvider();
+			var apiVersion = new ApiVersion(1, 0);
+			var transformer = new DocumentInfoTransformer(serviceProvider, apiVersion);
+
+			// Act
 			var isTransformer = transformer is Microsoft.AspNetCore.OpenApi.IOpenApiDocumentTransformer;
 
 			// Assert

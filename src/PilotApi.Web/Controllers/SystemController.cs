@@ -14,10 +14,13 @@ namespace PilotApi.Web.Controllers
 	/// <summary>
 	/// A controller for system processing.
 	/// </summary>
+	[ApiController]
+	[Produces("application/json")]
+	[Consumes("application/json")]
 	[ApiVersionNeutral]
 	[AllowAnonymous]
 
-	public class SystemController : SimpleControllerBase
+	public class SystemController : Controller
 	{
 		/// <summary>
 		/// Instantiate a <see cref="SystemController"/> object.

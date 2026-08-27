@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using PilotApi.Domain.Contracts.Services;
-using PilotApi.Web.Controllers;
+using PilotApi.Web.Controllers.V1;
 using PilotApi.Web.Tests.TestDoubles;
 using System.Reflection;
 
