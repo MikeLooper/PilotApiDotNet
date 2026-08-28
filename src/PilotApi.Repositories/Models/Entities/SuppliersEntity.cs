@@ -73,7 +73,7 @@ namespace PilotApi.Repositories.Models.Entities
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int? SupplierID { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Address)}={this.Address}, " +

@@ -40,7 +40,7 @@ namespace PilotApi.Repositories.Repositories
 		{
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		protected override List<string> ColumnNames
 		{
 			get
@@ -89,7 +89,7 @@ namespace PilotApi.Repositories.Repositories
 			}
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		protected override List<string> EntityColumns
 		{
 			get
@@ -112,7 +112,7 @@ namespace PilotApi.Repositories.Repositories
 			}
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		protected override List<string> KeyColumnNames
 		{
 			get
@@ -143,7 +143,7 @@ namespace PilotApi.Repositories.Repositories
 			}
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		protected override string TableName
 		{
 			get

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using PilotApi.Shared.Configuration;
+using PilotApi.Shared.Constants;
+using PilotApi.TestingShared.Utilities;
 using PilotApi.Web.Controllers;
 using System.Reflection;
 
@@ -13,7 +15,7 @@ namespace PilotApi.Web.Tests.Controllers
 		public void SystemController_About_ShowDetailsFalse_ReturnsMetadataWithoutConfigurationSettings_Test()
 		{
 			// Arrange
-			var applicationConfiguration = new ApplicationConfiguration();
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			applicationConfiguration.OpenApi.Title = "PilotApi";
 			applicationConfiguration.OpenApi.Version = "1.2.3";
 			var controller = new SystemController(applicationConfiguration);
@@ -41,23 +43,10 @@ namespace PilotApi.Web.Tests.Controllers
 		public void SystemController_About_ShowDetailsTrue_ReturnsMetadataWithConfigurationSettings_Test()
 		{
 			// Arrange
-			var applicationConfiguration = new ApplicationConfiguration();
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			applicationConfiguration.OpenApi.Title = "PilotApi";
 			applicationConfiguration.OpenApi.Version = "1.2.3";
-			applicationConfiguration.DataConnections.Add(new DataConnectionConfiguration
-			{
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "SecretValue",
-				UserName = "sa"
-			});
-			applicationConfiguration.DataSources.Add(new DataSourceConfiguration
-			{
-				DataSourceName = "Primary",
-				DataSource = "Northwind",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			});
+			applicationConfiguration.DataConnections[0].Password = "SecretValue";
 			var controller = new SystemController(applicationConfiguration);
 
 			// Act
@@ -81,7 +70,7 @@ namespace PilotApi.Web.Tests.Controllers
 		public void SystemController_Constructor_WithApplicationConfiguration_SetsProtectedApplicationConfigurationProperty_Test()
 		{
 			// Arrange
-			var applicationConfiguration = new ApplicationConfiguration();
+			var applicationConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 
 			// Act
 			var controller = new SystemController(applicationConfiguration);

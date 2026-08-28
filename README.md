@@ -167,7 +167,11 @@ This User Secrets file will look like the following:
                 "Port": 5432,
                 "UserName": "DevUser"
             }
-        ]
+        ],
+        "OpenTelemetry": {
+            "Server": "localhost",
+            "Port": 4318
+        }
     }
 }
 
@@ -227,14 +231,10 @@ The data source values for Production are included in the docker-deploy config f
             "License": "MIT",
             "Summary": "Proof of concept API",
             "Version": "0.1.1"
-        }
-    },
-    "Name": "OpenTelemetry",
-    "Args": {
-        "endpoint": "http://localhost:4317",
-        "protocol": "Grpc",
-        "resourceAttributes": {
-            "service.name": "serilog-demo-api"
+        },
+        "OpenTelemetry": {
+            "Server": "otel-collector",
+            "Port": 4318
         }
     },
     "Serilog": {
@@ -414,6 +414,54 @@ A summary of this API.
 ##### Version
 
 The application version.
+
+#### OpenTelemetry
+
+The settings that control how OpenTelemetry (OTEL) is configured within the application.
+
+##### Server
+
+The OpenTelemetry server address.
+
+##### Port
+
+The OpenTelemetry server port.
+
+
+### Troubleshooting
+
+#### Port Tracing
+
+When troubleshooting OTEL, you can check for port usages, at the command line:
+```
+netstat -ano | findstr 4318
+```
+
+When working correctly, this will result in something similar to the following:
+```
+   Proto  Local Address          Foreign Address        State           PID
+   ...
+   TCP    0.0.0.0:4318           0.0.0.0:0              LISTENING       25384
+   TCP    [::]:4318              [::]:0                 LISTENING       25384
+   TCP    [::1]:4318             [::]:0                 LISTENING       46888
+   TCP    [::1]:4318             [::1]:59028            TIME_WAIT       0
+   ...
+```
+
+The, start the command (via Win+R) the `resmon.exe` application.  Locate the PID, from the port listing, on the PID column.
+
+Examples fro the above:
+| PID | Application |
+| --- | ----------- |
+| 25384 | Docker Desktop Backend |
+| 46888 | Windows Subsystem for Linux |
+
+#### Tracing Logging
+
+You can also add tracing with this command, added to the PilotApi.Shared.OpenApi.Extensions.OpenTelemetryExtensions.OpenTelemetryWebApplicationBuilder(...) method.
+```
+OpenTelemetry.Sdk.SetDefaultTextMapPropagator(new TraceContextPropagator());
+```
 
 ### Deployment
 

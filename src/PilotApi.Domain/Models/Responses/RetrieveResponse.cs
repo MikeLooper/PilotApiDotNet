@@ -53,7 +53,7 @@
 		/// </summary>
 		public TReturn? Result { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.ErrorMessage)}={this.ErrorMessage}, " +

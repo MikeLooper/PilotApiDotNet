@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.OpenApi;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 using PilotApi.Shared.Contracts.Configuration;
 using System;
@@ -15,38 +17,57 @@ namespace PilotApi.Shared.OpenApi.Transformers
 		/// <summary>
 		/// Instantiate a <see cref="DocumentInfoTransformer"/> object.
 		/// </summary>
-		public DocumentInfoTransformer(IApplicationConfiguration applicationConfiguration)
+		/// <param name="serviceProvider">
+		/// A service provider object.
+		/// </param>
+		/// <param name="apiVersion">
+		/// An API version object.
+		/// </param>
+		public DocumentInfoTransformer(
+			IServiceProvider serviceProvider,
+			ApiVersion apiVersion)
 		{
-			this.ApplicationConfiguration = applicationConfiguration;
+			this.ServiceProvider = serviceProvider;
+			this.ApiVersion = apiVersion;
 		}
 
 		/// <summary>
-		/// Gets an application configuration object.
+		/// Gets an API version object.
 		/// </summary>
-		public IApplicationConfiguration? ApplicationConfiguration { get; }
+		public ApiVersion ApiVersion { get; }
 
-		/// <inheritdoc/>>
-		public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
+		/// <summary>
+		/// Gets a service provider object.
+		/// </summary>
+		public IServiceProvider ServiceProvider { get; }
+
+		/// <inheritdoc/>
+		public Task TransformAsync(
+			OpenApiDocument document,
+			OpenApiDocumentTransformerContext context,
+			CancellationToken cancellationToken)
 		{
+			var applicationConfiguration = this.ServiceProvider.GetRequiredService<IApplicationConfiguration>();
+
 			// Set the primary info section fields
-			document.Info.Title = this.ApplicationConfiguration.OpenApi.Title;
-			document.Info.Version = this.ApplicationConfiguration.OpenApi.Version;
-			document.Info.Description = this.ApplicationConfiguration.OpenApi.Description;
-			document.Info.Summary = this.ApplicationConfiguration.OpenApi.Summary;
+			document.Info.Title = applicationConfiguration.OpenApi.Title;
+			document.Info.Version = this.ApiVersion.MajorVersion.ToString();
+			document.Info.Description = applicationConfiguration.OpenApi.Description;
+			document.Info.Summary = applicationConfiguration.OpenApi.Summary;
 			//document.Info.TermsOfService = new Uri("https://example.com");
 
 			// Set developer contact info
 			document.Info.Contact = new OpenApiContact
 			{
-				Name = this.ApplicationConfiguration.OpenApi.Contact.Name,
-				Email = this.ApplicationConfiguration.OpenApi.Contact.Email,
-				Url = new Uri(this.ApplicationConfiguration.OpenApi.Contact.URL)
+				Name = applicationConfiguration.OpenApi.Contact.Name,
+				Email = applicationConfiguration.OpenApi.Contact.Email,
+				Url = new Uri(applicationConfiguration.OpenApi.Contact.URL)
 			};
 
 			// Set legal licensing details
 			document.Info.License = new OpenApiLicense
 			{
-				Name = this.ApplicationConfiguration.OpenApi.License,
+				Name = applicationConfiguration.OpenApi.License,
 				Url = new Uri("https://opensource.org")
 			};
 

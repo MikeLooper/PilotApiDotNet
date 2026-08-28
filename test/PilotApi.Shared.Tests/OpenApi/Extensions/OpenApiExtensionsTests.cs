@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using PilotApi.Shared.OpenApi.Extensions;
 using System;
 
@@ -13,7 +14,7 @@ namespace PilotApi.Shared.Tests.OpenApi.Extensions
 		{
 			// Arrange & Act & Assert
 			var exception = Assert.Throws<ArgumentException>(() =>
-				OpenApiExtensions.OpenApiWebApplicationBuilder(null));
+				OpenApiExtensions.OpenApiWebApplicationBuilder(null, null));
 			Assert.That(exception.Message, Does.Contain("builder"));
 		}
 
@@ -22,9 +23,10 @@ namespace PilotApi.Shared.Tests.OpenApi.Extensions
 		{
 			// Arrange
 			var builder = WebApplication.CreateBuilder();
+			var serviceProvider = builder.Services.BuildServiceProvider();
 
 			// Act & Assert
-			Assert.DoesNotThrow(() => builder.OpenApiWebApplicationBuilder());
+			Assert.Throws<InvalidOperationException>(() => builder.OpenApiWebApplicationBuilder(serviceProvider));
 		}
 
 		[Test]
@@ -52,9 +54,10 @@ namespace PilotApi.Shared.Tests.OpenApi.Extensions
 		{
 			// Arrange
 			var builder = WebApplication.CreateBuilder();
+			var serviceProvider = builder.Services.BuildServiceProvider();
 
 			// Act & Assert
-			Assert.DoesNotThrow(() => builder.OpenApiWebApplicationBuilder());
+			Assert.Throws<InvalidOperationException>(() => builder.OpenApiWebApplicationBuilder(serviceProvider));
 		}
 
 		[Test]
@@ -73,7 +76,7 @@ namespace PilotApi.Shared.Tests.OpenApi.Extensions
 		{
 			// Arrange & Act & Assert
 			var exception = Assert.Throws<ArgumentException>(() =>
-				OpenApiExtensions.OpenApiWebApplicationBuilder(null));
+				OpenApiExtensions.OpenApiWebApplicationBuilder(null, null));
 			Assert.That(exception.Message, Does.Contain("WebApplicationBuilder"));
 		}
 

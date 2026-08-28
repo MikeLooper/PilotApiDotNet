@@ -54,7 +54,7 @@ namespace PilotApi.Shared.Configuration
 		[JsonProperty]
 		public string? Version { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Active)}={this.Active}, " +

@@ -85,7 +85,7 @@ namespace PilotApi.Repositories.Models.Entities
 		/// </summary>
 		public int? ShipVia { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.CustomerID)}={this.CustomerID}, " +

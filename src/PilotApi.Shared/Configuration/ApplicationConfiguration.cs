@@ -20,6 +20,7 @@ namespace PilotApi.Shared.Configuration
 			this.DataConnections = new List<DataConnectionConfiguration>();
 			this.DataSources = new List<DataSourceConfiguration>();
 			this.OpenApi = new OpenApiConfiguration();
+			this.OpenTelemetry = new OpenTelemetryConfiguration();
 		}
 
 		/// <summary>
@@ -39,31 +40,37 @@ namespace PilotApi.Shared.Configuration
 			this.Initialize(sourceConfiguration, suppressSensitiveValues);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public List<DataConnectionConfiguration>? DataConnections { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public List<DataSourceConfiguration>? DataSources { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
+		[JsonProperty]
 		public OpenApiConfiguration? OpenApi { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
+		[JsonProperty]
+		public OpenTelemetryConfiguration? OpenTelemetry { get; set; }
+
+		/// <inheritdoc/>
 		public DataSourceConfiguration? GetDataSource(string dataSourceName)
 		{
 			var dataSource = this.DataSources.FirstOrDefault(fod => fod.DataSourceName.Equals(dataSourceName, StringComparison.Ordinal));
 			return dataSource;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Active)}={this.Active}, " +
 				$"{nameof(this.DataConnections)}=[{this.DataConnections}], " +
 				$"{nameof(this.DataSources)}=[{this.DataSources}], " +
-				$"{nameof(this.OpenApi)}=[{this.OpenApi}]";
+				$"{nameof(this.OpenApi)}=[{this.OpenApi}], " +
+				$"{nameof(this.OpenTelemetry)}=[{this.OpenTelemetry}]";
 		}
 
 		/// <inheritdoc/>
@@ -138,6 +145,17 @@ namespace PilotApi.Shared.Configuration
 				this.OpenApi.Validate(ref exceptions);
 			}
 
+			if (this.OpenTelemetry == null)
+			{
+				exceptions.Add(
+					new ConfigurationException(
+						$"The {nameof(this.OpenTelemetry)} property is required and cannot be null or empty ({this.GetType().Name})"));
+			}
+			else
+			{
+				this.OpenTelemetry.Validate(ref exceptions);
+			}
+
 			if (exceptions.Count == 1)
 			{
 				throw exceptions.First();
@@ -180,6 +198,7 @@ namespace PilotApi.Shared.Configuration
 				?.Select(s => new DataSourceConfiguration(s))
 				.ToList();
 			this.OpenApi = new OpenApiConfiguration(sourceConfiguration.OpenApi);
+			this.OpenTelemetry = new OpenTelemetryConfiguration(sourceConfiguration.OpenTelemetry);
 		}
 	}
 }

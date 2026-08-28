@@ -178,7 +178,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return dynamicParameters;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<int>> CountAllAsync(CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -216,7 +216,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<int>(result);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<bool>> DeleteAsync<TType>(TType[] ids, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -274,7 +274,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<bool>(success, errorMessage);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<List<TEntity>>?> GetAllAsync(CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -314,7 +314,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<List<TEntity>>(result?.ToList());
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<TEntity>?> GetAsync<TType>(TType[] ids, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -363,7 +363,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<TEntity>(result);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<TReturn>?> InsertAsync<TReturn>(TEntity model, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -461,7 +461,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<TReturn>(id);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<IEnumerable<TEntity>>?> QueryAsync(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -502,7 +502,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<IEnumerable<TEntity>>(result);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<TEntity>?> QueryFirstAsync(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -542,7 +542,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<TEntity>(result);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<TMethodType>?> QuerySingleAsync<TMethodType>(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -582,7 +582,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<TMethodType>(result);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<TEntity>?> QuerySingleAsync(string querySql, object? parameters = null, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
@@ -622,7 +622,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			return new RetrieveResponse<TEntity>(result);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.ColumnNames)}={this.ColumnNames}, " +
@@ -630,7 +630,7 @@ namespace PilotApi.Repositories.Repositories.Base
 				$"{nameof(this.DataSourceContext)}={this.DataSourceContext}";
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public virtual async Task<RetrieveResponse<bool>> UpdateAsync(TEntity model, CancellationToken cancellationToken = default)
 		{
 			this.Validate();

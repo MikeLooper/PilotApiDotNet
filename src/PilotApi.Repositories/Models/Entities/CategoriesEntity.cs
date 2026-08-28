@@ -34,7 +34,7 @@ namespace PilotApi.Repositories.Models.Entities
 		/// </summary>
 		public byte[]? Picture { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.CategoryID)}={this.CategoryID}, " +

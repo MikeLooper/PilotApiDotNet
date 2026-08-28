@@ -90,7 +90,7 @@ namespace PilotApi.Repositories.Repositories
 			}
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		protected override List<string> EntityColumns
 		{
 			get

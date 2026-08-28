@@ -70,7 +70,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// </summary>
 		public int? SupplierID { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Address)}={this.Address}, " +

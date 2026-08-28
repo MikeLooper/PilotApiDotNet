@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using PilotApi.Shared.Configuration;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.Exceptions;
+using PilotApi.TestingShared.Utilities;
 using System;
 
 namespace PilotApi.Shared.Tests.Configuration
@@ -36,44 +38,9 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_ConstructorWithSourceConfigurationAndSuppressSensitiveValuesTrue_RedactsNestedPassword_Test()
 		{
 			// Arrange
-			var sourceConfiguration = new ApplicationConfiguration
-			{
-				Active = false,
-				OpenApi = new OpenApiConfiguration
-				{
-					Active = true,
-					Title = "PilotApi",
-					Version = "1.0.0",
-					Description = "description",
-					Summary = "summary",
-					License = "MIT",
-					Contact = new OpenApiContactConfiguration
-					{
-						Active = true,
-						Name = "Support",
-						Email = "support@example.com",
-						URL = "https://example.com"
-					}
-				}
-			};
-			sourceConfiguration.DataConnections.Add(new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "VerySecret",
-				UserName = "sa",
-				Port = 1433,
-				ConnectTimeout = 15
-			});
-			sourceConfiguration.DataSources.Add(new DataSourceConfiguration
-			{
-				Active = true,
-				DataSource = "MainDB",
-				DataSourceName = "Primary",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			});
+			var sourceConfiguration = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			sourceConfiguration.Active = false;
+			sourceConfiguration.DataConnections[0].Password = "VerySecret";
 
 			// Act
 			var result = new ApplicationConfiguration(sourceConfiguration, true);
@@ -112,7 +79,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_GetDataSource_WithDifferentCase_ShouldReturnNull_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			var dataSource = new DataSourceConfiguration
 			{
 				Active = true,
@@ -134,7 +101,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_GetDataSource_WithNonExistentDataSourceName_ShouldReturnNull_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 
 			// Act
 			var result = config.GetDataSource("NonExistent");
@@ -147,7 +114,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_GetDataSource_WithValidDataSourceName_ShouldReturnDataSource_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			var dataSource = new DataSourceConfiguration
 			{
 				Active = true,
@@ -169,7 +136,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_ToString_ShouldReturnFormattedString_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			config.Active = true;
 
 			// Act
@@ -186,45 +153,8 @@ namespace PilotApi.Shared.Tests.Configuration
 		[Test]
 		public void ApplicationConfiguration_Validate_CalledMultipleTimes_ShouldSucceed_Test()
 		{
-			// Arrange
-			var config = new ApplicationConfiguration();
-
-			var dataConnection = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			config.DataConnections.Add(dataConnection);
-
-			var dataSource = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				DataSource = "MainDB",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			config.DataSources.Add(dataSource);
-
-			config.OpenApi = new OpenApiConfiguration
-			{
-				Active = true,
-				Title = "API",
-				Version = "1.0",
-				Description = "Test",
-				Summary = "Test API",
-				License = "MIT",
-				Contact = new OpenApiContactConfiguration
-				{
-					Active = true,
-					Name = "Support",
-					Email = "support@example.com",
-					URL = "https://example.com"
-				}
-			};
+			// Arrange - the utility method already produces a valid, testable configuration
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 
 			// Act & Assert - calling validate twice should not throw
 			Assert.DoesNotThrow(() => config.Validate());
@@ -235,44 +165,8 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_Validate_WithMismatchedDataSourceName_ShouldThrow_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
-
-			var dataConnection = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			config.DataConnections.Add(dataConnection);
-
-			var dataSource = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSourceName = "Secondary",
-				DataSource = "MainDB",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			config.DataSources.Add(dataSource);
-
-			config.OpenApi = new OpenApiConfiguration
-			{
-				Active = true,
-				Title = "API",
-				Version = "1.0",
-				Description = "Test",
-				Summary = "Test API",
-				License = "MIT",
-				Contact = new OpenApiContactConfiguration
-				{
-					Active = true,
-					Name = "Support",
-					Email = "support@example.com",
-					URL = "https://example.com"
-				}
-			};
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			config.DataConnections[0].DataSourceName = "Mismatched";
 
 			// Act & Assert
 			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
@@ -283,16 +177,8 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_Validate_WithMultipleActiveDataConnections_ShouldThrow_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 
-			var connection1 = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
 			var connection2 = new DataConnectionConfiguration
 			{
 				Active = true,
@@ -301,11 +187,10 @@ namespace PilotApi.Shared.Tests.Configuration
 				Password = "password",
 				UserName = "user"
 			};
-			config.DataConnections.Add(connection1);
 			config.DataConnections.Add(connection2);
 
 			// Act & Assert
-			var exception = Assert.Throws<AggregateException>(() => config.Validate());
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("one active item"));
 		}
 
@@ -313,11 +198,11 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_Validate_WithoutDataConnections_ShouldThrow_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			config.DataConnections = null;
 
 			// Act & Assert
-			var exception = Assert.Throws<AggregateException>(() => config.Validate());
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("DataConnections"));
 		}
 
@@ -325,20 +210,11 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_Validate_WithoutDataSources_ShouldThrow_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
-			var dataConnection = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			config.DataConnections.Add(dataConnection);
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			config.DataSources = null;
 
 			// Act & Assert
-			var exception = Assert.Throws<AggregateException>(() => config.Validate());
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("DataSources"));
 		}
 
@@ -346,28 +222,7 @@ namespace PilotApi.Shared.Tests.Configuration
 		public void ApplicationConfiguration_Validate_WithoutOpenApi_ShouldThrow_Test()
 		{
 			// Arrange
-			var config = new ApplicationConfiguration();
-
-			var dataConnection = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user"
-			};
-			config.DataConnections.Add(dataConnection);
-
-			var dataSource = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				DataSource = "MainDB",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			config.DataSources.Add(dataSource);
-
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 			config.OpenApi = null;
 
 			// Act & Assert
@@ -378,47 +233,8 @@ namespace PilotApi.Shared.Tests.Configuration
 		[Test]
 		public void ApplicationConfiguration_Validate_WithValidConfiguration_ShouldNotThrow_Test()
 		{
-			// Arrange
-			var config = new ApplicationConfiguration();
-
-			var dataConnection = new DataConnectionConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				Host = "localhost",
-				Password = "password",
-				UserName = "user",
-				Port = 1433,
-				ConnectTimeout = 30
-			};
-			config.DataConnections.Add(dataConnection);
-
-			var dataSource = new DataSourceConfiguration
-			{
-				Active = true,
-				DataSourceName = "Primary",
-				DataSource = "MainDB",
-				DataSourceType = "SqlServer",
-				Schema = "dbo"
-			};
-			config.DataSources.Add(dataSource);
-
-			config.OpenApi = new OpenApiConfiguration
-			{
-				Active = true,
-				Title = "API",
-				Version = "1.0",
-				Description = "Test",
-				Summary = "Test API",
-				License = "MIT",
-				Contact = new OpenApiContactConfiguration
-				{
-					Active = true,
-					Name = "Support",
-					Email = "support@example.com",
-					URL = "https://example.com"
-				}
-			};
+			// Arrange - the utility method already produces a valid, testable configuration
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
 
 			// Act & Assert
 			Assert.DoesNotThrow(() => config.Validate());

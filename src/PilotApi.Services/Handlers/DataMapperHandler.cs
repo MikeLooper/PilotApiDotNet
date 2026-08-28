@@ -15,7 +15,7 @@ namespace PilotApi.Services.Handlers
 	/// </summary>
 	public class DataMapperHandler : IDataMapperHandler
 	{
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<TEntity?> MapDtoToEntity<TDto, TEntity>(TDto? dto)
 			where TDto : IDtoBase
 			where TEntity : IEntityBase
@@ -66,7 +66,7 @@ namespace PilotApi.Services.Handlers
 			return value;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<TDto?> MapEntityToDto<TDto, TEntity>(TEntity? entity)
 			where TDto : IDtoBase
 			where TEntity : IEntityBase
@@ -117,7 +117,7 @@ namespace PilotApi.Services.Handlers
 			return value;
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public async Task<IEnumerable<TDto>?> MapEntityToDtoList<TDto, TEntity>(IEnumerable<TEntity>? entities)
 			where TDto : IDtoBase
 			where TEntity : IEntityBase

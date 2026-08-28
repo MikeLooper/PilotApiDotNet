@@ -61,31 +61,31 @@ namespace PilotApi.Shared.Configuration
 			this.Initialize(sourceConfiguration, suppressSensitiveValues);
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public int ConnectTimeout { get; set; } = 0;
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? DataSourceName { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? Host { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? Password { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public int? Port { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		[JsonProperty]
 		public string? UserName { get; set; }
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Active)}={this.Active}, " +
@@ -97,7 +97,7 @@ namespace PilotApi.Shared.Configuration
 				$"{nameof(this.UserName)}={this.UserName}";
 		}
 
-		/// <inheritdoc/>>
+		/// <inheritdoc/>
 		public override void Validate(ref List<Exception> exceptions)
 		{
 			if (exceptions == null)

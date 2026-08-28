@@ -7,9 +7,10 @@
       "launchUrl.sc": "scalar",
       "launchUrl.sw": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OTEL_LOG_LEVEL": "debug"
       },
-      "applicationUrl": "http://localhost:53060"
+      "applicationUrl": "http://localhost:55001"
     }
   }
 }
