@@ -32,7 +32,7 @@ namespace PilotApi.Web.Tests.Controllers
 			// Assert
 			Assert.That(result, Is.Not.Null);
 			Assert.That(result?.StatusCode ?? 200, Is.EqualTo(200));
-			Assert.That(nameProperty?.GetValue(result?.Value), Is.EqualTo("PilotApi"));
+			Assert.That(nameProperty?.GetValue(result?.Value), Is.EqualTo("PilotApi (SQL Server)"));
 			Assert.That(appVersionProperty?.GetValue(result?.Value), Is.EqualTo("1.2.3"));
 			Assert.That(buildVersionProperty, Is.Not.Null);
 			Assert.That(deployDateProperty, Is.Not.Null);
