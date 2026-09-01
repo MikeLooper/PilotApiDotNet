@@ -21,6 +21,7 @@ namespace PilotApi.Web.Controllers
 	[Consumes("application/json")]
 	[ApiVersionNeutral]
 	[AllowAnonymous]
+	[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 
 	public class SystemController : Controller
 	{
@@ -44,12 +45,12 @@ namespace PilotApi.Web.Controllers
 		/// Return an OK.
 		/// </summary>
 		/// <returns>
-		/// A read only list of all DTO objects from the category table, or null if no objects exist.
+		/// A status of the current system.
 		/// </returns>
 		[HttpGet]
 		[Route("healthcheck")]
 		[ProducesResponseType<string>(StatusCodes.Status200OK)]
-		public async Task<IActionResult?> GetAll()
+		public async Task<IActionResult?> Healthcheck()
 		{
 			return this.Ok("OK");
 		}

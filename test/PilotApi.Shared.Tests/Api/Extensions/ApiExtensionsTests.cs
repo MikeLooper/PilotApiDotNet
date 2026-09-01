@@ -1,7 +1,9 @@
-using NUnit.Framework;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using PilotApi.Shared.Api.Extensions;
+using PilotApi.Shared.Configuration;
 using System;
 
 namespace PilotApi.Shared.Tests.Api.Extensions
@@ -9,6 +11,17 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 	[TestFixture]
 	public class ApiExtensionsTests
 	{
+		private static SecurityConfiguration GetSecurityConfiguration()
+		{
+			return new SecurityConfiguration
+			{
+				Active = true,
+				BaseUrl = "http://localhost",
+				Realm = "test-realm",
+				ClientId = "test-client"
+			};
+		}
+
 		[Test]
 		public void ApiExtensions_AddSecurity_WithValidServiceCollection_ShouldNotThrow_Test()
 		{
@@ -16,7 +29,44 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 			var services = new ServiceCollection();
 
 			// Act & Assert
-			Assert.DoesNotThrow(() => services.AddSecurity());
+			Assert.DoesNotThrow(() => services.AddSecurity(GetSecurityConfiguration()));
+		}
+
+		[Test]
+		public void ApiExtensions_AddSecurity_WithNullServices_ShouldThrow_Test()
+		{
+			// Arrange & Act & Assert
+			var exception = Assert.Throws<ArgumentException>(() =>
+				ApiExtensions.AddSecurity(null, GetSecurityConfiguration()));
+			Assert.That(exception.Message, Does.Contain("services"));
+		}
+
+		[Test]
+		public void ApiExtensions_AddSecurity_WithNullSecurityConfiguration_ShouldThrow_Test()
+		{
+			// Arrange
+			var services = new ServiceCollection();
+
+			// Act & Assert
+			var exception = Assert.Throws<ArgumentException>(() =>
+				services.AddSecurity(null));
+			Assert.That(exception.Message, Does.Contain("securityConfiguration"));
+		}
+
+		[Test]
+		public void ApiExtensions_AddSecurity_WithValidServiceCollection_ShouldRegisterAuthorizationHandlers_Test()
+		{
+			// Arrange
+			var services = new ServiceCollection();
+			services.AddLogging();
+
+			// Act
+			services.AddSecurity(GetSecurityConfiguration());
+			var serviceProvider = services.BuildServiceProvider();
+
+			// Assert
+			Assert.NotNull(serviceProvider.GetService<IAuthorizationHandler>());
+			Assert.NotNull(serviceProvider.GetService<IAuthorizationMiddlewareResultHandler>());
 		}
 
 		[Test]
@@ -67,6 +117,7 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		{
 			// Arrange
 			var builder = WebApplication.CreateBuilder();
+			builder.Services.AddSecurity(GetSecurityConfiguration());
 			var app = builder.Build();
 
 			// Act & Assert
@@ -87,6 +138,7 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		{
 			// Arrange
 			var builder = WebApplication.CreateBuilder();
+			builder.Services.AddSecurity(GetSecurityConfiguration());
 			var app = builder.Build();
 
 			// Act & Assert
@@ -100,7 +152,7 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 			var services = new ServiceCollection();
 
 			// Act & Assert
-			Assert.DoesNotThrow(() => services.AddSecurity());
+			Assert.DoesNotThrow(() => services.AddSecurity(GetSecurityConfiguration()));
 		}
 
 		[Test]
@@ -118,6 +170,7 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		{
 			// Arrange
 			var builder = WebApplication.CreateBuilder();
+			builder.Services.AddSecurity(GetSecurityConfiguration());
 			var app = builder.Build();
 
 			// Act & Assert
@@ -129,6 +182,7 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		{
 			// Arrange
 			var builder = WebApplication.CreateBuilder();
+			builder.Services.AddSecurity(GetSecurityConfiguration());
 			var app = builder.Build();
 
 			// Act & Assert

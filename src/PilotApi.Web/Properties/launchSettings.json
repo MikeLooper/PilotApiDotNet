@@ -10,7 +10,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_LOG_LEVEL": "debug"
       },
-      "applicationUrl": "http://localhost:55001"
+      "applicationUrl": "http://localhost:55099"
     }
   }
 }

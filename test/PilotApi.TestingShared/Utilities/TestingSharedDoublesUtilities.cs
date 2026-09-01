@@ -48,6 +48,14 @@ namespace PilotApi.TestingShared.Utilities
 						Schema = "dbo"
 					}
 				},
+				Security = new SecurityConfiguration
+				{
+					Active = true,
+					BaseUrl = "http://localhost:55001",
+					Realm = "local-realm",
+					ClientId = "local-client",
+					RequireHttpsMetadata = false
+				},
 				OpenApi = new OpenApiConfiguration
 				{
 					Active = true,

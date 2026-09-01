@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace PilotApi.Web.Controllers
 {
@@ -41,7 +42,9 @@ namespace PilotApi.Web.Controllers
 	[Produces("application/json")]
 	[Consumes("application/json")]
 	[Route("v{version:apiVersion}/[controller]")]
-	[AllowAnonymous]
+	[ProducesResponseType<string>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<string>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 	public class SimpleControllerBase : Controller
 	{
 		/// <summary>
@@ -49,5 +52,12 @@ namespace PilotApi.Web.Controllers
 		/// </summary>
 		[FromHeader(Name = "ApiVersion")]
 		public string? ApiVersion { get; set; }
+
+		/// <summary>
+		/// Gets or sets the Authorization header to apply to an operation.
+		/// </summary>
+		[FromHeader(Name = "Authorization")]
+		[Required]
+		public string? Authorization { get; set; }
 	}
 }

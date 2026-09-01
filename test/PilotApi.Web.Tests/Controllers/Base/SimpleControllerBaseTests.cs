@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using NUnit.Framework;
 using PilotApi.Web.Controllers;
 
@@ -23,6 +24,19 @@ namespace PilotApi.Web.Tests.Controllers.Base
 			var controller = new SimpleControllerBase();
 
 			Assert.That(controller.ApiVersion, Is.Null);
+		}
+
+		[Test]
+		public void SimpleControllerBase_DoesNotHaveAllowAnonymousAttribute_Test()
+		{
+			// Arrange
+			var type = typeof(SimpleControllerBase);
+
+			// Act
+			var hasAllowAnonymous = type.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length > 0;
+
+			// Assert
+			Assert.That(hasAllowAnonymous, Is.False);
 		}
 	}
 }

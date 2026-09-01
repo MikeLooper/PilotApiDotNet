@@ -31,6 +31,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(config.DataConnections.Count, Is.EqualTo(0));
 			Assert.NotNull(config.DataSources);
 			Assert.That(config.DataSources.Count, Is.EqualTo(0));
+			Assert.NotNull(config.Security);
 			Assert.NotNull(config.OpenApi);
 			Assert.That(config.Active, Is.True);
 		}
@@ -49,13 +50,16 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(result.Active, Is.False);
 			Assert.That(result.DataConnections, Is.Not.Null);
 			Assert.That(result.DataSources, Is.Not.Null);
+			Assert.That(result.Security, Is.Not.Null);
 			Assert.That(result.OpenApi, Is.Not.Null);
 			Assert.That(result.DataConnections.Count, Is.EqualTo(1));
 			Assert.That(result.DataConnections[0].Password, Is.EqualTo("[Redacted]"));
 			Assert.That(result.DataSources.Count, Is.EqualTo(1));
+			Assert.That(result.Security.Realm, Is.EqualTo("local-realm"));
 			Assert.That(result.OpenApi.Title, Is.EqualTo("PilotApi"));
 			Assert.That(result.DataConnections[0], Is.Not.SameAs(sourceConfiguration.DataConnections[0]));
 			Assert.That(result.DataSources[0], Is.Not.SameAs(sourceConfiguration.DataSources[0]));
+			Assert.That(result.Security, Is.Not.SameAs(sourceConfiguration.Security));
 		}
 
 		[Test]
@@ -147,6 +151,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.That(result, Does.Contain("Active=True"));
 			Assert.That(result, Does.Contain("DataConnections="));
 			Assert.That(result, Does.Contain("DataSources="));
+			Assert.That(result, Does.Contain("Security="));
 			Assert.That(result, Does.Contain("OpenApi="));
 		}
 
@@ -216,6 +221,30 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Act & Assert
 			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
 			Assert.That(exception.Message, Does.Contain("DataSources"));
+		}
+
+		[Test]
+		public void ApplicationConfiguration_Validate_WithoutSecurity_ShouldThrow_Test()
+		{
+			// Arrange
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			config.Security = null;
+
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			Assert.That(exception.Message, Does.Contain("Security"));
+		}
+
+		[Test]
+		public void ApplicationConfiguration_Validate_WithInvalidSecurity_ShouldThrow_Test()
+		{
+			// Arrange
+			var config = TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.SqlServer);
+			config.Security.BaseUrl = null;
+
+			// Act & Assert
+			var exception = Assert.Throws<ConfigurationException>(() => config.Validate());
+			Assert.That(exception.Message, Does.Contain("BaseUrl"));
 		}
 
 		[Test]

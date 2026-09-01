@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Utilities;
-using System;
 
 namespace PilotApi.Shared.Tests.Utilities
 {
@@ -9,21 +8,55 @@ namespace PilotApi.Shared.Tests.Utilities
 	public class SecurityUtilitiesTests
 	{
 		[Test]
-		public void SecurityUtilities_ConnectionStringClean_WithValidConnectionString_ShouldRedactPassword_Test()
+		public void SecurityUtilities_BearerTokenClean_WithNullAuthorizationHeader_ShouldReturnEmpty_Test()
 		{
 			// Arrange
-			var connectionString = "Server=localhost;Database=TestDB;User Id=admin;Password=SecretPassword123;";
+			string authorizationHeaderValue = null;
 
 			// Act
-			var result = SecurityUtilities.ConnectionStringClean(connectionString);
+			var result = SecurityUtilities.BearerTokenClean(authorizationHeaderValue);
 
 			// Assert
-			Assert.NotNull(result);
-			Assert.That(result, Does.Contain("Server=localhost"));
-			Assert.That(result, Does.Contain("Database=TestDB"));
-			Assert.That(result, Does.Contain("User Id=admin"));
-			Assert.That(result, Does.Contain("[Redacted]"));
-			Assert.That(result, Does.Not.Contain("SecretPassword123"));
+			Assert.That(result, Is.EqualTo(string.Empty));
+		}
+
+		[Test]
+		public void SecurityUtilities_BearerTokenClean_WithBearerTokenAndZeroEdgeInclusions_ShouldRedactEntireToken_Test()
+		{
+			// Arrange
+			var authorizationHeaderValue = "Bearer abcdefghij";
+
+			// Act
+			var result = SecurityUtilities.BearerTokenClean(authorizationHeaderValue, 0);
+
+			// Assert
+			Assert.That(result, Is.EqualTo($"Bearer {StringConstants.Redacted}"));
+		}
+
+		[Test]
+		public void SecurityUtilities_BearerTokenClean_WithBearerTokenAndEdgeInclusions_ShouldPreserveTokenEdges_Test()
+		{
+			// Arrange
+			var authorizationHeaderValue = "Bearer abcdefghij";
+
+			// Act
+			var result = SecurityUtilities.BearerTokenClean(authorizationHeaderValue, 2);
+
+			// Assert
+			Assert.That(result, Is.EqualTo($"Bearer ab{StringConstants.Redacted}ij"));
+		}
+
+		[Test]
+		public void SecurityUtilities_BearerTokenClean_WithNonBearerValue_ShouldRedactEntireValue_Test()
+		{
+			// Arrange
+			var authorizationHeaderValue = "Basic abcdefghij";
+
+			// Act
+			var result = SecurityUtilities.BearerTokenClean(authorizationHeaderValue, 2);
+
+			// Assert
+			Assert.That(result, Is.EqualTo(StringConstants.Redacted));
 		}
 
 		[Test]

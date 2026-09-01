@@ -220,6 +220,14 @@ The data source values for Production are included in the docker-deploy config f
                 "Schema": "pilot"
             }
         ],
+        "Security": {
+            "Active": true,
+            "BaseUrl": "http://local-keycloak:8080",
+            "Realm": "local-realm",
+            "ClientId": "local-client",
+            "RequireHttpsMetadata": false,
+            "ClockSkewSeconds": 60
+        },
         "OpenApi": {
             "Title": "PilotApiDotNet",
             "Contact": {
@@ -373,6 +381,38 @@ Available values: "SqlServer", "PostgreSQL"
 
 The schema where the target tables would be found.
 
+#### Security
+
+The settings that control authentication (JWT/OAuth2) and role-based authorization against Security. See [Calling a Secured Endpoint](#calling-a-secured-endpoint) for usage details.
+
+##### Active
+
+Is the current section of settings active?  Available options: true, false.
+
+When true, a missing/invalid token or an insufficient role for the requested HTTP verb returns a 401/403 response.
+
+When false, the same failures do not block the request — it proceeds to the controller action, but the response includes a `Warning` header describing what failed. This is intended for staged rollout or incident response, not for production use.
+
+##### BaseUrl
+
+The base URL of the Security server. Example (local development): "http://localhost:55001". Example (Docker deployment): "http://local-keycloak:8080".
+
+##### Realm
+
+The Security realm. Example: "local-realm".
+
+##### ClientId
+
+The Security client Id. Example: "local-client".
+
+##### RequireHttpsMetadata
+
+Whether HTTPS is required when retrieving Security's metadata/signing keys. Should be true in production; false is typical for local development against an HTTP Security instance.
+
+##### ClockSkewSeconds
+
+The clock skew tolerance, in seconds, applied when validating token expiry. Defaults to 60 (tighter than the framework default of 300), so a token isn't rejected purely due to minor clock drift between the API host and Security.
+
 #### OpenApi
 
 The settings that control how the OpenAPI specification is define within the application.
@@ -481,6 +521,108 @@ You can use this file to generate client code or to explore the API using tools 
 To get a visual representation of the API, you can use the Swagger editor by navigating to `https://editor.swagger.io/`.
 
 You can also interact with the API using the Swagger UI by navigating to `https://localhost:5001/swagger` after running the application locally with Visual Studio.
+
+### Calling a Secured Endpoint
+
+All endpoints are secured with a Security-issued JWT (OAuth2), except `/healthcheck` and `/about`, which always remain open.
+
+#### Obtaining a token
+
+For local development, obtain an access token directly from Security using the Resource Owner Password grant:
+
+```
+curl -X POST "http://localhost:55001/realms/local-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=local-client" \
+  -d "username=working_admin_user" \
+  -d "password=<the user's password>"
+```
+
+> Note: the Resource Owner Password grant sends a user's password directly from the calling client, which is convenient for local development and scripting, but should not be used by real/production clients — those should use the Authorization Code flow with PKCE instead.
+
+> **Prerequisite:** the `local-client` client in Keycloak must have **Direct access grants** enabled (Keycloak Admin Console → realm `local-realm` → Clients → `local-client` → Settings/Capability config). Without it, Keycloak rejects every request from this grant type with `400 {"error":"unauthorized_client","error_description":"Client not allowed for direct access grants"}` — before it even checks the username/password — and neither this `curl` command nor the Bruno collection below can obtain a token.
+
+#### Calling an endpoint
+
+Include the returned `access_token` as a bearer token on the request:
+
+```
+curl -H "Authorization: Bearer <access_token>" "http://localhost:55551/v1/categories/get-all"
+```
+
+#### Roles
+
+Roles are not read from Security token role claims. They are looked up (via a `UserRoles` repository) using the token's `preferred_username` claim:
+
+| UserId | Role | Allowed HTTP Methods |
+| --- | --- | --- |
+| reader_user | ReadOnly | GET |
+| working_user | ReadWrite | GET, POST, PUT |
+| working_admin_user | Admin | GET, POST, PUT, DELETE |
+
+A request using a verb outside of the assigned role's allowed methods is treated as an authorization failure.
+
+#### Response behavior
+
+- **401 Unauthorized** — the request had no token, or the token was missing/invalid/expired, and `Security.Active` is `true`.
+- **403 Forbidden** — the request was authenticated, but the resolved role does not permit the requested HTTP verb, and `Security.Active` is `true`.
+- **`Security.Active` = `false`** — either of the failures above no longer blocks the request; it proceeds to the controller action, but the response includes a `Warning` header describing what failed (e.g. "Token expired.", "Missing or invalid bearer token.", or the specific role/verb mismatch). This is intended for staged rollout or incident response, not for production use.
+
+#### Token expiry and refresh
+
+This API only validates bearer tokens; it does not issue or refresh them (it is a Security resource server, not a token issuer). Token expiry is enforced on every request, with a small clock-skew tolerance (`ClockSkewSeconds`, default 60 seconds) so a token isn't rejected purely due to minor clock drift between the API host and Security.
+
+When a request fails with `401` because the access token expired, the client must call Security's token endpoint again with `grant_type=refresh_token` (using the `refresh_token` value returned alongside the original `access_token`) to obtain a new `access_token`, then retry the original request:
+
+```
+curl -X POST "http://localhost:55001/realms/local-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=refresh_token" \
+  -d "client_id=local-client" \
+  -d "refresh_token=<refresh_token from the original token response>"
+```
+
+#### Bruno collection
+
+The Bruno collection (`test/Bruno/PilotApiDotNet`) automates the token flow described above instead of requiring the manual `curl` steps. It has the same prerequisite as the `curl` flow above — the `local-client` Keycloak client must have **Direct access grants** enabled, or every "Get Access Token" attempt fails with a generic "No access token received" error in the Bruno UI (the underlying `400 unauthorized_client` from Keycloak isn't surfaced).
+
+Authentication is configured once, as an OAuth2 "Password Credentials" auth block on the collection root (`test/Bruno/PilotApiDotNet/opencollection.yml`). Every folder and request in the collection defaults to `auth: inherit`, and Bruno resolves that by walking up the tree to the nearest folder with a concrete (non-`inherit`, non-`none`) auth override, falling all the way back to the collection root if none is found — so this single config is automatically picked up by `v1` today, and by any future `v2` folder added as a sibling, with nothing further to configure.
+
+Bruno's inheritance only stops at a folder when that folder or one of its own requests carries an explicit, concrete auth override — a folder set to `none` is itself skipped when resolving its descendants, exactly like `inherit` is. Because of that, the three requests under `System` (`About_NoDetails`, `About_WithDetails`, `HealthCheck`) each carry no `auth` entry of their own (equivalent to `none`) directly on the request, not on the `System` folder — that is what actually stops them from picking up the collection-level token. Any new request added under `System` must do the same (omit `auth`, or explicitly set it, rather than leaving the inherited default) to stay token-free.
+
+Bruno fetches an access token from Security's token endpoint (`{{IdpHostBaseUrl}}/realms/{{IdpHostRealm}}/protocol/openid-connect/token`) the first time a request under `v1` is sent, caches it, adds it to the request as `Authorization: Bearer <access_token>`, and automatically refreshes it (using the `refresh_token` grant) once it expires. No manual token copy/paste is required.
+
+The collection root also sets two headers (`Accept: application/json`, `ApiVersion: 1`) that apply to every request, `System` included — headers merge cumulatively from the collection root down through each folder to the request, so there is no need to repeat them anywhere else in the tree.
+
+> **Note:** `test/Bruno/opencollection.yml` (one directory above the collection) is not part of this collection and has no effect on it. Bruno collections are self-contained — everything (auth, headers, variables) is scoped to the single directory containing the collection's own `opencollection.yml` (here, `test/Bruno/PilotApiDotNet`); nothing cascades in from a parent directory. The only cross-collection concept Bruno has is a *workspace*, which requires a file literally named `workspace.yml` and, even then, only shares named global environments — never headers or auth. Define any collection-wide request headers/auth directly in `test/Bruno/PilotApiDotNet/opencollection.yml`, not in the outer file.
+>
+> Also: if this collection is open in the Bruno app while these files are edited by hand, saving anything from Bruno's UI rewrites the whole file from Bruno's in-memory copy, silently reverting the on-disk changes. Close the collection in Bruno (or reload it) after editing these files externally, and re-open/reload it before making further changes in the app.
+
+##### Collection variables
+
+The token request is built from variables defined for the collection:
+
+| Variable | Purpose |
+| --- | --- |
+| `IdpHostBaseUrl` | Base URL of the Security server, matching `Application.Security.BaseUrl`. |
+| `IdpHostRealm` | The Security realm, matching `Application.Security.Realm`. |
+| `IdpHostClientId` | The Security client Id, matching `Application.Security.ClientId`. |
+| `IdpHostUsername` | The user to authenticate as. Defaults to `working_admin_user` (Admin role), so every request in the collection — including `Add`, `Update`, and `Delete` — works without editing anything. |
+
+##### Environment variables
+
+The token request also includes a variable defined for the general environment:
+
+| Variable | Purpose |
+| --- | --- |
+| `IDP_HOST_PASSWORD` | The password for `IdpHostUsername`. |
+
+The above value is stored in a `.env` file inside the collection root, `test/Bruno/PilotApiDotNet/.env` (Bruno only looks for `.env` directly alongside the collection's `opencollection.yml`, not in a parent folder). This file must be created manually before opening Bruno:
+1. Copy `test/Bruno/PilotApiDotNet/.env.example` to `test/Bruno/PilotApiDotNet/.env`.
+2. Change the `<host-password>` value to the current password for the `IdpHostUsername` user.
+
+`.env` is git-ignored; `.env.example` is intentionally excluded from that ignore rule so it stays committed as the template for other developers.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
