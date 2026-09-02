@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using PilotApi.Shared.Constants;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,13 +18,6 @@ namespace PilotApi.Shared.Api.Security
 	/// </remarks>
 	public sealed class HttpVerbRoleAuthorizationHandler : AuthorizationHandler<HttpVerbRoleRequirement>
 	{
-		private static readonly IReadOnlyDictionary<string, string[]> RoleVerbMap = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
-		{
-			[RoleNames.ReadOnly] = ["GET"],
-			[RoleNames.ReadWrite] = ["GET", "POST", "PUT"],
-			[RoleNames.Admin] = ["GET", "POST", "PUT", "DELETE"]
-		};
-
 		/// <summary>
 		/// Instantiates a new instance of the <see cref="HttpVerbRoleAuthorizationHandler"/> class.
 		/// </summary>
@@ -67,7 +59,7 @@ namespace PilotApi.Shared.Api.Security
 			}
 
 			var allowed = roles.Any(role =>
-				RoleVerbMap.TryGetValue(role, out var allowedHttpMethods) &&
+				RoleNames.MapToVerbs.TryGetValue(role, out var allowedHttpMethods) &&
 				allowedHttpMethods.Contains(method, StringComparer.OrdinalIgnoreCase));
 
 			if (allowed)

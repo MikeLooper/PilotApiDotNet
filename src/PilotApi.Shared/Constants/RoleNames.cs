@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace PilotApi.Shared.Constants
 {
 	/// <summary>
@@ -5,6 +8,11 @@ namespace PilotApi.Shared.Constants
 	/// </summary>
 	public static class RoleNames
 	{
+		/// <summary>
+		/// A role that can perform all data maintenance (HTTP GET, POST, PUT, DELETE).
+		/// </summary>
+		public const string Admin = "admin_role";
+
 		/// <summary>
 		/// A role that can only read data (HTTP GET).
 		/// </summary>
@@ -16,8 +24,13 @@ namespace PilotApi.Shared.Constants
 		public const string ReadWrite = "read_write_role";
 
 		/// <summary>
-		/// A role that can perform all data maintenance (HTTP GET, POST, PUT, DELETE).
+		/// A read-only dictionary that maps role names to the HTTP verbs they are allowed to use.
 		/// </summary>
-		public const string Admin = "admin_role";
+		public static readonly IReadOnlyDictionary<string, string[]> MapToVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+		{
+			[ReadOnly] = ["GET", "HEAD", "OPTIONS", "QUERY", "TRACE"],
+			[ReadWrite] = ["GET", "HEAD", "OPTIONS", "QUERY", "PATCH", "POST", "PUT", "TRACE"],
+			[Admin] = ["DELETE", "GET", "HEAD", "OPTIONS", "QUERY", "PATCH", "POST", "PUT", "TRACE"]
+		};
 	}
 }
