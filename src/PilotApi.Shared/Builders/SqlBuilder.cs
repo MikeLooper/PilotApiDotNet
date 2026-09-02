@@ -403,6 +403,91 @@ namespace PilotApi.Shared.Handlers
 		}
 
 		/// <inheritdoc/>
+		public string BuildSelect(
+			string tableName,
+			List<string> columnNames,
+			List<string>? keyColumnNames,
+			int page,
+			int pageSize)
+		{
+			if (string.IsNullOrWhiteSpace(tableName))
+			{
+				throw new ArgumentException(
+					$"The {nameof(tableName)} argument cannot be null or empty ({this.GetType().Name})");
+			}
+
+			if (columnNames == null ||
+				columnNames.Count == 0)
+			{
+				throw new ArgumentException(
+					$"The {nameof(columnNames)} argument cannot be null or empty ({this.GetType().Name})");
+			}
+
+			if (page < 0)
+			{
+				throw new ArgumentException($"The {nameof(page)} argument cannot be negative ({this.GetType().Name})");
+			}
+
+			if (page > 0 && pageSize < 1)
+			{
+				throw new ArgumentException($"The {nameof(pageSize)} argument must be greater than zero when paging is enabled ({this.GetType().Name})");
+			}
+
+			var querySql = new StringBuilder("SELECT ");
+			foreach (var columnName in columnNames)
+			{
+				if (querySql.Length > 7)
+				{
+					querySql.Append(",");
+				}
+
+				var delimitedColumnName = DataSourceUtilities.DelimitName(columnName, this.DataSourceConfiguration.DataSourceEnum);
+				querySql.Append(delimitedColumnName);
+			}
+
+			var delimitedSchemaName = DataSourceUtilities.DelimitName(this.DataSourceConfiguration.Schema, this.DataSourceConfiguration.DataSourceEnum);
+			var delimitedTableName = DataSourceUtilities.DelimitName(tableName, this.DataSourceConfiguration.DataSourceEnum);
+
+			querySql.Append(" FROM ");
+			querySql.Append(delimitedSchemaName);
+			querySql.Append(".");
+			querySql.Append(delimitedTableName);
+
+			if (page > 0)
+			{
+				if (keyColumnNames != null && keyColumnNames.Count > 0)
+				{
+					querySql.Append(" ORDER BY ");
+					for (var keyIndex = 0; keyIndex < keyColumnNames.Count; keyIndex++)
+					{
+						if (keyIndex > 0)
+						{
+							querySql.Append(",");
+						}
+
+						querySql.Append(DataSourceUtilities.DelimitName(keyColumnNames[keyIndex], this.DataSourceConfiguration.DataSourceEnum));
+					}
+				}
+
+				var offset = (page - 1) * pageSize;
+				if (this.IsSqlServer)
+				{
+					querySql.Append($" OFFSET {offset} ROWS FETCH NEXT {pageSize} ROWS ONLY");
+				}
+				else if (this.IsPostgreSQL)
+				{
+					querySql.Append($" LIMIT {pageSize} OFFSET {offset}");
+				}
+				else
+				{
+					throw new InvalidOperationException($"Unhandled data source type: '{this.DataSourceConfiguration.DataSourceEnum}' ({this.GetType().Name})");
+				}
+			}
+
+			return querySql.ToString();
+		}
+
+		/// <inheritdoc/>
 		public string BuildUpdate(
 			string tableName,
 			List<string> columnNames,

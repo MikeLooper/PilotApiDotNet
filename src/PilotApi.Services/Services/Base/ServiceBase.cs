@@ -73,9 +73,9 @@ namespace PilotApi.Services.Services.Base
 		}
 
 		/// <inheritdoc/>
-		public async Task<RetrieveResponse<List<TDto>>?> GetAllAsync(CancellationToken cancellationToken = default)
+		public async Task<RetrieveResponse<List<TDto>>?> GetAllAsync(int page = 0, int pageSize = 20, CancellationToken cancellationToken = default)
 		{
-			var retrieveResponse = await this.Repository.GetAllAsync(cancellationToken);
+			var retrieveResponse = await this.Repository.GetAllAsync(page, pageSize, cancellationToken);
 			var mapped = await this.DataMapperHandler.MapEntityToDtoList<TDto, TEntity>(retrieveResponse.Result);
 			return new RetrieveResponse<List<TDto>>(mapped?.ToList(), retrieveResponse.ErrorMessage);
 		}

@@ -28,3 +28,12 @@ Update the PilotApiDotNet README file, to describes how the Bruno tests call the
 4.
 Add-Security-Plan.md
 
+5.
+Update the GetAll endpoints to add pagination, with two optional query parameters:
+- `page` = the target page index.  1-based, meaning the first page is 1.
+	- Default: 0
+- `pageSize` = how many items return per page.
+	- Default: 20
+If `page` = 0, do not use paging - return all rows.
+This pagination will control how data is retieved from the database.
+

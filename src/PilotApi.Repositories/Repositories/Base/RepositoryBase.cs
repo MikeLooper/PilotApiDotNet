@@ -275,14 +275,17 @@ namespace PilotApi.Repositories.Repositories.Base
 		}
 
 		/// <inheritdoc/>
-		public virtual async Task<RetrieveResponse<List<TEntity>>?> GetAllAsync(CancellationToken cancellationToken = default)
+		public virtual async Task<RetrieveResponse<List<TEntity>>?> GetAllAsync(int page = 0, int pageSize = 20, CancellationToken cancellationToken = default)
 		{
 			this.Validate();
 
 			// Construct the SQL query to select all records from the table.
 			var querySql = this.SqlBuilder.BuildSelect(
 				this.TableName,
-				this.ColumnNames);
+				this.ColumnNames,
+				this.KeyColumnNames,
+				page,
+				pageSize);
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();

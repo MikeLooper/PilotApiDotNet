@@ -51,15 +51,15 @@ namespace PilotApi.Shared.OpenApi.Transformers
 
 			// Set the primary info section fields
 			document.Info.Title = applicationConfiguration.OpenApi.Title;
-			document.Info.Version = this.ApiVersion.MajorVersion.ToString();
-			document.Info.Description = applicationConfiguration.OpenApi.Description;
-			document.Info.Summary = applicationConfiguration.OpenApi.Summary;
+			document.Info.Version = $"Version: {this.ApiVersion.MajorVersion.ToString()}";
+			document.Info.Description = $"Description: {applicationConfiguration.OpenApi.Description}";
+			document.Info.Summary = $"Summary: {applicationConfiguration.OpenApi.Summary}";
 			//document.Info.TermsOfService = new Uri("https://example.com");
 
 			// Set developer contact info
 			document.Info.Contact = new OpenApiContact
 			{
-				Name = applicationConfiguration.OpenApi.Contact.Name,
+				Name = $"Contact: {applicationConfiguration.OpenApi.Contact.Name}",
 				Email = applicationConfiguration.OpenApi.Contact.Email,
 				Url = new Uri(applicationConfiguration.OpenApi.Contact.URL)
 			};
@@ -67,7 +67,7 @@ namespace PilotApi.Shared.OpenApi.Transformers
 			// Set legal licensing details
 			document.Info.License = new OpenApiLicense
 			{
-				Name = applicationConfiguration.OpenApi.License,
+				Name = $"License: {applicationConfiguration.OpenApi.License}",
 				Url = new Uri("https://opensource.org")
 			};
 

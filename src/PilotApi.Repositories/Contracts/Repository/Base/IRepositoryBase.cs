@@ -56,13 +56,19 @@ namespace PilotApi.Repositories.Contracts.Repository.Base
 		/// <summary>
 		/// Gets all records from the data source table.
 		/// </summary>
+		/// <param name="page">
+		/// The target page index. Use 0 to return all rows without paging.
+		/// </param>
+		/// <param name="pageSize">
+		/// The number of items to return per page.
+		/// </param>
 		/// <param name="cancellationToken">
 		/// A token that can be used to cancel the operation.
 		/// </param>
 		/// <returns>
 		/// An List&lt;T&gt; containing all records from the data source table.
 		/// </returns>
-		Task<RetrieveResponse<List<TEntity>>?> GetAllAsync(CancellationToken cancellationToken = default);
+		Task<RetrieveResponse<List<TEntity>>?> GetAllAsync(int page = 0, int pageSize = 20, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets a record from the data source table based on the specified ID.

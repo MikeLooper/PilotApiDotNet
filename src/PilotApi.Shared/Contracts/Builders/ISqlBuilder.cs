@@ -115,6 +115,36 @@ namespace PilotApi.Shared.Handlers
 			List<string>? keyColumnNames = null);
 
 		/// <summary>
+		/// Build and return a paged SELECT string.
+		/// </summary>
+		/// <param name="tableName">
+		/// The name of the current table.
+		/// </param>
+		/// <param name="columnNames">
+		/// A list of the column names for the source entity.
+		/// </param>
+		/// <param name="keyColumnNames">
+		/// A list of the column names for the source entity key(s), to be used for deterministic paging order.
+		/// If this list is null or empty, no ORDER BY clause will be included.
+		/// Default = Null.
+		/// </param>
+		/// <param name="page">
+		/// The target page index. Use 0 to return all rows without paging.
+		/// </param>
+		/// <param name="pageSize">
+		/// The number of items to return per page.
+		/// </param>
+		/// <returns>
+		/// A SELECT string.
+		/// </returns>
+		string BuildSelect(
+			string tableName,
+			List<string> columnNames,
+			List<string>? keyColumnNames,
+			int page,
+			int pageSize);
+
+		/// <summary>
 		/// Build and return an UPDATE string.
 		/// </summary>
 		/// <param name="tableName">
