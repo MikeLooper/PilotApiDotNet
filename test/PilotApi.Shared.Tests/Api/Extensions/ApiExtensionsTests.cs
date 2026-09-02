@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using PilotApi.Shared.Api.Extensions;
@@ -20,53 +18,6 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 				Realm = "test-realm",
 				ClientId = "test-client"
 			};
-		}
-
-		[Test]
-		public void ApiExtensions_AddSecurity_WithValidServiceCollection_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var services = new ServiceCollection();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => services.AddSecurity(GetSecurityConfiguration()));
-		}
-
-		[Test]
-		public void ApiExtensions_AddSecurity_WithNullServices_ShouldThrow_Test()
-		{
-			// Arrange & Act & Assert
-			var exception = Assert.Throws<ArgumentException>(() =>
-				ApiExtensions.AddSecurity(null, GetSecurityConfiguration()));
-			Assert.That(exception.Message, Does.Contain("services"));
-		}
-
-		[Test]
-		public void ApiExtensions_AddSecurity_WithNullSecurityConfiguration_ShouldThrow_Test()
-		{
-			// Arrange
-			var services = new ServiceCollection();
-
-			// Act & Assert
-			var exception = Assert.Throws<ArgumentException>(() =>
-				services.AddSecurity(null));
-			Assert.That(exception.Message, Does.Contain("securityConfiguration"));
-		}
-
-		[Test]
-		public void ApiExtensions_AddSecurity_WithValidServiceCollection_ShouldRegisterAuthorizationHandlers_Test()
-		{
-			// Arrange
-			var services = new ServiceCollection();
-			services.AddLogging();
-
-			// Act
-			services.AddSecurity(GetSecurityConfiguration());
-			var serviceProvider = services.BuildServiceProvider();
-
-			// Assert
-			Assert.NotNull(serviceProvider.GetService<IAuthorizationHandler>());
-			Assert.NotNull(serviceProvider.GetService<IAuthorizationMiddlewareResultHandler>());
 		}
 
 		[Test]
@@ -113,46 +64,12 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		}
 
 		[Test]
-		public void ApiExtensions_UseSecurity_WithValidWebApp_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			builder.Services.AddSecurity(GetSecurityConfiguration());
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.UseSecurity());
-		}
-
-		[Test]
 		public void ApiExtensions_ApiWebApplication_WithNullWebApp_ShouldThrow_Test()
 		{
 			// Arrange & Act & Assert
 			var exception = Assert.Throws<ArgumentException>(() =>
 				ApiExtensions.ApiWebApplication(null));
 			Assert.That(exception.Message, Does.Contain("webApp"));
-		}
-
-		[Test]
-		public void ApiExtensions_ApiWebApplication_WithValidWebApp_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			builder.Services.AddSecurity(GetSecurityConfiguration());
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.ApiWebApplication());
-		}
-
-		[Test]
-		public void ApiExtensions_AddSecurity_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var services = new ServiceCollection();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => services.AddSecurity(GetSecurityConfiguration()));
 		}
 
 		[Test]
@@ -163,30 +80,6 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 
 			// Act & Assert
 			Assert.DoesNotThrow(() => services.AddVersioning());
-		}
-
-		[Test]
-		public void ApiExtensions_ApiWebApplication_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			builder.Services.AddSecurity(GetSecurityConfiguration());
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.ApiWebApplication());
-		}
-
-		[Test]
-		public void ApiExtensions_UseSecurity_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			builder.Services.AddSecurity(GetSecurityConfiguration());
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.UseSecurity());
 		}
 	}
 }

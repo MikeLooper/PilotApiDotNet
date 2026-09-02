@@ -1,511 +1,511 @@
-﻿//using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Logging;
-//using Microsoft.IdentityModel.Tokens;
-//using Newtonsoft.Json;
-//using Newtonsoft.Json.Linq;
-//using PilotApi.Shared.Api.Extensions;
-//using PilotApi.Shared.Api.Security;
-//using PilotApi.Shared.Constants;
-//using PilotApi.Shared.Contracts.Configuration;
-//using PilotApi.Shared.Utilities;
-//using System;
-//using System.Collections.Generic;
-//using System.IdentityModel.Tokens.Jwt;
-//using System.Linq;
-//using System.Security.Claims;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PilotApi.Shared.Api.Security;
+using PilotApi.Shared.Constants;
+using PilotApi.Shared.Contracts.Configuration;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
-//namespace PilotApi.Shared.Helpers
-//{
-//	/// <summary>
-//	/// A helper for security-related functionality.
-//	/// </summary>
-//	public class SecurityHelper : ISecurityHelper
-//	{
-//		/// <summary>
-//		/// Initializes a new instance of the <see cref="SecurityHelper"/> class.
-//		/// </summary>
-//		/// <param name="applicationConfiguration">
-//		/// The application configuration.
-//		/// </param>
-//		public SecurityHelper(IApplicationConfiguration applicationConfiguration)
-//		{
-//#pragma warning disable CS8601 // Possible null reference assignment.
-//			this.SecurityConfiguration = applicationConfiguration.Security;
-//#pragma warning restore CS8601 // Possible null reference assignment.
-//		}
+namespace PilotApi.Shared.Helpers
+{
+	/// <summary>
+	/// A helper for security-related functionality.
+	/// </summary>
+	public class SecurityHelper
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SecurityHelper"/> class.
+		/// </summary>
+		/// <param name="services">
+		/// A services collection.
+		/// </param>
+		public SecurityHelper(IServiceCollection services)
+		{
+			if (services == null)
+			{
+				throw new ArgumentException($"Invalid argument : {nameof(services)}. "
+					+ $"A valid object type of: '{typeof(IServiceCollection)}' is needed to continue. ({nameof(SecurityHelper)})");
+			}
 
-//		/// <summary>
-//		/// Gets the security configuration.
-//		/// </summary>
-//		protected ISecurityConfiguration SecurityConfiguration { get; }
+			this.ServiceCollection = services;
+			var serviceProvider = services.BuildServiceProvider();
 
-//		/// <inheritdoc/>
-//		public void AddSecurity(IServiceCollection services)
-//		{
-//			if (services == null)
-//			{
-//				throw new ArgumentException($"Invalid argument : {nameof(services)}. "
-//					+ $"A valid object type of: '{typeof(IServiceCollection)}' is needed to continue. ({nameof(ApiExtensions)})");
-//			}
+			var applicationConfiguration = serviceProvider.GetRequiredService<IApplicationConfiguration>();
+			this.SecurityConfiguration = applicationConfiguration.Security;
+			this.Logger = serviceProvider.GetRequiredService<ILogger<SecurityHelper>>();
+		}
 
-//			// The order of configuration matters (authentication before authorization)
-//			ConfigureAuthentication(services);
-//			ConfigureAuthorization(services);
+		/// <summary>
+		/// Gets a logger object.
+		/// </summary>
+		protected ILogger Logger { get; }
 
-//			RegisterSecurityServices(services);
-//		}
+		/// <summary>
+		/// Gets the security configuration.
+		/// </summary>
+		protected ISecurityConfiguration SecurityConfiguration { get; }
 
-//		/// <summary>
-//		/// Configures JWT Bearer authentication scheme.
-//		/// </summary>
-//		/// <param name="services">
-//		/// A list of service objects.
-//		/// </param>
-//		protected void ConfigureAuthentication(IServiceCollection services)
-//		{
-//			services.AddAuthentication(options =>
-//			{
-//				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//			})
-//			.AddJwtBearer(options =>
-//			{
-//				options.Authority = this.SecurityConfiguration.Authority;
-//				options.Audience = this.SecurityConfiguration.ClientId;
-//				options.RequireHttpsMetadata = this.SecurityConfiguration.RequireHttpsMetadata;
-//				options.MapInboundClaims = false; // keep raw "preferred_username" claim name
-//				options.TokenValidationParameters = ConfigureTokenValidationParameters();
-//				options.Events = ConfigureJwtBearerEvents();
-//			});
-//		}
+		/// <summary>
+		/// Gets a service collection.
+		/// </summary>
+		protected IServiceCollection ServiceCollection { get; }
 
-//		/// <summary>
-//		/// Configures authorization policy and fallback requirements.
-//		/// </summary>
-//		/// <param name="services">
-//		/// A list of service objects.
-//		/// </param>
-//		protected void ConfigureAuthorization(IServiceCollection services)
-//		{
-//			services.AddAuthorization(options =>
-//			{
-//				options.FallbackPolicy = new AuthorizationPolicyBuilder()
-//					.RequireAuthenticatedUser()
-//					.AddRequirements(new HttpVerbRoleRequirement())
-//					.Build();
-//			});
-//		}
+		/// <summary>
+		/// Adds security services to the service collection, including authentication and authorization.
+		/// </summary>
+		public void AddSecurity()
+		{
+			// The order of configuration matters (authentication before authorization)
+			ConfigureAuthentication();
+			ConfigureAuthorization();
 
-//		/// <summary>
-//		/// Configures JWT Bearer authentication event handlers.
-//		/// </summary>
-//		/// <returns>
-//		/// Configured JwtBearerEvents.
-//		/// </returns>
-//		protected JwtBearerEvents ConfigureJwtBearerEvents()
-//		{
-//			return new JwtBearerEvents
-//			{
-//				OnMessageReceived = HandleOnMessageReceived,
-//				OnTokenValidated = HandleOnTokenValidated,
-//				OnAuthenticationFailed = HandleOnAuthenticationFailed
-//			};
-//		}
+			RegisterSecurityServices();
+		}
 
-//		/// <summary>
-//		/// Configures JWT token validation parameters.
-//		/// </summary>
-//		/// <returns>
-//		/// Configured TokenValidationParameters.
-//		/// </returns>
-//		protected TokenValidationParameters ConfigureTokenValidationParameters()
-//		{
-//			return new TokenValidationParameters
-//			{
-//				ValidateIssuer = true,
-//				ValidIssuer = this.SecurityConfiguration.Authority,
-//				ValidateAudience = true,
-//				AudienceValidator = (audiences, token, validationParameters) =>
-//				{
-//					var audienceList = audiences?.ToArray() ?? [];
-//					var clientId = this.SecurityConfiguration.ClientId;
+		/// <summary>
+		/// Add realm roles to the claims collection from the supplied realm_access object.
+		/// This structure is typically found in Keycloak-issued JWT tokens.
+		/// </summary>
+		/// <param name="claims">
+		/// The collection of claims to add to.
+		/// </param>
+		/// <param name="realmAccess">
+		/// The realm_access object containing roles.
+		/// </param>
+		protected void AddRealmRoles(ICollection<Claim> claims, JObject? realmAccess)
+		{
+			if (realmAccess == null || realmAccess["roles"] is not JArray roles)
+			{
+				return;
+			}
 
-//					return audienceList.Contains(clientId, StringComparer.OrdinalIgnoreCase)
-//						|| audienceList.Contains("account", StringComparer.OrdinalIgnoreCase);
-//				},
-//				ValidateLifetime = true,
-//				ClockSkew = TimeSpan.FromSeconds(this.SecurityConfiguration.ClockSkewSeconds),
-//				ValidateIssuerSigningKey = true,
-//				NameClaimType = SecurityConstants.PreferredUsernameClaimType
-//			};
-//		}
+			foreach (var role in roles.Values<string>().Where(role => !string.IsNullOrWhiteSpace(role)))
+			{
+				claims.Add(new Claim(ClaimTypes.Role, role!));
+			}
+		}
 
-//		/// <summary>
-//		/// Handles the OnAuthenticationFailed event - logs authentication failures.
-//		/// </summary>
-//		protected Task HandleOnAuthenticationFailed(AuthenticationFailedContext context)
-//		{
-//			var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(ApiExtensions));
-//			var isExpired = context.Exception is SecurityTokenExpiredException;
-//			var redactedAuthorization = this.BearerTokenClean(context.Request.Headers.Authorization.ToString());
+		/// <summary>
+		/// Add resource roles to the claims collection from the supplied resource_access object.
+		/// This structure is typically found in Keycloak-issued JWT tokens.
+		/// </summary>
+		/// <param name="claims">
+		/// The collection of claims to add to.
+		/// </param>
+		/// <param name="resourceAccess">
+		/// The resource_access object containing roles.
+		/// </param>
+		protected void AddResourceRoles(ICollection<Claim> claims, JObject? resourceAccess)
+		{
+			if (resourceAccess == null)
+			{
+				return;
+			}
 
-//			logger.LogWarning(
-//				context.Exception,
-//				"{FailureReason} for {Method} {Path}. Authorization: {Authorization}",
-//				isExpired ? "Token expired" : "Token validation failed",
-//				context.Request.Method,
-//				context.Request.Path,
-//				redactedAuthorization);
+			foreach (var resource in resourceAccess.Properties())
+			{
+				if (resource.Value is not JObject resourceDetails || resourceDetails["roles"] is not JArray roles)
+				{
+					continue;
+				}
 
-//			context.HttpContext.Items["AuthFailureReason"] = isExpired ? "Token expired." : "Missing or invalid bearer token.";
+				foreach (var role in roles.Values<string>().Where(role => !string.IsNullOrWhiteSpace(role)))
+				{
+					claims.Add(new Claim(ClaimTypes.Role, role!));
+				}
+			}
+		}
 
-//			return Task.CompletedTask;
-//		}
+		/// <summary>
+		/// Add scopes to the claims collection from the supplied scope token.
+		/// </summary>
+		/// <param name="claims">
+		/// The collection of claims to add to.
+		/// </param>
+		/// <param name="scopeToken">
+		/// The scope token containing scopes.
+		/// </param>
+		protected void AddScopes(ICollection<Claim> claims, JToken scopeToken)
+		{
+			var scopeValues = scopeToken.Type == JTokenType.String
+				? scopeToken.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries)
+				: scopeToken.Values<string>();
 
-//		/// <summary>
-//		/// Handles the OnMessageReceived event - logs token reception before validation.
-//		/// </summary>
-//		protected Task HandleOnMessageReceived(MessageReceivedContext context)
-//		{
-//			var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(ApiExtensions));
-//			var authorizationString = context.Request.Headers.Authorization.ToString();
-//			var redactedAuthorization = this.BearerTokenClean(authorizationString);
-//			var redactedJwt = this.CleanJwtToken(authorizationString);
+			foreach (var scope in scopeValues.Where(scope => !string.IsNullOrWhiteSpace(scope)))
+			{
+				claims.Add(new Claim("scope", scope!));
+			}
+		}
 
-//			logger.LogInformation(
-//				"Authentication token received for {Method} {Path}. Authorization: {Authorization}. JWT: {Jwt}. RemoteIp: '{RemoteIp}'",
-//				context.Request.Method,
-//				context.Request.Path,
-//				redactedAuthorization,
-//				redactedJwt,
-//				context.HttpContext.Connection.RemoteIpAddress);
+		/// <summary>
+		/// Clean and return the supplied bearer token Authorization header value.
+		/// </summary>
+		/// <param name="authorizationHeaderValue">
+		/// The Authorization header value to clean.
+		/// </param>
+		/// <param name="edgeInclusions">
+		/// The number of characters to include at the edges of the token.
+		/// Default = 4. If the token is shorter than (edgeInclusions * 2), the entire token will be redacted.
+		/// </param>
+		/// <returns>
+		/// A cleaned Authorization header value with the token redacted.
+		/// </returns>
+		protected string BearerTokenClean(string? authorizationHeaderValue, int edgeInclusions = 4)
+		{
+			if (string.IsNullOrWhiteSpace(authorizationHeaderValue))
+			{
+				return authorizationHeaderValue ?? string.Empty;
+			}
 
-//			return Task.CompletedTask;
-//		}
+			if (!authorizationHeaderValue.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
+			{
+				return StringConstants.Redacted;
+			}
 
-//		/// <summary>
-//		/// Handles the OnTokenValidated event - logs successful authentication.
-//		/// </summary>
-//		protected Task HandleOnTokenValidated(TokenValidatedContext context)
-//		{
-//			var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(ApiExtensions));
-//			var authorizationString = context.Request.Headers.Authorization.ToString();
-//			context.Principal = this.GetJwtPrincipal(context.Principal, authorizationString);
-//			context.HttpContext.User = context.Principal ?? context.HttpContext.User;
+			var token = authorizationHeaderValue["Bearer ".Length..];
+			if (edgeInclusions <= 0 || token.Length <= (edgeInclusions * 2))
+			{
+				return $"Bearer {StringConstants.Redacted}";
+			}
 
-//			var userId = context.Principal?.FindFirst(SecurityConstants.PreferredUsernameClaimType)?.Value;
+			var tokenPrefix = token[..edgeInclusions];
+			var tokenSuffix = token[^edgeInclusions..];
+			return $"Bearer {tokenPrefix}{StringConstants.Redacted}{tokenSuffix}";
+		}
 
-//			logger.LogInformation(
-//				"Authentication succeeded for UserId: '{UserId}' from RemoteIp: '{RemoteIp}'",
-//				userId ?? StringConstants.LogNull,
-//				context.HttpContext.Connection.RemoteIpAddress);
+		/// <summary>
+		/// Clean and return the supplied JWT token from the Authorization header value.
+		/// </summary>
+		/// <param name="authorizationString">
+		/// The Authorization header value to clean.
+		/// </param>
+		/// <returns>
+		/// A cleaned JWT token.
+		/// </returns>
+		protected string CleanJwtToken(string? authorizationString)
+		{
+			if (string.IsNullOrWhiteSpace(authorizationString) ||
+				!authorizationString.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
+			{
+				return StringConstants.Redacted;
+			}
 
-//			return Task.CompletedTask;
-//		}
+			var jwt = authorizationString["Bearer ".Length..].Trim();
+			if (string.IsNullOrWhiteSpace(jwt))
+			{
+				return StringConstants.Redacted;
+			}
 
-//		/// <summary>
-//		/// Registers security-related singleton services.
-//		/// </summary>
-//		/// <param name="services">
-//		/// A list of service objects.
-//		/// </param>
-//		protected void RegisterSecurityServices(IServiceCollection services)
-//		{
-//			services.AddSingleton(this.SecurityConfiguration);
-//			services.AddSingleton<IAuthorizationHandler, HttpVerbRoleAuthorizationHandler>();
-//			services.AddSingleton<IAuthorizationMiddlewareResultHandler, BypassOnInactiveAuthorizationMiddlewareResultHandler>();
-//		}
+			var handler = new JwtSecurityTokenHandler();
+			if (!handler.CanReadToken(jwt))
+			{
+				return StringConstants.Redacted;
+			}
 
-//		/// <summary>
-//		/// Clean and return the supplied bearer token Authorization header value.
-//		/// </summary>
-//		/// <param name="authorizationHeaderValue">
-//		/// The Authorization header value to clean.
-//		/// </param>
-//		/// <param name="edgeInclusions">
-//		/// The number of characters to include at the edges of the token.
-//		/// Default = 4. If the token is shorter than (edgeInclusions * 2), the entire token will be redacted.
-//		/// </param>
-//		/// <returns>
-//		/// A cleaned Authorization header value with the token redacted.
-//		/// </returns>
-//		protected string BearerTokenClean(string? authorizationHeaderValue, int edgeInclusions = 4)
-//		{
-//			if (string.IsNullOrWhiteSpace(authorizationHeaderValue))
-//			{
-//				return authorizationHeaderValue ?? string.Empty;
-//			}
+			var token = handler.ReadJwtToken(jwt);
+			var payload = JObject.Parse(token.Payload.SerializeToJson());
 
-//			if (!authorizationHeaderValue.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
-//			{
-//				return StringConstants.Redacted;
-//			}
+			//// Redact identifiers and personal data so logs cannot be used to correlate users or expose token-linked data.
+			//foreach (var property in payload.Properties())
+			//{
+			//	if (IsSensitiveJwtClaim(property.Name))
+			//	{
+			//		property.Value = StringConstants.Redacted;
+			//	}
+			//}
 
-//			var token = authorizationHeaderValue["Bearer ".Length..];
-//			if (edgeInclusions <= 0 || token.Length <= (edgeInclusions * 2))
-//			{
-//				return $"Bearer {StringConstants.Redacted}";
-//			}
+			return payload.ToString(Formatting.None);
+		}
 
-//			var tokenPrefix = token[..edgeInclusions];
-//			var tokenSuffix = token[^edgeInclusions..];
-//			return $"Bearer {tokenPrefix}{StringConstants.Redacted}{tokenSuffix}";
-//		}
+		/// <summary>
+		/// Configures JWT Bearer authentication scheme.
+		/// </summary>
+		protected void ConfigureAuthentication()
+		{
+			this.ServiceCollection.AddAuthentication(options =>
+			{
+				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			.AddJwtBearer(options =>
+			{
+				options.Authority = this.SecurityConfiguration.Authority;
+				options.Audience = this.SecurityConfiguration.ClientId;
+				options.RequireHttpsMetadata = this.SecurityConfiguration.RequireHttpsMetadata;
+				options.MapInboundClaims = false; // keep raw "preferred_username" claim name
+				options.TokenValidationParameters = ConfigureTokenValidationParameters();
+				options.Events = ConfigureJwtBearerEvents();
+			});
+		}
 
-//		/// <summary>
-//		/// Clean and return the supplied JWT token from the Authorization header value.
-//		/// </summary>
-//		/// <param name="authorizationString">
-//		/// The Authorization header value to clean.
-//		/// </param>
-//		/// <returns>
-//		/// A cleaned JWT token.
-//		/// </returns>
-//		protected string CleanJwtToken(string? authorizationString)
-//		{
-//			if (string.IsNullOrWhiteSpace(authorizationString) ||
-//				!authorizationString.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
-//			{
-//				return StringConstants.Redacted;
-//			}
+		/// <summary>
+		/// Configures authorization policy and fallback requirements.
+		/// </summary>
+		protected void ConfigureAuthorization()
+		{
+			this.ServiceCollection.AddAuthorization(options =>
+			{
+				options.FallbackPolicy = new AuthorizationPolicyBuilder()
+					.RequireAuthenticatedUser()
+					.AddRequirements(new HttpVerbRoleRequirement())
+					.Build();
+			});
+		}
 
-//			var jwt = authorizationString["Bearer ".Length..].Trim();
-//			if (string.IsNullOrWhiteSpace(jwt))
-//			{
-//				return StringConstants.Redacted;
-//			}
+		/// <summary>
+		/// Configures JWT Bearer authentication event handlers.
+		/// </summary>
+		/// <returns>
+		/// Configured JwtBearerEvents.
+		/// </returns>
+		protected JwtBearerEvents ConfigureJwtBearerEvents()
+		{
+			return new JwtBearerEvents
+			{
+				OnMessageReceived = HandleOnMessageReceived,
+				OnTokenValidated = HandleOnTokenValidated,
+				OnAuthenticationFailed = HandleOnAuthenticationFailed
+			};
+		}
 
-//			var handler = new JwtSecurityTokenHandler();
-//			if (!handler.CanReadToken(jwt))
-//			{
-//				return StringConstants.Redacted;
-//			}
+		/// <summary>
+		/// Configures JWT token validation parameters.
+		/// </summary>
+		/// <returns>
+		/// Configured TokenValidationParameters.
+		/// </returns>
+		protected TokenValidationParameters ConfigureTokenValidationParameters()
+		{
+			return new TokenValidationParameters
+			{
+				ValidateIssuer = true,
+				ValidIssuer = this.SecurityConfiguration.Authority,
+				ValidateAudience = true,
+				AudienceValidator = (audiences, token, validationParameters) =>
+				{
+					var audienceList = audiences?.ToArray() ?? [];
+					var clientId = this.SecurityConfiguration.ClientId;
 
-//			var token = handler.ReadJwtToken(jwt);
-//			var payload = JObject.Parse(token.Payload.SerializeToJson());
+					return audienceList.Contains(clientId, StringComparer.OrdinalIgnoreCase)
+						|| audienceList.Contains("account", StringComparer.OrdinalIgnoreCase);
+				},
+				ValidateLifetime = true,
+				ClockSkew = TimeSpan.FromSeconds(this.SecurityConfiguration.ClockSkewSeconds),
+				ValidateIssuerSigningKey = true,
+				NameClaimType = SecurityConstants.PreferredUsernameClaimType
+			};
+		}
 
-//			//// Redact identifiers and personal data so logs cannot be used to correlate users or expose token-linked data.
-//			//foreach (var property in payload.Properties())
-//			//{
-//			//	if (IsSensitiveJwtClaim(property.Name))
-//			//	{
-//			//		property.Value = StringConstants.Redacted;
-//			//	}
-//			//}
+		/// <summary>
+		/// Extract claims, roles, and scopes from the supplied bearer token Authorization header value.
+		/// </summary>
+		/// <param name="authorizationString">
+		/// The Authorization header value to inspect.
+		/// </param>
+		/// <returns>
+		/// The token claims projected into normal <see cref="Claim"/> instances.
+		/// </returns>
+		protected IEnumerable<Claim> GetJwtClaims(string? authorizationString)
+		{
+			if (string.IsNullOrWhiteSpace(authorizationString) ||
+				!authorizationString.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
+			{
+				return Enumerable.Empty<Claim>();
+			}
 
-//			return payload.ToString(Formatting.None);
-//		}
+			var jwt = authorizationString["Bearer ".Length..].Trim();
+			if (string.IsNullOrWhiteSpace(jwt))
+			{
+				return Enumerable.Empty<Claim>();
+			}
 
-//		/// <summary>
-//		/// Determine if the supplied claim name is considered sensitive and should be redacted from logs.
-//		/// </summary>
-//		/// <param name="claimName">
-//		/// The name of the claim to check.
-//		/// </param>
-//		/// <returns>
-//		/// True if the claim is considered sensitive; otherwise, false.
-//		/// </returns>
-//		protected bool IsSensitiveJwtClaim(string claimName)
-//		{
-//			return claimName.Equals("sub", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("sid", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("jti", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("name", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("preferred_username", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("given_name", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("family_name", System.StringComparison.OrdinalIgnoreCase)
-//				|| claimName.Equals("email", System.StringComparison.OrdinalIgnoreCase);
-//		}
+			var handler = new JwtSecurityTokenHandler();
+			if (!handler.CanReadToken(jwt))
+			{
+				return Enumerable.Empty<Claim>();
+			}
 
-//		/// <summary>
-//		/// Extract claims, roles, and scopes from the supplied bearer token Authorization header value.
-//		/// </summary>
-//		/// <param name="authorizationString">
-//		/// The Authorization header value to inspect.
-//		/// </param>
-//		/// <returns>
-//		/// The token claims projected into normal <see cref="Claim"/> instances.
-//		/// </returns>
-//		protected IEnumerable<Claim> GetJwtClaims(string? authorizationString)
-//		{
-//			if (string.IsNullOrWhiteSpace(authorizationString) ||
-//				!authorizationString.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
-//			{
-//				return Enumerable.Empty<Claim>();
-//			}
+			var token = handler.ReadJwtToken(jwt);
+			var payload = JObject.Parse(token.Payload.SerializeToJson());
+			var claims = new List<Claim>();
 
-//			var jwt = authorizationString["Bearer ".Length..].Trim();
-//			if (string.IsNullOrWhiteSpace(jwt))
-//			{
-//				return Enumerable.Empty<Claim>();
-//			}
+			foreach (var property in payload.Properties())
+			{
+				if (property.Name.Equals("realm_access", System.StringComparison.OrdinalIgnoreCase))
+				{
+					AddRealmRoles(claims, property.Value as JObject);
+					claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
+					continue;
+				}
 
-//			var handler = new JwtSecurityTokenHandler();
-//			if (!handler.CanReadToken(jwt))
-//			{
-//				return Enumerable.Empty<Claim>();
-//			}
+				if (property.Name.Equals("resource_access", System.StringComparison.OrdinalIgnoreCase))
+				{
+					AddResourceRoles(claims, property.Value as JObject);
+					claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
+					continue;
+				}
 
-//			var token = handler.ReadJwtToken(jwt);
-//			var payload = JObject.Parse(token.Payload.SerializeToJson());
-//			var claims = new List<Claim>();
+				if (property.Name.Equals("scope", System.StringComparison.OrdinalIgnoreCase))
+				{
+					AddScopes(claims, property.Value.ToString());
+					claims.Add(new Claim(property.Name, property.Value.ToString()));
+					continue;
+				}
 
-//			foreach (var property in payload.Properties())
-//			{
-//				if (property.Name.Equals("realm_access", System.StringComparison.OrdinalIgnoreCase))
-//				{
-//					AddRealmRoles(claims, property.Value as JObject);
-//					claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
-//					continue;
-//				}
+				if (property.Name.Equals("scp", System.StringComparison.OrdinalIgnoreCase))
+				{
+					AddScopes(claims, property.Value);
+					claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
+					continue;
+				}
 
-//				if (property.Name.Equals("resource_access", System.StringComparison.OrdinalIgnoreCase))
-//				{
-//					AddResourceRoles(claims, property.Value as JObject);
-//					claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
-//					continue;
-//				}
+				claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
+			}
 
-//				if (property.Name.Equals("scope", System.StringComparison.OrdinalIgnoreCase))
-//				{
-//					AddScopes(claims, property.Value.ToString());
-//					claims.Add(new Claim(property.Name, property.Value.ToString()));
-//					continue;
-//				}
+			return claims;
+		}
 
-//				if (property.Name.Equals("scp", System.StringComparison.OrdinalIgnoreCase))
-//				{
-//					AddScopes(claims, property.Value);
-//					claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
-//					continue;
-//				}
+		/// <summary>
+		/// Build an enriched claims principal using claims extracted from the bearer token.
+		/// </summary>
+		/// <param name="principal">
+		/// The existing principal created by authentication.
+		/// </param>
+		/// <param name="authorizationString">
+		/// The Authorization header value to inspect.
+		/// </param>
+		/// <returns>
+		/// A principal with the token-derived roles, claims, and scopes added.
+		/// </returns>
+		protected ClaimsPrincipal GetJwtPrincipal(ClaimsPrincipal? principal, string? authorizationString)
+		{
+			var baseIdentity = principal?.Identities.OfType<ClaimsIdentity>().FirstOrDefault();
+			var enrichedIdentity = baseIdentity == null
+				? new ClaimsIdentity()
+				: new ClaimsIdentity(
+					baseIdentity.Claims,
+					baseIdentity.AuthenticationType,
+					baseIdentity.NameClaimType,
+					baseIdentity.RoleClaimType);
 
-//				claims.Add(new Claim(property.Name, property.Value.ToString(Formatting.None)));
-//			}
+			foreach (var claim in GetJwtClaims(authorizationString))
+			{
+				if (!enrichedIdentity.HasClaim(claim.Type, claim.Value))
+				{
+					enrichedIdentity.AddClaim(claim);
+				}
+			}
 
-//			return claims;
-//		}
+			var enrichedPrincipal = new ClaimsPrincipal(enrichedIdentity);
+			if (principal != null)
+			{
+				foreach (var identity in principal.Identities.Where(identity => !ReferenceEquals(identity, baseIdentity)))
+				{
+					enrichedPrincipal.AddIdentity(identity);
+				}
+			}
 
-//		/// <summary>
-//		/// Build an enriched claims principal using claims extracted from the bearer token.
-//		/// </summary>
-//		/// <param name="principal">
-//		/// The existing principal created by authentication.
-//		/// </param>
-//		/// <param name="authorizationString">
-//		/// The Authorization header value to inspect.
-//		/// </param>
-//		/// <returns>
-//		/// A principal with the token-derived roles, claims, and scopes added.
-//		/// </returns>
-//		protected ClaimsPrincipal GetJwtPrincipal(ClaimsPrincipal? principal, string? authorizationString)
-//		{
-//			var baseIdentity = principal?.Identities.OfType<ClaimsIdentity>().FirstOrDefault();
-//			var enrichedIdentity = baseIdentity == null
-//				? new ClaimsIdentity()
-//				: new ClaimsIdentity(
-//					baseIdentity.Claims,
-//					baseIdentity.AuthenticationType,
-//					baseIdentity.NameClaimType,
-//					baseIdentity.RoleClaimType);
+			return enrichedPrincipal;
+		}
 
-//			foreach (var claim in GetJwtClaims(authorizationString))
-//			{
-//				if (!enrichedIdentity.HasClaim(claim.Type, claim.Value))
-//				{
-//					enrichedIdentity.AddClaim(claim);
-//				}
-//			}
+		/// <summary>
+		/// Handles the OnAuthenticationFailed event - logs authentication failures.
+		/// </summary>
+		protected Task HandleOnAuthenticationFailed(AuthenticationFailedContext context)
+		{
+			var isExpired = context.Exception is SecurityTokenExpiredException;
+			var redactedAuthorization = this.BearerTokenClean(context.Request.Headers.Authorization.ToString());
 
-//			var enrichedPrincipal = new ClaimsPrincipal(enrichedIdentity);
-//			if (principal != null)
-//			{
-//				foreach (var identity in principal.Identities.Where(identity => !ReferenceEquals(identity, baseIdentity)))
-//				{
-//					enrichedPrincipal.AddIdentity(identity);
-//				}
-//			}
+			this.Logger.LogWarning(
+				context.Exception,
+				"{FailureReason} for {Method} {Path}. Authorization: {Authorization}",
+				isExpired ? "Token expired" : "Token validation failed",
+				context.Request.Method,
+				context.Request.Path,
+				redactedAuthorization);
 
-//			return enrichedPrincipal;
-//		}
+			context.HttpContext.Items["AuthFailureReason"] = isExpired ? "Token expired." : "Missing or invalid bearer token.";
 
-//		/// <summary>
-//		/// Add realm roles to the claims collection from the supplied realm_access object.
-//		/// This structure is typically found in Keycloak-issued JWT tokens.
-//		/// </summary>
-//		/// <param name="claims">
-//		/// The collection of claims to add to.
-//		/// </param>
-//		/// <param name="realmAccess">
-//		/// The realm_access object containing roles.
-//		/// </param>
-//		protected void AddRealmRoles(ICollection<Claim> claims, JObject? realmAccess)
-//		{
-//			if (realmAccess == null || realmAccess["roles"] is not JArray roles)
-//			{
-//				return;
-//			}
+			return Task.CompletedTask;
+		}
 
-//			foreach (var role in roles.Values<string>().Where(role => !string.IsNullOrWhiteSpace(role)))
-//			{
-//				claims.Add(new Claim(ClaimTypes.Role, role!));
-//			}
-//		}
+		/// <summary>
+		/// Handles the OnMessageReceived event - logs token reception before validation.
+		/// </summary>
+		protected Task HandleOnMessageReceived(MessageReceivedContext context)
+		{
+			var authorizationString = context.Request.Headers.Authorization.ToString();
+			var redactedAuthorization = this.BearerTokenClean(authorizationString);
+			var redactedJwt = this.CleanJwtToken(authorizationString);
 
-//		/// <summary>
-//		/// Add resource roles to the claims collection from the supplied resource_access object.
-//		/// This structure is typically found in Keycloak-issued JWT tokens.
-//		/// </summary>
-//		/// <param name="claims">
-//		/// The collection of claims to add to.
-//		/// </param>
-//		/// <param name="resourceAccess">
-//		/// The resource_access object containing roles.
-//		/// </param>
-//		protected void AddResourceRoles(ICollection<Claim> claims, JObject? resourceAccess)
-//		{
-//			if (resourceAccess == null)
-//			{
-//				return;
-//			}
+			this.Logger.LogInformation(
+				"Authentication token received for {Method} {Path}. Authorization: {Authorization}. JWT: {Jwt}. RemoteIp: '{RemoteIp}'",
+				context.Request.Method,
+				context.Request.Path,
+				redactedAuthorization,
+				redactedJwt,
+				context.HttpContext.Connection.RemoteIpAddress);
 
-//			foreach (var resource in resourceAccess.Properties())
-//			{
-//				if (resource.Value is not JObject resourceDetails || resourceDetails["roles"] is not JArray roles)
-//				{
-//					continue;
-//				}
+			return Task.CompletedTask;
+		}
 
-//				foreach (var role in roles.Values<string>().Where(role => !string.IsNullOrWhiteSpace(role)))
-//				{
-//					claims.Add(new Claim(ClaimTypes.Role, role!));
-//				}
-//			}
-//		}
+		/// <summary>
+		/// Handles the OnTokenValidated event - logs successful authentication.
+		/// </summary>
+		protected Task HandleOnTokenValidated(TokenValidatedContext context)
+		{
+			var authorizationString = context.Request.Headers.Authorization.ToString();
+			context.Principal = this.GetJwtPrincipal(context.Principal, authorizationString);
+			context.HttpContext.User = context.Principal ?? context.HttpContext.User;
 
-//		/// <summary>
-//		/// Add scopes to the claims collection from the supplied scope token.
-//		/// </summary>
-//		/// <param name="claims">
-//		/// The collection of claims to add to.
-//		/// </param>
-//		/// <param name="scopeToken">
-//		/// The scope token containing scopes.
-//		/// </param>
-//		protected void AddScopes(ICollection<Claim> claims, JToken scopeToken)
-//		{
-//			var scopeValues = scopeToken.Type == JTokenType.String
-//				? scopeToken.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries)
-//				: scopeToken.Values<string>();
+			var userId = context.Principal?.FindFirst(SecurityConstants.PreferredUsernameClaimType)?.Value;
 
-//			foreach (var scope in scopeValues.Where(scope => !string.IsNullOrWhiteSpace(scope)))
-//			{
-//				claims.Add(new Claim("scope", scope!));
-//			}
-//		}
-//	}
-//}
+			this.Logger.LogInformation(
+				"Authentication succeeded for UserId: '{UserId}' from RemoteIp: '{RemoteIp}'",
+				userId ?? StringConstants.LogNull,
+				context.HttpContext.Connection.RemoteIpAddress);
+
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Determine if the supplied claim name is considered sensitive and should be redacted from logs.
+		/// </summary>
+		/// <param name="claimName">
+		/// The name of the claim to check.
+		/// </param>
+		/// <returns>
+		/// True if the claim is considered sensitive; otherwise, false.
+		/// </returns>
+		protected bool IsSensitiveJwtClaim(string claimName)
+		{
+			return claimName.Equals("sub", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("sid", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("jti", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("name", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("preferred_username", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("given_name", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("family_name", System.StringComparison.OrdinalIgnoreCase)
+				|| claimName.Equals("email", System.StringComparison.OrdinalIgnoreCase);
+		}
+
+		/// <summary>
+		/// Registers security-related singleton services.
+		/// </summary>
+		protected void RegisterSecurityServices()
+		{
+			this.ServiceCollection.AddSingleton(this.SecurityConfiguration);
+			this.ServiceCollection.AddSingleton<IAuthorizationHandler, HttpVerbRoleAuthorizationHandler>();
+			this.ServiceCollection.AddSingleton<IAuthorizationMiddlewareResultHandler, BypassOnInactiveAuthorizationMiddlewareResultHandler>();
+		}
+	}
+}
