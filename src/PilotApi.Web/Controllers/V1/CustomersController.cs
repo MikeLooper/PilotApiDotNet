@@ -131,7 +131,10 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			return this.Ok(new AddResponseString(retrieveResponse.Result));
+			return this.CreatedAtAction(
+				nameof(this.GetById), 
+				new { customerId = retrieveResponse.Result }, 
+				new AddResponseString(retrieveResponse.Result));
 		}
 
 		/// <summary>

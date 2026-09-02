@@ -130,7 +130,10 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			return this.Ok(new AddResponseInt(retrieveResponse.Result));
+			return this.CreatedAtAction(
+				nameof(this.GetById), 
+				new { shipperId = retrieveResponse.Result }, 
+				new AddResponseInt(retrieveResponse.Result));
 		}
 
 		/// <summary>

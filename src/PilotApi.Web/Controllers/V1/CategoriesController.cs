@@ -113,7 +113,7 @@ namespace PilotApi.Web.Controllers.V1
 		/// </returns>
 		[HttpPost]
 		[Route("add")]
-		[ProducesResponseType<AddResponseInt>(StatusCodes.Status200OK)]
+		[ProducesResponseType<AddResponseInt>(StatusCodes.Status201Created)]
 		public async Task<IActionResult> Add(
 			[Required][FromBody] CategoriesDto model,
 			CancellationToken cancellationToken)
@@ -130,7 +130,10 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			return this.Ok(new AddResponseInt(retrieveResponse.Result));
+			return this.CreatedAtAction(
+				nameof(this.GetById), 
+				new { categoryId = retrieveResponse.Result }, 
+				new AddResponseInt(retrieveResponse.Result));
 		}
 
 		/// <summary>
