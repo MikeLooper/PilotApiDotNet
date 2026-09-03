@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace PilotApi.Web.Controllers
 {
@@ -52,12 +51,5 @@ namespace PilotApi.Web.Controllers
 		/// </summary>
 		[FromHeader(Name = "ApiVersion")]
 		public string? ApiVersion { get; set; }
-
-		/// <summary>
-		/// Gets or sets the Authorization header to apply to an operation.
-		/// </summary>
-		[FromHeader(Name = "Authorization")]
-		[Required]
-		public string? Authorization { get; set; }
 	}
 }

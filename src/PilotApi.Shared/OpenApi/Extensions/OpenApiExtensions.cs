@@ -95,6 +95,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 						// transformers
 						options.AddOperationTransformer<GlobalOperationTransformer>();
 						options.AddDocumentTransformer(new DocumentInfoTransformer(serviceProvider, description.ApiVersion));
+						options.AddDocumentTransformer<DocumentSecuritySchemeTransformer>();
 
 						var xmlFilename = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
 						var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
