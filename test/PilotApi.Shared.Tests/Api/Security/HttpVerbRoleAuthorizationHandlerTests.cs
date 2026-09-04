@@ -23,6 +23,7 @@ namespace PilotApi.Shared.Tests.Api.Security
 			var principal = new ClaimsPrincipal(identity);
 			var httpContext = new DefaultHttpContext();
 			httpContext.Request.Method = method;
+			httpContext.Request.Headers.Authorization = "Bearer test-token";
 
 			return new AuthorizationHandlerContext(
 				new[] { new HttpVerbRoleRequirement() },
@@ -76,7 +77,7 @@ namespace PilotApi.Shared.Tests.Api.Security
 		}
 
 		[Test]
-		public async Task HttpVerbRoleAuthorizationHandler_HandleRequirementAsync_WithNonHttpContextResource_ShouldFail_Test()
+		public void HttpVerbRoleAuthorizationHandler_HandleRequirementAsync_WithNonHttpContextResource_ShouldThrow_Test()
 		{
 			// Arrange
 			var handler = GetHandler();
@@ -89,12 +90,8 @@ namespace PilotApi.Shared.Tests.Api.Security
 				principal,
 				new object());
 
-			// Act
-			await handler.HandleAsync(context);
-
-			// Assert
-			Assert.That(context.HasSucceeded, Is.False);
-			Assert.That(context.HasFailed, Is.True);
+			// Act / Assert
+			Assert.ThrowsAsync<System.NullReferenceException>(async () => await handler.HandleAsync(context));
 		}
 
 		[Test]

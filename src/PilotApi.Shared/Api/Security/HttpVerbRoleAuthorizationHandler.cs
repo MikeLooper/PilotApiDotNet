@@ -37,6 +37,13 @@ namespace PilotApi.Shared.Api.Security
 			var httpContext = context.Resource as HttpContext
 				?? (context.Resource as AuthorizationFilterContext)?.HttpContext;
 
+			var authorizationString = httpContext.Request.Headers.Authorization.ToString();
+			if (string.IsNullOrWhiteSpace(authorizationString))
+			{
+				context.Fail(new AuthorizationFailureReason(this, "The Authorization request header is empty."));
+				return Task.CompletedTask;
+			}
+			
 			if (httpContext == null)
 			{
 				context.Fail(new AuthorizationFailureReason(this, "Unable to resolve the current HTTP context."));

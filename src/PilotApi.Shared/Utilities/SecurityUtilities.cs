@@ -49,5 +49,36 @@ namespace PilotApi.Shared.Utilities
 
 			return connectionStringCleaned.ToString();
 		}
+
+		/// <summary>
+		/// Return a value after redacting.
+		/// </summary>
+		/// <param name="sourceValue">
+		/// The source value to clean.
+		/// </param>
+		/// <param name="edgeInclusions">
+		/// The number of characters to include at the edges of the source value.
+		/// Default = 4. If the source value is shorter than (edgeInclusions * 2), the entire value will be redacted.
+		/// </param>
+		/// <returns>
+		/// A cleaned value with the edges included and the middle redacted.
+		/// If a null or white spaces are passed in, the return value will be "-Empty-".
+		/// </returns>
+		public static string Redact(string? sourceValue, int edgeInclusions = 4)
+		{
+			if (string.IsNullOrWhiteSpace(sourceValue))
+			{
+				return StringConstants.LogEmpty;
+			}
+
+			if (edgeInclusions <= 0 || sourceValue.Length <= (edgeInclusions * 2))
+			{
+				return StringConstants.Redacted;
+			}
+
+			var prefix = sourceValue[..edgeInclusions];
+			var suffix = sourceValue[^edgeInclusions..];
+			return $"{prefix}{StringConstants.Redacted}{suffix}";
+		}
 	}
 }

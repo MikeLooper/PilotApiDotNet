@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using PilotApi.Shared.Api.Security;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration;
+using PilotApi.Shared.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -163,12 +164,12 @@ namespace PilotApi.Shared.Helpers
 		{
 			if (string.IsNullOrWhiteSpace(authorizationHeaderValue))
 			{
-				return authorizationHeaderValue ?? string.Empty;
+				return StringConstants.LogEmpty;
 			}
 
 			if (!authorizationHeaderValue.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
 			{
-				return StringConstants.Redacted;
+				return SecurityUtilities.Redact(authorizationHeaderValue, edgeInclusions);
 			}
 
 			var token = authorizationHeaderValue["Bearer ".Length..];
@@ -193,22 +194,26 @@ namespace PilotApi.Shared.Helpers
 		/// </returns>
 		protected string CleanJwtToken(string? authorizationString)
 		{
-			if (string.IsNullOrWhiteSpace(authorizationString) ||
-				!authorizationString.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
+			if (string.IsNullOrWhiteSpace(authorizationString))
 			{
-				return StringConstants.Redacted;
+				return StringConstants.LogEmpty;
+			}
+
+			if (!authorizationString.StartsWith("Bearer ", System.StringComparison.OrdinalIgnoreCase))
+			{
+				return SecurityUtilities.Redact(authorizationString);
 			}
 
 			var jwt = authorizationString["Bearer ".Length..].Trim();
 			if (string.IsNullOrWhiteSpace(jwt))
 			{
-				return StringConstants.Redacted;
+				return StringConstants.LogEmpty;
 			}
 
 			var handler = new JwtSecurityTokenHandler();
 			if (!handler.CanReadToken(jwt))
 			{
-				return StringConstants.Redacted;
+				return SecurityUtilities.Redact(jwt);
 			}
 
 			var token = handler.ReadJwtToken(jwt);
@@ -397,11 +402,14 @@ namespace PilotApi.Shared.Helpers
 					baseIdentity.NameClaimType,
 					baseIdentity.RoleClaimType);
 
-			foreach (var claim in GetJwtClaims(authorizationString))
+			if (!string.IsNullOrWhiteSpace(authorizationString))
 			{
-				if (!enrichedIdentity.HasClaim(claim.Type, claim.Value))
+				foreach (var claim in GetJwtClaims(authorizationString))
 				{
-					enrichedIdentity.AddClaim(claim);
+					if (!enrichedIdentity.HasClaim(claim.Type, claim.Value))
+					{
+						enrichedIdentity.AddClaim(claim);
+					}
 				}
 			}
 
