@@ -37,6 +37,10 @@ namespace PilotApi.Shared.Configuration
 
 		/// <inheritdoc/>
 		[JsonProperty]
+		public string? PublicBaseUrl { get; set; }
+
+		/// <inheritdoc/>
+		[JsonProperty]
 		public string? Realm { get; set; }
 
 		/// <inheritdoc/>
@@ -55,10 +59,15 @@ namespace PilotApi.Shared.Configuration
 		public string Authority => $"{this.BaseUrl?.TrimEnd('/')}/realms/{this.Realm}";
 
 		/// <inheritdoc/>
+		public string PublicAuthority =>
+			$"{(string.IsNullOrWhiteSpace(this.PublicBaseUrl) ? this.BaseUrl : this.PublicBaseUrl)?.TrimEnd('/')}/realms/{this.Realm}";
+
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.Active)}={this.Active}, " +
 				$"{nameof(this.BaseUrl)}={this.BaseUrl}, " +
+				$"{nameof(this.PublicBaseUrl)}={this.PublicBaseUrl}, " +
 				$"{nameof(this.Realm)}={this.Realm}, " +
 				$"{nameof(this.ClientId)}={this.ClientId}, " +
 				$"{nameof(this.RequireHttpsMetadata)}={this.RequireHttpsMetadata}, " +
@@ -113,6 +122,7 @@ namespace PilotApi.Shared.Configuration
 
 			this.Active = sourceConfiguration.Active;
 			this.BaseUrl = sourceConfiguration.BaseUrl;
+			this.PublicBaseUrl = sourceConfiguration.PublicBaseUrl;
 			this.Realm = sourceConfiguration.Realm;
 			this.ClientId = sourceConfiguration.ClientId;
 			this.RequireHttpsMetadata = sourceConfiguration.RequireHttpsMetadata;

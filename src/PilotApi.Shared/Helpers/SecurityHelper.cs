@@ -293,7 +293,7 @@ namespace PilotApi.Shared.Helpers
 			return new TokenValidationParameters
 			{
 				ValidateIssuer = true,
-				ValidIssuer = this.SecurityConfiguration.Authority,
+				ValidIssuer = this.SecurityConfiguration.PublicAuthority,
 				ValidateAudience = true,
 				AudienceValidator = (audiences, token, validationParameters) =>
 				{

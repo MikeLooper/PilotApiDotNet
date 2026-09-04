@@ -31,7 +31,8 @@ namespace PilotApi.Shared.Tests.Configuration
 			var sourceConfiguration = new SecurityConfiguration
 			{
 				Active = false,
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://local-keycloak:8080",
+				PublicBaseUrl = "http://localhost:55001",
 				Realm = "local-realm",
 				ClientId = "local-client",
 				RequireHttpsMetadata = true,
@@ -43,7 +44,8 @@ namespace PilotApi.Shared.Tests.Configuration
 
 			// Assert
 			Assert.That(result.Active, Is.False);
-			Assert.That(result.BaseUrl, Is.EqualTo("http://localhost:55001"));
+			Assert.That(result.BaseUrl, Is.EqualTo("http://local-keycloak:8080"));
+			Assert.That(result.PublicBaseUrl, Is.EqualTo("http://localhost:55001"));
 			Assert.That(result.Realm, Is.EqualTo("local-realm"));
 			Assert.That(result.ClientId, Is.EqualTo("local-client"));
 			Assert.That(result.RequireHttpsMetadata, Is.True);
@@ -102,6 +104,59 @@ namespace PilotApi.Shared.Tests.Configuration
 		}
 
 		[Test]
+		public void SecurityConfiguration_PublicAuthority_WithoutPublicBaseUrl_ShouldFallBackToBaseUrl_Test()
+		{
+			// Arrange
+			var config = new SecurityConfiguration
+			{
+				BaseUrl = "http://localhost:55001",
+				Realm = "local-realm"
+			};
+
+			// Act
+			var result = config.PublicAuthority;
+
+			// Assert
+			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+		}
+
+		[Test]
+		public void SecurityConfiguration_PublicAuthority_WithPublicBaseUrl_ShouldComputeFromPublicBaseUrlAndRealm_Test()
+		{
+			// Arrange
+			var config = new SecurityConfiguration
+			{
+				BaseUrl = "http://local-keycloak:8080",
+				PublicBaseUrl = "http://localhost:55001",
+				Realm = "local-realm"
+			};
+
+			// Act
+			var result = config.PublicAuthority;
+
+			// Assert
+			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+		}
+
+		[Test]
+		public void SecurityConfiguration_PublicAuthority_WithTrailingSlashOnPublicBaseUrl_ShouldNotDoubleSlash_Test()
+		{
+			// Arrange
+			var config = new SecurityConfiguration
+			{
+				BaseUrl = "http://local-keycloak:8080",
+				PublicBaseUrl = "http://localhost:55001/",
+				Realm = "local-realm"
+			};
+
+			// Act
+			var result = config.PublicAuthority;
+
+			// Assert
+			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+		}
+
+		[Test]
 		public void SecurityConfiguration_Properties_CanBeSet_Test()
 		{
 			// Arrange
@@ -110,6 +165,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Act
 			config.Active = false;
 			config.BaseUrl = "http://local-keycloak:8080";
+			config.PublicBaseUrl = "http://localhost:55001";
 			config.Realm = "local-realm";
 			config.ClientId = "local-client";
 			config.RequireHttpsMetadata = true;
@@ -118,6 +174,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Assert
 			Assert.That(config.Active, Is.False);
 			Assert.That(config.BaseUrl, Is.EqualTo("http://local-keycloak:8080"));
+			Assert.That(config.PublicBaseUrl, Is.EqualTo("http://localhost:55001"));
 			Assert.That(config.Realm, Is.EqualTo("local-realm"));
 			Assert.That(config.ClientId, Is.EqualTo("local-client"));
 			Assert.That(config.RequireHttpsMetadata, Is.True);
@@ -131,7 +188,8 @@ namespace PilotApi.Shared.Tests.Configuration
 			var config = new SecurityConfiguration
 			{
 				Active = true,
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://local-keycloak:8080",
+				PublicBaseUrl = "http://localhost:55001",
 				Realm = "local-realm",
 				ClientId = "local-client",
 				RequireHttpsMetadata = false,
@@ -144,7 +202,8 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Assert
 			Assert.NotNull(result);
 			Assert.That(result, Does.Contain("Active=True"));
-			Assert.That(result, Does.Contain("BaseUrl=http://localhost:55001"));
+			Assert.That(result, Does.Contain("BaseUrl=http://local-keycloak:8080"));
+			Assert.That(result, Does.Contain("PublicBaseUrl=http://localhost:55001"));
 			Assert.That(result, Does.Contain("Realm=local-realm"));
 			Assert.That(result, Does.Contain("ClientId=local-client"));
 			Assert.That(result, Does.Contain("RequireHttpsMetadata=False"));
