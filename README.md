@@ -496,14 +496,49 @@ Examples fro the above:
 | 25384 | Docker Desktop Backend |
 | 46888 | Windows Subsystem for Linux |
 
-#### Tracing Logging
+## OpenTelemetry
 
-You can also add tracing with this command, added to the PilotApi.Shared.OpenApi.Extensions.OpenTelemetryExtensions.OpenTelemetryWebApplicationBuilder(...) method.
+The application exports traces, metrics, and logs via OpenTelemetry (OTEL) auto-instrumentation.
+
+Telemetry is sent over OTLP/gRPC to a local OpenTelemetry Collector, which routes it to a Grafana LGTM stack (Tempo for traces, Mimir for metrics, Loki for logs):
+
 ```
-OpenTelemetry.Sdk.SetDefaultTextMapPropagator(new TraceContextPropagator());
+PilotApiDotNet --OTLP/gRPC--> otel-collector --> Tempo / Mimir / Loki --> Grafana
 ```
 
-### Deployment
+View traces, metrics, and logs in Grafana at `http://localhost:3000`.
+
+### Querying Logs in Grafana
+
+Application logs land in Loki. In Grafana, open **Explore**, select the **Loki** datasource, and query using [LogQL](https://grafana.com/docs/loki/latest/query/), filtering on these labels:
+
+| Label | Example value | Purpose |
+|---|---|---|
+| `service_name` | `PilotApiDotNet` | Scope to this API |
+| `deployment_environment` | `development` / `production` | Filter by environment (from `OTEL_DEPLOYMENT_ENVIRONMENT`) |
+| `detected_level` / `severity_text` | `info`, `warn`, `error` | Filter by log level |
+| `code_namespace` | `PilotApi.Shared.Helpers.SecurityHelper` | Filter by originating Java class |
+| `host_name` | *(machine name)* | Filter by the host the API ran on |
+
+Example queries:
+
+```logql
+# All PilotApiDotNet logs
+{service_name="PilotApiDotNet"}
+
+# Errors and warnings only
+{service_name="PilotApiDotNet", detected_level=~"error|warn"}
+
+# Logs from a specific class
+{service_name="PilotApiDotNet", code_namespace="PilotApi.Shared.Helpers.SecurityHelper"}
+
+# Production logs mentioning a specific route
+{service_name="PilotApiDotNet", deployment_environment="production"} |= "/v1/categories"
+```
+
+Each log entry also carries `trace_id`/`span_id` (when logged within a traced request), so you can jump from a log line directly to its trace in Tempo.
+
+## Deployment
 
 This application will be deployed to a Docker container.
 Deploy instructions can be found in the [Docker README](..\docker\README.md).
