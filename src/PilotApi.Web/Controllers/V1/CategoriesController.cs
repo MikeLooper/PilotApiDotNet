@@ -1,5 +1,4 @@
 ﻿using Asp.Versioning;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PilotApi.Domain.Contracts.Services;
@@ -48,9 +47,11 @@ namespace PilotApi.Web.Controllers.V1
 		[Route("get-all")]
 		[ProducesResponseType<List<CategoriesDto>>(StatusCodes.Status200OK)]
 		public async Task<IActionResult?> GetAll(
-			CancellationToken cancellationToken)
+			[FromQuery] int page = 0,
+			[FromQuery] int pageSize = 20,
+			CancellationToken cancellationToken = default)
 		{
-			var retrieveResponse = await this.Service.GetAllAsync(cancellationToken);
+			var retrieveResponse = await this.Service.GetAllAsync(page, pageSize, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -114,7 +115,7 @@ namespace PilotApi.Web.Controllers.V1
 		/// </returns>
 		[HttpPost]
 		[Route("add")]
-		[ProducesResponseType<AddResponseInt>(StatusCodes.Status200OK)]
+		[ProducesResponseType<AddResponseInt>(StatusCodes.Status201Created)]
 		public async Task<IActionResult> Add(
 			[Required][FromBody] CategoriesDto model,
 			CancellationToken cancellationToken)
@@ -131,7 +132,10 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			return this.Ok(new AddResponseInt(retrieveResponse.Result));
+			return this.CreatedAtAction(
+				nameof(this.GetById), 
+				new { categoryId = retrieveResponse.Result }, 
+				new AddResponseInt(retrieveResponse.Result));
 		}
 
 		/// <summary>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PilotApi.Domain.Contracts.DataSource;
@@ -9,6 +10,7 @@ using PilotApi.Repositories.Handlers;
 using PilotApi.Repositories.Repositories;
 using PilotApi.Services.Contracts;
 using PilotApi.Services.Handlers;
+using PilotApi.Services.Security;
 using PilotApi.Services.Services;
 using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Contracts.Configuration;
@@ -90,6 +92,9 @@ namespace PilotApi.Services.Extensions
 			builder.Services.AddTransient<IProductsRepository, ProductsRepository>();
 			builder.Services.AddTransient<IShippersRepository, ShippersRepository>();
 			builder.Services.AddTransient<ISuppliersRepository, SuppliersRepository>();
+			builder.Services.AddTransient<IUserRolesRepository, UserRolesRepository>();
+
+			builder.Services.AddScoped<IClaimsTransformation, PreferredUsernameRoleClaimsTransformation>();
 
 			builder.Services.AddTransient<ICategoriesService, CategoriesService>();
 			builder.Services.AddTransient<ICustomersService, CustomersService>();

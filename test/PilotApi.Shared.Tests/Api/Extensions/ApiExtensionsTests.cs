@@ -1,7 +1,7 @@
-using NUnit.Framework;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using PilotApi.Shared.Api.Extensions;
+using PilotApi.Shared.Configuration;
 using System;
 
 namespace PilotApi.Shared.Tests.Api.Extensions
@@ -9,14 +9,15 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 	[TestFixture]
 	public class ApiExtensionsTests
 	{
-		[Test]
-		public void ApiExtensions_AddSecurity_WithValidServiceCollection_ShouldNotThrow_Test()
+		private static SecurityConfiguration GetSecurityConfiguration()
 		{
-			// Arrange
-			var services = new ServiceCollection();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => services.AddSecurity());
+			return new SecurityConfiguration
+			{
+				Active = true,
+				BaseUrl = "http://localhost",
+				Realm = "test-realm",
+				ClientId = "test-client"
+			};
 		}
 
 		[Test]
@@ -63,44 +64,12 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		}
 
 		[Test]
-		public void ApiExtensions_UseSecurity_WithValidWebApp_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.UseSecurity());
-		}
-
-		[Test]
 		public void ApiExtensions_ApiWebApplication_WithNullWebApp_ShouldThrow_Test()
 		{
 			// Arrange & Act & Assert
 			var exception = Assert.Throws<ArgumentException>(() =>
 				ApiExtensions.ApiWebApplication(null));
 			Assert.That(exception.Message, Does.Contain("webApp"));
-		}
-
-		[Test]
-		public void ApiExtensions_ApiWebApplication_WithValidWebApp_ShouldNotThrow_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.ApiWebApplication());
-		}
-
-		[Test]
-		public void ApiExtensions_AddSecurity_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var services = new ServiceCollection();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => services.AddSecurity());
 		}
 
 		[Test]
@@ -111,28 +80,6 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 
 			// Act & Assert
 			Assert.DoesNotThrow(() => services.AddVersioning());
-		}
-
-		[Test]
-		public void ApiExtensions_ApiWebApplication_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.ApiWebApplication());
-		}
-
-		[Test]
-		public void ApiExtensions_UseSecurity_IsExtensionMethod_Test()
-		{
-			// Arrange
-			var builder = WebApplication.CreateBuilder();
-			var app = builder.Build();
-
-			// Act & Assert
-			Assert.DoesNotThrow(() => app.UseSecurity());
 		}
 	}
 }

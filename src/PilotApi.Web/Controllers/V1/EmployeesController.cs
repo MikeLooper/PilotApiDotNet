@@ -48,9 +48,11 @@ namespace PilotApi.Web.Controllers.V1
 		[Route("get-all")]
 		[ProducesResponseType<IList<EmployeesDto>>(StatusCodes.Status200OK)]
 		public async Task<IActionResult?> GetAll(
-			CancellationToken cancellationToken)
+			[FromQuery] int page = 0,
+			[FromQuery] int pageSize = 20,
+			CancellationToken cancellationToken = default)
 		{
-			var retrieveResponse = await this.Service.GetAllAsync(cancellationToken);
+			var retrieveResponse = await this.Service.GetAllAsync(page, pageSize, cancellationToken);
 			if (retrieveResponse.IsError)
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
@@ -131,7 +133,10 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			return this.Ok(new AddResponseInt(retrieveResponse.Result));
+			return this.CreatedAtAction(
+				nameof(this.GetById), 
+				new { employeeId = retrieveResponse.Result }, 
+				new AddResponseInt(retrieveResponse.Result));
 		}
 
 		/// <summary>

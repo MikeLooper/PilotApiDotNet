@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PilotApi.Web.Controllers
@@ -41,7 +41,9 @@ namespace PilotApi.Web.Controllers
 	[Produces("application/json")]
 	[Consumes("application/json")]
 	[Route("v{version:apiVersion}/[controller]")]
-	[AllowAnonymous]
+	[ProducesResponseType<string>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<string>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 	public class SimpleControllerBase : Controller
 	{
 		/// <summary>

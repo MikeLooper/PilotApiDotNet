@@ -7,7 +7,7 @@ using PilotApi.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PilotApi.Web.Tests.Middleware
@@ -26,25 +26,21 @@ namespace PilotApi.Web.Tests.Middleware
 			var logger = loggerFactory.CreateLogger<UnhandledExceptionMiddleware>();
 			var middleware = new UnhandledExceptionMiddleware(next, logger);
 			var context = new DefaultHttpContext();
+			context.Response.Body = new MemoryStream();
 
 			// Act
-			var exception = Assert.ThrowsAsync<UserException>(async () => await middleware.InvokeAsync(context));
+			await middleware.InvokeAsync(context);
 
 			// Assert
-			Assert.NotNull(exception);
 			Assert.That(loggerProvider.Entries, Has.Count.EqualTo(1));
 
 			var logEntry = loggerProvider.Entries[0];
 			Assert.That(logEntry.Exception, Is.SameAs(originalException));
 			Assert.That(logEntry.Message, Does.StartWith("An error occurred."));
-
-			var match = Regex.Match(exception!.Message, @"correlation ID: ([0-9a-fA-F-]+)");
-			Assert.That(match.Success, Is.True);
-			Assert.That(logEntry.Message, Does.Contain(match.Groups[1].Value));
 		}
 
 		[Test]
-		public async Task UnhandledExceptionMiddleware_InvokeAsync_WhenNextThrows_ShouldThrowUserException_Test()
+		public async Task UnhandledExceptionMiddleware_InvokeAsync_WhenNextThrows_ShouldWriteInternalServerErrorProblemDetails_Test()
 		{
 			// Arrange
 			var originalException = new InvalidOperationException("Unhandled failure");
@@ -54,14 +50,25 @@ namespace PilotApi.Web.Tests.Middleware
 			var logger = loggerFactory.CreateLogger<UnhandledExceptionMiddleware>();
 			var middleware = new UnhandledExceptionMiddleware(next, logger);
 			var context = new DefaultHttpContext();
+			context.Request.Path = "/test/path";
+			context.Response.Body = new MemoryStream();
 
 			// Act
-			var exception = Assert.ThrowsAsync<UserException>(async () => await middleware.InvokeAsync(context));
+			await middleware.InvokeAsync(context);
 
 			// Assert
-			Assert.NotNull(exception);
-			Assert.That(exception?.Message, Does.StartWith("An error occurred. The details can be found in the log with the following correlation ID: "));
-			Assert.That(exception?.InnerException, Is.SameAs(originalException));
+			Assert.That(context.Response.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+			Assert.That(context.Response.ContentType, Does.StartWith("application/json"));
+
+			context.Response.Body.Position = 0;
+			using var reader = new StreamReader(context.Response.Body);
+			var responseBody = await reader.ReadToEndAsync();
+			using var document = JsonDocument.Parse(responseBody);
+			var root = document.RootElement;
+			Assert.That(root.GetProperty("title").GetString(), Is.EqualTo("Internal Server Error"));
+			Assert.That(root.GetProperty("status").GetInt32(), Is.EqualTo(StatusCodes.Status500InternalServerError));
+			Assert.That(root.GetProperty("detail").GetString(), Does.StartWith("An error occurred. The error details can be found in the log with the following correlation ID: "));
+			Assert.That(root.GetProperty("instance").GetString(), Is.EqualTo("/test/path"));
 		}
 
 		[Test]
@@ -82,6 +89,7 @@ namespace PilotApi.Web.Tests.Middleware
 			// Assert
 			Assert.That(exception, Is.SameAs(originalException));
 		}
+
 		private sealed class CapturingLogger : ILogger
 		{
 			private readonly List<LogEntry> entries;
@@ -120,6 +128,7 @@ namespace PilotApi.Web.Tests.Middleware
 			{
 			}
 		}
+
 		private sealed class NullScope : IDisposable
 		{
 			public static NullScope Instance { get; } = new NullScope();

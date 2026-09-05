@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using PilotApi.Shared.Api.Middleware;
 using PilotApi.Shared.Api.Transformers;
 using PilotApi.Shared.Handlers;
+using PilotApi.Shared.Helpers;
 using PilotApi.Shared.Logging.Extensions;
 using PilotApi.Shared.OpenApi.Extensions;
 using PilotApi.Shared.Swagger.Extensions;
@@ -18,36 +19,6 @@ namespace PilotApi.Shared.Api.Extensions
 	/// </summary>
 	public static class ApiExtensions
 	{
-		/// <summary>
-		/// Add security processing via the ServiceCollection.
-		/// </summary>
-		/// <param name="services">
-		/// A list of service objects.
-		/// </param>
-		public static void AddSecurity(this IServiceCollection services)
-		{
-			//services.AddAuthentication(options =>
-			//{
-			//	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-			//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			//})
-			//.AddJwtBearer(options =>
-			//{
-			//	options.TokenValidationParameters = new TokenValidationParameters
-			//	{
-			//		ValidateIssuer = true,
-			//		ValidateAudience = true,
-			//		ValidateLifetime = true,
-			//		ValidateIssuerSigningKey = true,
-			//		ValidIssuer = builder.Configuration["Jwt:Issuer"],
-			//		ValidAudience = builder.Configuration["Jwt:Audience"],
-			//		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-			//	};
-			//});
-
-			//services.AddAuthorization();
-		}
-
 		/// <summary>
 		/// Add versioning processing.
 		/// </summary>
@@ -84,10 +55,10 @@ namespace PilotApi.Shared.Api.Extensions
 		/// <code>
 		/// // app: create
 		/// var webAppBuilder = WebApplication.CreateBuilder(args);
-		/// 
+		///
 		/// // app: build
 		/// var webApp = webAppBuilder.ApiWebApplication();
-		/// 
+		///
 		/// // shared: setups
 		/// webApp.UseLogging();
 		/// </code>
@@ -136,7 +107,7 @@ namespace PilotApi.Shared.Api.Extensions
 		/// <code>
 		/// // app: create
 		/// var webAppBuilder = WebApplication.CreateBuilder(args);
-		/// 
+		///
 		/// // shared: setups
 		/// webAppBuilder.ApiWebApplicationBuilder();
 		/// </code>
@@ -146,11 +117,14 @@ namespace PilotApi.Shared.Api.Extensions
 			if (builder == null)
 			{
 				throw new ArgumentException($"Invalid argument : {nameof(builder)}. "
-					+ $"A valid object type of: '{typeof(IServiceCollection)}' is needed to continue. ({nameof(ApiExtensions)})");
+					+ $"A valid object type of: '{typeof(WebApplicationBuilder)}' is needed to continue. ({nameof(ApiExtensions)})");
 			}
 
+			// security
+			var securityHelper = new SecurityHelper(builder.Services);
+			securityHelper.AddSecurity();
+
 			// standard
-			builder.Services.AddSecurity();
 			builder.Services.AddVersioning();
 			builder.Services.AddControllers(options =>
 			{
@@ -163,7 +137,7 @@ namespace PilotApi.Shared.Api.Extensions
 			builder.OpenTelemetryWebApplicationBuilder(serviceProvider);
 			builder.OpenApiWebApplicationBuilder(serviceProvider);
 			builder.LoggingWebApplicationBuilder();
-			
+
 			// services
 			builder.Services.AddTransient<ISqlBuilder, SqlBuilder>();
 		}
@@ -182,8 +156,8 @@ namespace PilotApi.Shared.Api.Extensions
 					+ $"A valid object type of: '{typeof(WebApplication)}' is needed to continue. ({nameof(ApiExtensions)})");
 			}
 
-			//webApp.UseAuthentication();
-			//webApp.UseAuthorization();
+			webApp.UseAuthentication();
+			webApp.UseAuthorization();
 		}
 	}
 }

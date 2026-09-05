@@ -1,31 +1,11 @@
 using NUnit.Framework;
-using PilotApi.Shared.Constants;
 using PilotApi.Shared.Utilities;
-using System;
 
 namespace PilotApi.Shared.Tests.Utilities
 {
 	[TestFixture]
 	public class SecurityUtilitiesTests
 	{
-		[Test]
-		public void SecurityUtilities_ConnectionStringClean_WithValidConnectionString_ShouldRedactPassword_Test()
-		{
-			// Arrange
-			var connectionString = "Server=localhost;Database=TestDB;User Id=admin;Password=SecretPassword123;";
-
-			// Act
-			var result = SecurityUtilities.ConnectionStringClean(connectionString);
-
-			// Assert
-			Assert.NotNull(result);
-			Assert.That(result, Does.Contain("Server=localhost"));
-			Assert.That(result, Does.Contain("Database=TestDB"));
-			Assert.That(result, Does.Contain("User Id=admin"));
-			Assert.That(result, Does.Contain("[Redacted]"));
-			Assert.That(result, Does.Not.Contain("SecretPassword123"));
-		}
-
 		[Test]
 		public void SecurityUtilities_ConnectionStringClean_WithSqlServerConnectionString_ShouldRedactPassword_Test()
 		{

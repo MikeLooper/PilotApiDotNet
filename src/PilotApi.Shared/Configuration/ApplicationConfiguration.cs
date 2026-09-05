@@ -19,6 +19,7 @@ namespace PilotApi.Shared.Configuration
 		{
 			this.DataConnections = new List<DataConnectionConfiguration>();
 			this.DataSources = new List<DataSourceConfiguration>();
+			this.Security = new SecurityConfiguration();
 			this.OpenApi = new OpenApiConfiguration();
 			this.OpenTelemetry = new OpenTelemetryConfiguration();
 		}
@@ -50,6 +51,10 @@ namespace PilotApi.Shared.Configuration
 
 		/// <inheritdoc/>
 		[JsonProperty]
+		public SecurityConfiguration? Security { get; set; }
+
+		/// <inheritdoc/>
+		[JsonProperty]
 		public OpenApiConfiguration? OpenApi { get; set; }
 
 		/// <inheritdoc/>
@@ -69,6 +74,7 @@ namespace PilotApi.Shared.Configuration
 			return $"{nameof(this.Active)}={this.Active}, " +
 				$"{nameof(this.DataConnections)}=[{this.DataConnections}], " +
 				$"{nameof(this.DataSources)}=[{this.DataSources}], " +
+				$"{nameof(this.Security)}=[{this.Security}], " +
 				$"{nameof(this.OpenApi)}=[{this.OpenApi}], " +
 				$"{nameof(this.OpenTelemetry)}=[{this.OpenTelemetry}]";
 		}
@@ -134,6 +140,17 @@ namespace PilotApi.Shared.Configuration
 				}
 			}
 
+			if (this.Security == null)
+			{
+				exceptions.Add(
+					new ConfigurationException(
+						$"The {nameof(this.Security)} property is required and cannot be null or empty ({this.GetType().Name})"));
+			}
+			else
+			{
+				this.Security.Validate(ref exceptions);
+			}
+
 			if (this.OpenApi == null)
 			{
 				exceptions.Add(
@@ -197,6 +214,7 @@ namespace PilotApi.Shared.Configuration
 			this.DataSources = sourceConfiguration.DataSources
 				?.Select(s => new DataSourceConfiguration(s))
 				.ToList();
+			this.Security = new SecurityConfiguration(sourceConfiguration.Security);
 			this.OpenApi = new OpenApiConfiguration(sourceConfiguration.OpenApi);
 			this.OpenTelemetry = new OpenTelemetryConfiguration(sourceConfiguration.OpenTelemetry);
 		}

@@ -30,6 +30,14 @@ namespace PilotApi.Shared.Contracts.Configuration
 	///				"Schema": "dbo"
 	///			}
 	///		],
+	///		"Security": {
+	///			"Active": true,
+	///			"BaseUrl": "http://localhost:55001",
+	///			"Realm": "local-realm",
+	///			"ClientId": "local-client",
+	///			"RequireHttpsMetadata": false,
+	///			"ClockSkewSeconds": 60
+	///		},
 	///		"OpenApi": {
 	///			"Title": "PilotApi",
 	///			"Contact": {
@@ -60,6 +68,11 @@ namespace PilotApi.Shared.Contracts.Configuration
 		/// Gets or sets the list of data source configurations for the application.
 		/// </summary>
 		List<DataSourceConfiguration>? DataSources { get; set; }
+
+		/// <summary>
+		/// Gets or sets an object with Security settings.
+		/// </summary>
+		SecurityConfiguration? Security { get; set; }
 
 		/// <summary>
 		/// Gets or sets an object with OpenApi settings.

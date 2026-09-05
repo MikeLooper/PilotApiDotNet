@@ -29,13 +29,19 @@ namespace PilotApi.Domain.Contracts.Services.Base
 		/// <summary>
 		/// Gets all DTO objects of the given type.
 		/// </summary>
+		/// <param name="page">
+		/// The target page index. Use 0 to return all rows without paging.
+		/// </param>
+		/// <param name="pageSize">
+		/// The number of items to return per page.
+		/// </param>
 		/// <param name="cancellationToken">
 		/// A token that can be used to cancel the operation.
 		/// </param>
 		/// <returns>
 		/// A collection of DTO objects of the given type, or null if no objects were found.
 		/// </returns>
-		Task<RetrieveResponse<List<TDto>>?> GetAllAsync(CancellationToken cancellationToken = default);
+		Task<RetrieveResponse<List<TDto>>?> GetAllAsync(int page = 0, int pageSize = 20, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets a DTO object of the given type by its ID.

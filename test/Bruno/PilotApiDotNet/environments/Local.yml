@@ -1,5 +1,5 @@
 name: Local
 variables:
   - name: Host
-    value: http://localhost:55001/
-    description: ""
+    value: http://localhost:55099/
+    description: "The base URL for the API under test"

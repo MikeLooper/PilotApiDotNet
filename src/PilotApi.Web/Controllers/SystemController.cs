@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using PilotApi.Domain.Models.Dto;
 using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Contracts.Configuration;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.Utilities;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PilotApi.Web.Controllers
@@ -19,6 +21,7 @@ namespace PilotApi.Web.Controllers
 	[Consumes("application/json")]
 	[ApiVersionNeutral]
 	[AllowAnonymous]
+	[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 
 	public class SystemController : Controller
 	{
@@ -42,12 +45,12 @@ namespace PilotApi.Web.Controllers
 		/// Return an OK.
 		/// </summary>
 		/// <returns>
-		/// A read only list of all DTO objects from the category table, or null if no objects exist.
+		/// A status of the current system.
 		/// </returns>
 		[HttpGet]
 		[Route("healthcheck")]
 		[ProducesResponseType<string>(StatusCodes.Status200OK)]
-		public async Task<IActionResult?> GetAll()
+		public async Task<IActionResult?> Healthcheck()
 		{
 			return this.Ok("OK");
 		}
@@ -68,13 +71,21 @@ namespace PilotApi.Web.Controllers
 			[FromQuery(Name = "show-details")] bool showDetails = false)
 		{
 			var name = this.ApplicationConfiguration.OpenApi.Title;
+			var activeDataConnection = this.ApplicationConfiguration.DataConnections?.FirstOrDefault(f => f.Active);
+			var currentDataSource = activeDataConnection == null
+				? null 
+				: this.ApplicationConfiguration.GetDataSource(activeDataConnection.DataSourceName);
+			var databaseType = currentDataSource?.DataSourceEnum == DataSourceTypes.PostgreSQL 
+				? "PostgreSQL" 
+				: "SQL Server";
+			var aboutName = $"{name} ({databaseType})";
 			var appVersion = this.ApplicationConfiguration.OpenApi.Version;
 			var buildVersion = FileUtilities.GetApplicationVersion();
 			var deployDate = Environment.GetEnvironmentVariable("APP_DEPLOY_DATE");
 
 			var aboutResponse  = new AboutResponse
 			{
-				Name = name,
+				Name = aboutName,
 				ApiVersion = appVersion,
 				BuildVersion = buildVersion,
 				DeployDate = deployDate,

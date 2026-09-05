@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -29,7 +30,6 @@ namespace PilotApi.Shared.OpenApi.Extensions
 		/// <param name="serviceProvider">
 		/// A <see cref="IServiceProvider"/> object.
 		/// </param>
-		/// <example>
 		/// <example>
 		/// Example usage:
 		/// <code>
@@ -95,6 +95,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 						// transformers
 						options.AddOperationTransformer<GlobalOperationTransformer>();
 						options.AddDocumentTransformer(new DocumentInfoTransformer(serviceProvider, description.ApiVersion));
+						options.AddDocumentTransformer<DocumentSecuritySchemeTransformer>();
 
 						var xmlFilename = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
 						var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
@@ -137,6 +138,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 			//if (webApp.Environment.IsDevelopment())
 
 			webApp.MapOpenApi()
+						.AllowAnonymous()
 						.CacheOutput();
 
 			// set display to look similar to Swagger
@@ -162,7 +164,8 @@ namespace PilotApi.Shared.OpenApi.Extensions
 				// OpenApiDisplayConstants .CustomCssFolderFilePath);
 				//options.WithCustomCss{uiCss);
 				options.WithTheme(ScalarTheme.BluePlanet);
-			});
+			})
+			.AllowAnonymous();
 		}
 	}
 }
