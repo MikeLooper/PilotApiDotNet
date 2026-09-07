@@ -15,6 +15,7 @@ namespace PilotApi.Web.Controllers.V1
 	/// A controller for accessing and manipulating OrderDetails data in the data store.
 	/// </summary>
 	[ApiVersion("1.0")]
+	[Route("v{version:apiVersion}/order-details")]
 	public class OrderDetailsController : SimpleControllerBase
 	{
 		/// <summary>
