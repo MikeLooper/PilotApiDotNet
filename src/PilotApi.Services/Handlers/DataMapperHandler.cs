@@ -16,7 +16,7 @@ namespace PilotApi.Services.Handlers
 	public class DataMapperHandler : IDataMapperHandler
 	{
 		/// <inheritdoc/>
-		public async Task<TEntity?> MapDtoToEntity<TDto, TEntity>(TDto? dto)
+		public async Task<TEntity?> MapDtoToEntityAsync<TDto, TEntity>(TDto? dto)
 			where TDto : IDtoBase
 			where TEntity : IEntityBase
 		{
@@ -67,7 +67,7 @@ namespace PilotApi.Services.Handlers
 		}
 
 		/// <inheritdoc/>
-		public async Task<TDto?> MapEntityToDto<TDto, TEntity>(TEntity? entity)
+		public async Task<TDto?> MapEntityToDtoAsync<TDto, TEntity>(TEntity? entity)
 			where TDto : IDtoBase
 			where TEntity : IEntityBase
 		{
@@ -118,7 +118,7 @@ namespace PilotApi.Services.Handlers
 		}
 
 		/// <inheritdoc/>
-		public async Task<IEnumerable<TDto>?> MapEntityToDtoList<TDto, TEntity>(IEnumerable<TEntity>? entities)
+		public async Task<IEnumerable<TDto>?> MapEntityToDtoListAsync<TDto, TEntity>(IEnumerable<TEntity>? entities)
 			where TDto : IDtoBase
 			where TEntity : IEntityBase
 		{
@@ -130,7 +130,7 @@ namespace PilotApi.Services.Handlers
 			var dtoList = new List<TDto>();
 			foreach (var entity in entities)
 			{
-				var dto = await MapEntityToDto<TDto, TEntity>(entity);
+				var dto = await MapEntityToDtoAsync<TDto, TEntity>(entity);
 				if (dto != null)
 				{
 					dtoList.Add(dto);

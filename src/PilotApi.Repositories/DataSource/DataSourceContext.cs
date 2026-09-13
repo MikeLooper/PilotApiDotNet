@@ -100,7 +100,7 @@ namespace PilotApi.Repositories.DataSource
 		protected ISqlBuilder SqlBuilder { get; }
 
 		/// <inheritdoc/>
-		public async Task Commit()
+		public async Task CommitAsync()
 		{
 			if (this.DataSourceTransaction != null)
 			{
@@ -154,7 +154,7 @@ namespace PilotApi.Repositories.DataSource
 		}
 
 		/// <inheritdoc/>
-		public async Task Rollback()
+		public async Task RollbackAsync()
 		{
 			if (this.DataSourceTransaction != null &&
 				this.DataSourceTransaction.Connection != null)

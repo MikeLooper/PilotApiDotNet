@@ -37,7 +37,7 @@ namespace PilotApi.Services.Tests.Handlers
 			CategoriesDto? dto = null;
 
 			// Act
-			CategoriesEntity? result = await handler.MapDtoToEntity<CategoriesDto, CategoriesEntity>(dto);
+			CategoriesEntity? result = await handler.MapDtoToEntityAsync<CategoriesDto, CategoriesEntity>(dto);
 
 			// Assert
 			Assert.That(result, Is.Null);
@@ -51,7 +51,7 @@ namespace PilotApi.Services.Tests.Handlers
 			CategoriesEntity? entity = null;
 
 			// Act
-			CategoriesDto? result = await handler.MapEntityToDto<CategoriesDto, CategoriesEntity>(entity);
+			CategoriesDto? result = await handler.MapEntityToDtoAsync<CategoriesDto, CategoriesEntity>(entity);
 
 			// Assert
 			Assert.That(result, Is.Null);
@@ -65,7 +65,7 @@ namespace PilotApi.Services.Tests.Handlers
 			IEnumerable<CategoriesEntity>? entities = null;
 
 			// Act
-			IEnumerable<CategoriesDto>? result = await handler.MapEntityToDtoList<CategoriesDto, CategoriesEntity>(entities);
+			IEnumerable<CategoriesDto>? result = await handler.MapEntityToDtoListAsync<CategoriesDto, CategoriesEntity>(entities);
 
 			// Assert
 			Assert.That(result, Is.Null);
@@ -85,7 +85,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			CategoriesEntity? result = await handler.MapDtoToEntity<CategoriesDto, CategoriesEntity>(dto);
+			CategoriesEntity? result = await handler.MapDtoToEntityAsync<CategoriesDto, CategoriesEntity>(dto);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -116,7 +116,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			CustomersDto? result = await handler.MapEntityToDto<CustomersDto, CustomersEntity>(entity);
+			CustomersDto? result = await handler.MapEntityToDtoAsync<CustomersDto, CustomersEntity>(entity);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -161,7 +161,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			EmployeesEntity? result = await handler.MapDtoToEntity<EmployeesDto, EmployeesEntity>(dto);
+			EmployeesEntity? result = await handler.MapDtoToEntityAsync<EmployeesDto, EmployeesEntity>(dto);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -200,7 +200,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			OrderDetailsDto? result = await handler.MapEntityToDto<OrderDetailsDto, OrderDetailsEntity>(entity);
+			OrderDetailsDto? result = await handler.MapEntityToDtoAsync<OrderDetailsDto, OrderDetailsEntity>(entity);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -235,7 +235,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			OrdersEntity? result = await handler.MapDtoToEntity<OrdersDto, OrdersEntity>(dto);
+			OrdersEntity? result = await handler.MapDtoToEntityAsync<OrdersDto, OrdersEntity>(dto);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -275,7 +275,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			ProductsDto? result = await handler.MapEntityToDto<ProductsDto, ProductsEntity>(entity);
+			ProductsDto? result = await handler.MapEntityToDtoAsync<ProductsDto, ProductsEntity>(entity);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -304,7 +304,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			ShippersEntity? result = await handler.MapDtoToEntity<ShippersDto, ShippersEntity>(dto);
+			ShippersEntity? result = await handler.MapDtoToEntityAsync<ShippersDto, ShippersEntity>(dto);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -335,7 +335,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			SuppliersDto? result = await handler.MapEntityToDto<SuppliersDto, SuppliersEntity>(entity);
+			SuppliersDto? result = await handler.MapEntityToDtoAsync<SuppliersDto, SuppliersEntity>(entity);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -365,7 +365,7 @@ namespace PilotApi.Services.Tests.Handlers
 			};
 
 			// Act
-			IEnumerable<CategoriesDto>? result = await handler.MapEntityToDtoList<CategoriesDto, CategoriesEntity>(entities);
+			IEnumerable<CategoriesDto>? result = await handler.MapEntityToDtoListAsync<CategoriesDto, CategoriesEntity>(entities);
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
@@ -382,7 +382,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var dto = new UnsupportedDto();
 
 			// Act
-			AsyncTestDelegate action = async () => await handler.MapDtoToEntity<UnsupportedDto, CategoriesEntity>(dto);
+			AsyncTestDelegate action = async () => await handler.MapDtoToEntityAsync<UnsupportedDto, CategoriesEntity>(dto);
 
 			// Assert
 			Assert.That(action, Throws.TypeOf<InvalidOperationException>());
@@ -396,7 +396,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var entity = new UnsupportedEntity();
 
 			// Act
-			AsyncTestDelegate action = async () => await handler.MapEntityToDto<CategoriesDto, UnsupportedEntity>(entity);
+			AsyncTestDelegate action = async () => await handler.MapEntityToDtoAsync<CategoriesDto, UnsupportedEntity>(entity);
 
 			// Assert
 			Assert.That(action, Throws.TypeOf<InvalidOperationException>());

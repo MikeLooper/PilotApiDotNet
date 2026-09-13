@@ -238,7 +238,7 @@ namespace PilotApi.Repositories.Tests.DataSource
 			dataSourceContext.DataSourceTransaction = fakeTransaction;
 
 			// Act
-			await dataSourceContext.Commit();
+			await dataSourceContext.CommitAsync();
 
 			// Assert
 			Assert.That(fakeTransaction.CommitCalled, Is.True);
@@ -256,7 +256,7 @@ namespace PilotApi.Repositories.Tests.DataSource
 			dataSourceContext.DataSourceTransaction = fakeTransaction;
 
 			// Act
-			await dataSourceContext.Rollback();
+			await dataSourceContext.RollbackAsync();
 
 			// Assert
 			Assert.That(fakeTransaction.RollbackCalled, Is.True);

@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using PilotApi.Domain.Contracts.DataSource;
 using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using PilotApi.Repositories.Contracts.Repository.Base;
 using PilotApi.Repositories.Handlers;
 using PilotApi.Repositories.Models.Base;
@@ -202,7 +203,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.GetAllAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -249,18 +250,18 @@ namespace PilotApi.Repositories.Repositories.Base
 				success = result > 0;
 				if (success)
 				{
-					await this.DataSourceContext.Commit();
+					await this.DataSourceContext.CommitAsync();
 				}
 				else
 				{
-					await this.DataSourceContext.Rollback();
+					await this.DataSourceContext.RollbackAsync();
 					errorMessage = $"Zero rows were deleted: {querySql}";
 				}
 			}
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.DeleteAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -303,7 +304,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.GetAllAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -352,7 +353,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.GetAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -440,17 +441,17 @@ namespace PilotApi.Repositories.Repositories.Base
 
 				if (success)
 				{
-					await this.DataSourceContext.Commit();
+					await this.DataSourceContext.CommitAsync();
 				}
 				else
 				{
-					await this.DataSourceContext.Rollback();
+					await this.DataSourceContext.RollbackAsync();
 				}
 			}
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.InsertAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -492,7 +493,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.QueryAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -532,7 +533,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.QueryFirstAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -572,7 +573,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, $"{nameof(this.QuerySingleAsync)}-TMethodType");
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -612,7 +613,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, $"{nameof(this.QuerySingleAsync)}-TEntity");
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -669,18 +670,18 @@ namespace PilotApi.Repositories.Repositories.Base
 				success = result > 0;
 				if (success)
 				{
-					await this.DataSourceContext.Commit();
+					await this.DataSourceContext.CommitAsync();
 				}
 				else
 				{
-					await this.DataSourceContext.Rollback();
+					await this.DataSourceContext.RollbackAsync();
 					errorMessage = $"Zero rows were updated: {querySql}";
 				}
 			}
 			catch (Exception exc)
 			{
 				this.Logger.LogError(exc, nameof(this.UpdateAsync));
-				await this.DataSourceContext.Rollback();
+				await this.DataSourceContext.RollbackAsync();
 
 				throw;
 			}
@@ -760,7 +761,7 @@ namespace PilotApi.Repositories.Repositories.Base
 				catch (Exception exc)
 				{
 					this.Logger.LogError(exc, nameof(this.GetNextIdsAsync));
-					await this.DataSourceContext.Rollback();
+					await this.DataSourceContext.RollbackAsync();
 
 					throw;
 				}

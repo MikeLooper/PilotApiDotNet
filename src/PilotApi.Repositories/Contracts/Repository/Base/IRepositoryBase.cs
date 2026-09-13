@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using PilotApi.Repositories.Models.Base;
 using System.Collections.Generic;
 using System.Threading;

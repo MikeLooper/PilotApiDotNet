@@ -1,5 +1,5 @@
 using PilotApi.Domain.Contracts.Base;
-using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

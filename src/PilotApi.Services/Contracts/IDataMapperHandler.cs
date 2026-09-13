@@ -25,7 +25,7 @@ namespace PilotApi.Services.Contracts
 		/// <returns>
 		/// A collection of DTOs mapped from the provided entity models, or null if the input collection is null.
 		/// </returns>
-		Task<IEnumerable<TDto>?> MapEntityToDtoList<TDto, TEntity>(IEnumerable<TEntity>? entities) where TDto : IDtoBase where TEntity : IEntityBase;
+		Task<IEnumerable<TDto>?> MapEntityToDtoListAsync<TDto, TEntity>(IEnumerable<TEntity>? entities) where TDto : IDtoBase where TEntity : IEntityBase;
 
 		/// <summary>
 		/// Maps a single entity model to a data transfer object (DTO).
@@ -42,7 +42,7 @@ namespace PilotApi.Services.Contracts
 		/// <returns>
 		/// A DTO mapped from the provided entity model, or null if the input entity is null.
 		/// </returns>
-		Task<TDto?> MapEntityToDto<TDto, TEntity>(TEntity? entity) where TDto : IDtoBase where TEntity : IEntityBase;
+		Task<TDto?> MapEntityToDtoAsync<TDto, TEntity>(TEntity? entity) where TDto : IDtoBase where TEntity : IEntityBase;
 
 		/// <summary>
 		/// Maps a single data transfer object (DTO) to an entity model.
@@ -59,6 +59,6 @@ namespace PilotApi.Services.Contracts
 		/// <returns>
 		/// An entity model mapped from the provided data transfer object, or null if the input DTO is null.
 		/// </returns>
-		Task<TEntity?> MapDtoToEntity<TDto, TEntity>(TDto? dto) where TDto : IDtoBase where TEntity : IEntityBase;
+		Task<TEntity?> MapDtoToEntityAsync<TDto, TEntity>(TDto? dto) where TDto : IDtoBase where TEntity : IEntityBase;
 	}
 }

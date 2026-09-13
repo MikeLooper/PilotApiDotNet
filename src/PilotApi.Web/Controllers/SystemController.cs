@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using PilotApi.Shared.Configuration;
-using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Constants;
+using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Utilities;
 using System;
 using System.Linq;

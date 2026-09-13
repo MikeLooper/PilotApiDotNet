@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 
 namespace PilotApi.Domain.Tests.Models.Responses
 {

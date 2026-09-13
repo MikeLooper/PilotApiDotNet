@@ -57,9 +57,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -121,9 +121,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -185,9 +185,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -249,9 +249,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -313,9 +313,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -377,9 +377,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -441,9 +441,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)
@@ -505,9 +505,9 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 				.Returns(Mock.Of<IDbConnection>());
 			dataSourceContext.Setup(s => s.DataSourceTransaction)
 				.Returns(Mock.Of<IDbTransaction>());
-			dataSourceContext.Setup(s => s.Commit())
+			dataSourceContext.Setup(s => s.CommitAsync())
 				.Returns(Task.CompletedTask);
-			dataSourceContext.Setup(s => s.Rollback())
+			dataSourceContext.Setup(s => s.RollbackAsync())
 				.Returns(Task.CompletedTask);
 			dataSourceContext.Setup(s => s.Dispose());
 			dataSourceContext.Setup(s => s.ConnectionStringClean)

@@ -1,9 +1,9 @@
 ﻿using Asp.Versioning;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PilotApi.Domain.Contracts.Services;
 using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PilotApi.Domain.Contracts.Services;
 using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace PilotApi.Web.Controllers.V1
 	/// A controller for accessing and manipulating OrderDetails data in the data store.
 	/// </summary>
 	[ApiVersion("1.0")]
+	[Route("v{version:apiVersion}/order-details")]
 	public class OrderDetailsController : SimpleControllerBase
 	{
 		/// <summary>

@@ -7,10 +7,14 @@ namespace PilotApi.Web.Tests.Controllers.Base
 	[TestFixture]
 	public class SimpleControllerBaseTests
 	{
+		private class TestSimpleController : SimpleControllerBase
+		{
+		}
+
 		[Test]
 		public void SimpleControllerBase_ApiVersion_SetValue_GetReturnsSameValue_Test()
 		{
-			var controller = new SimpleControllerBase
+			var controller = new TestSimpleController
 			{
 				ApiVersion = "1.0"
 			};
@@ -21,7 +25,7 @@ namespace PilotApi.Web.Tests.Controllers.Base
 		[Test]
 		public void SimpleControllerBase_ApiVersion_DefaultValue_IsNull_Test()
 		{
-			var controller = new SimpleControllerBase();
+			var controller = new TestSimpleController();
 
 			Assert.That(controller.ApiVersion, Is.Null);
 		}
