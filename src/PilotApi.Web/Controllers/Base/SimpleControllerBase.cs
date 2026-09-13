@@ -44,7 +44,7 @@ namespace PilotApi.Web.Controllers
 	[ProducesResponseType<string>(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType<string>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-	public class SimpleControllerBase : Controller
+	public abstract class SimpleControllerBase : Controller
 	{
 		/// <summary>
 		/// Gets or sets the API version to apply to an operation.

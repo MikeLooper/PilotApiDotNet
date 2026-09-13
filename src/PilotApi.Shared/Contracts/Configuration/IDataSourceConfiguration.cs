@@ -1,7 +1,7 @@
 ﻿using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration.Base;
 
-namespace PilotApi.Shared.Configuration
+namespace PilotApi.Shared.Contracts.Configuration
 {
 	/// <summary>
 	/// Configuration for a data source.

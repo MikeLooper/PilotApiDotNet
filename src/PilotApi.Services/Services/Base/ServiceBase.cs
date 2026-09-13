@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using PilotApi.Domain.Contracts.Base;
 using PilotApi.Domain.Contracts.Services.Base;
 using PilotApi.Domain.Models.Dto;
+using PilotApi.Domain.Models.Responses;
 using PilotApi.Repositories.Contracts.Repository.Base;
 using PilotApi.Repositories.Models.Base;
 using PilotApi.Services.Contracts;
@@ -76,7 +77,7 @@ namespace PilotApi.Services.Services.Base
 		public async Task<RetrieveResponse<List<TDto>>?> GetAllAsync(int page = 0, int pageSize = 20, CancellationToken cancellationToken = default)
 		{
 			var retrieveResponse = await this.Repository.GetAllAsync(page, pageSize, cancellationToken);
-			var mapped = await this.DataMapperHandler.MapEntityToDtoList<TDto, TEntity>(retrieveResponse.Result);
+			var mapped = await this.DataMapperHandler.MapEntityToDtoListAsync<TDto, TEntity>(retrieveResponse.Result);
 			return new RetrieveResponse<List<TDto>>(mapped?.ToList(), retrieveResponse.ErrorMessage);
 		}
 
@@ -89,7 +90,7 @@ namespace PilotApi.Services.Services.Base
 			}
 
 			var retrieveResponse = await this.Repository.GetAsync(ids, cancellationToken);
-			var mapped = await this.DataMapperHandler.MapEntityToDto<TDto, TEntity>(retrieveResponse.Result);
+			var mapped = await this.DataMapperHandler.MapEntityToDtoAsync<TDto, TEntity>(retrieveResponse.Result);
 			return new RetrieveResponse<TDto>(mapped, retrieveResponse.ErrorMessage);
 		}
 
@@ -101,7 +102,7 @@ namespace PilotApi.Services.Services.Base
 				throw new ArgumentException($"Invalid argument: {nameof(model)}");
 			}
 
-			var mapped = await this.DataMapperHandler.MapDtoToEntity<TDto, TEntity>(model);
+			var mapped = await this.DataMapperHandler.MapDtoToEntityAsync<TDto, TEntity>(model);
 			var result = await this.Repository.InsertAsync<TReturn>(mapped, cancellationToken);
 			return result;
 		}
@@ -115,7 +116,7 @@ namespace PilotApi.Services.Services.Base
 			}
 
 			var retrieveResponse = await this.Repository.QueryAsync(query, parameters, cancellationToken);
-			var mapped = await this.DataMapperHandler.MapEntityToDtoList<TDto, TEntity>(retrieveResponse.Result);
+			var mapped = await this.DataMapperHandler.MapEntityToDtoListAsync<TDto, TEntity>(retrieveResponse.Result);
 			return new RetrieveResponse<List<TDto>>(mapped?.ToList(), retrieveResponse.ErrorMessage);
 		}
 
@@ -128,7 +129,7 @@ namespace PilotApi.Services.Services.Base
 			}
 
 			var retrieveResponse = await this.Repository.QueryFirstAsync(query, parameters, cancellationToken);
-			var mapped = await this.DataMapperHandler.MapEntityToDto<TDto, TEntity>(retrieveResponse.Result);
+			var mapped = await this.DataMapperHandler.MapEntityToDtoAsync<TDto, TEntity>(retrieveResponse.Result);
 			return new RetrieveResponse<TDto>(mapped, retrieveResponse.ErrorMessage);
 		}
 
@@ -141,7 +142,7 @@ namespace PilotApi.Services.Services.Base
 			}
 
 			var retrieveResponse = await this.Repository.QuerySingleAsync(query, parameters, cancellationToken);
-			var mapped = await this.DataMapperHandler.MapEntityToDto<TDto, TEntity>(retrieveResponse.Result);
+			var mapped = await this.DataMapperHandler.MapEntityToDtoAsync<TDto, TEntity>(retrieveResponse.Result);
 			return new RetrieveResponse<TDto>(mapped, retrieveResponse.ErrorMessage);
 		}
 
@@ -153,7 +154,7 @@ namespace PilotApi.Services.Services.Base
 				throw new ArgumentException($"Invalid argument: {nameof(model)}");
 			}
 
-			var mapped = await this.DataMapperHandler.MapDtoToEntity<TDto, TEntity>(model);
+			var mapped = await this.DataMapperHandler.MapDtoToEntityAsync<TDto, TEntity>(model);
 			var result = await this.Repository.UpdateAsync(mapped, cancellationToken);
 			return result;
 		}

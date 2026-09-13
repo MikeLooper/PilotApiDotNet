@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PilotApi.Shared.Configuration.Base;
 using PilotApi.Shared.Constants;
+using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Exceptions;
 using PilotApi.Shared.Utilities;
 using System;

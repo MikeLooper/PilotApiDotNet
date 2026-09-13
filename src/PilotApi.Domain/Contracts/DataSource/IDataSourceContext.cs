@@ -34,7 +34,7 @@ namespace PilotApi.Domain.Contracts.DataSource
 		/// <summary>
 		/// Commit the current transaction.
 		/// </summary>
-		Task Commit();
+		Task CommitAsync();
 
 		/// <summary>
 		/// Build and return a <see cref="IDbConnection"/> object.
@@ -52,6 +52,6 @@ namespace PilotApi.Domain.Contracts.DataSource
 		/// <summary>
 		/// Rollback the current transaction.
 		/// </summary>
-		Task Rollback();
+		Task RollbackAsync();
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using PilotApi.Shared.Contracts.Configuration;
 using System.Text.Json.Serialization;
 
-namespace PilotApi.Domain.Models.Dto
+namespace PilotApi.Domain.Models.Responses
 {
 	/// <summary>
 	/// A result for an about request.

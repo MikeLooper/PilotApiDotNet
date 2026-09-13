@@ -1,4 +1,4 @@
-﻿namespace PilotApi.Domain.Models.Dto
+﻿namespace PilotApi.Domain.Models.Responses
 {
 	/// <summary>
 	/// A result for a data source retrieve.

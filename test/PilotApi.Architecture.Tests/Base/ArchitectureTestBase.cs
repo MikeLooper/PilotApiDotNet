@@ -1,5 +1,6 @@
 using System.Reflection;
 using ArchUnitNET.Loader;
+using Microsoft.AspNetCore.Authorization;
 using PilotApi.Architecture.Tests.Constants;
 
 namespace PilotApi.Architecture.Tests.Base
@@ -19,7 +20,8 @@ namespace PilotApi.Architecture.Tests.Base
 					Assembly.Load(ArchTestConstants.RepositoriesAssembly),
 					Assembly.Load(ArchTestConstants.ServicesAssembly),
 					Assembly.Load(ArchTestConstants.SharedAssembly),
-					Assembly.Load(ArchTestConstants.WebAssembly))
+					Assembly.Load(ArchTestConstants.WebAssembly),
+					typeof(AuthorizeAttribute).Assembly)
 				.Build();
 	}
 }
