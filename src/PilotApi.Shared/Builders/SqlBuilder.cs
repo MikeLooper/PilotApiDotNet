@@ -468,6 +468,10 @@ namespace PilotApi.Shared.Handlers
 						querySql.Append(DataSourceUtilities.DelimitName(keyColumnNames[keyIndex], this.DataSourceConfiguration.DataSourceEnum));
 					}
 				}
+				else
+				{
+					throw new ArgumentException($"The {nameof(keyColumnNames)} argument cannot be null or empty when paging is enabled ({this.GetType().Name})");
+				}
 
 				var offset = (page - 1) * pageSize;
 				if (this.IsSqlServer)

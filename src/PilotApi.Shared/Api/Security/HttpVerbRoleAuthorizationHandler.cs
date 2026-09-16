@@ -37,6 +37,12 @@ namespace PilotApi.Shared.Api.Security
 			var httpContext = context.Resource as HttpContext
 				?? (context.Resource as AuthorizationFilterContext)?.HttpContext;
 
+			if (httpContext == null)
+			{
+				context.Fail(new AuthorizationFailureReason(this, "Unable to resolve the current HTTP context."));
+				return Task.CompletedTask;
+			}
+
 			var authorizationString = httpContext.Request.Headers.Authorization.ToString();
 			if (string.IsNullOrWhiteSpace(authorizationString))
 			{
@@ -44,12 +50,6 @@ namespace PilotApi.Shared.Api.Security
 				return Task.CompletedTask;
 			}
 			
-			if (httpContext == null)
-			{
-				context.Fail(new AuthorizationFailureReason(this, "Unable to resolve the current HTTP context."));
-				return Task.CompletedTask;
-			}
-
 			var method = httpContext.Request.Method;
 			var roles = context.User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(s => s.Value).ToList();
 
