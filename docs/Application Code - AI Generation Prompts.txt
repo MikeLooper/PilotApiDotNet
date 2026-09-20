@@ -45,3 +45,19 @@ OTEL collector is deployed to Docker container `otel-collector`, using the follo
 OTEL deploy script: `C:\Working\Storage\Dev\GitHub\Docker\Otel\Docker-Otel-builder.bat`.
 When the OTEL updates are complete, update the README to include details, such as what keywords would be used in Grafana to review logged events.
 
+7.
+You are an expert QA and C# developer. 
+Generate integration test classes using NUnit, Moq, and the Arrange-Act-Assert pattern.
+
+Goal:
+Test the integration and interaction of multiple classes to cover maximum application logic, while mocking all external components and complex infrastructure.
+Add the integration tests to the `PilotApi.Integration.Tests' project.
+
+Requirements:
+1. Mock External Components: Always mock databases and file systems using Moq.
+2. Real Internal Classes: Instantiate and use the real implementation of internal business logic classes, services, and validators to test their end-to-end interactions.
+3. Setup & Injection: Inject the mocked external components into the real service/orchestrator class being tested.
+4. Test Coverage: Write test cases covering the main happy path, edge cases, and error handling logic.
+5. Structure: Arrange classes logically according to their functionality, grouping them into directories when the functionality is similar.
+
+

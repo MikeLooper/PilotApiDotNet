@@ -224,7 +224,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			if (ids.Length < 1)
 			{
-				throw new ArgumentException($"The supplied ids list ({ids} must contain at least one item ({this.GetType().Name})");
+				throw new ArgumentException($"The supplied ids list ({ids}) must contain at least one item ({this.GetType().Name})");
 			}
 
 			// Construct the SQL query to delete the record from the table.

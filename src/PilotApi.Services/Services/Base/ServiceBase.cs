@@ -67,7 +67,7 @@ namespace PilotApi.Services.Services.Base
 		{
 			if (ids.Length < 1)
 			{
-				throw new ArgumentException($"The supplied ids list ({ids} must contain at least one item ({this.GetType().Name})");
+				throw new ArgumentException($"The supplied ids list ({ids}) must contain at least one item ({this.GetType().Name})");
 			}
 
 			return await this.Repository.DeleteAsync(ids, cancellationToken);

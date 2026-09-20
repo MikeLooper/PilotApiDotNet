@@ -77,7 +77,7 @@ namespace PilotApi.Shared.Tests.Api.Security
 		}
 
 		[Test]
-		public void HttpVerbRoleAuthorizationHandler_HandleRequirementAsync_WithNonHttpContextResource_ShouldThrow_Test()
+		public async Task HttpVerbRoleAuthorizationHandler_HandleRequirementAsync_WithNonHttpContextResource_ShouldFail_Test()
 		{
 			// Arrange
 			var handler = GetHandler();
@@ -90,8 +90,12 @@ namespace PilotApi.Shared.Tests.Api.Security
 				principal,
 				new object());
 
-			// Act / Assert
-			Assert.ThrowsAsync<System.NullReferenceException>(async () => await handler.HandleAsync(context));
+			// Act
+			await handler.HandleAsync(context);
+
+			// Assert
+			Assert.That(context.HasSucceeded, Is.False);
+			Assert.That(context.HasFailed, Is.True);
 		}
 
 		[Test]
