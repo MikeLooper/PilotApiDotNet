@@ -30,9 +30,9 @@ namespace PilotApi.Integration.Tests.Repositories
 		public async Task DeleteAsync_WhenNoRowsAffected_RollsBackRealTransaction_AndReturnsError_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrderDetailsRepository(dataSourceContext, sqlBuilder);
 
 			fakeConnection.NextNonQueryResult = 0;
@@ -53,9 +53,9 @@ namespace PilotApi.Integration.Tests.Repositories
 		public async Task DeleteAsync_WhenRowsAffected_CommitsRealTransaction_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrderDetailsRepository(dataSourceContext, sqlBuilder);
 
 			fakeConnection.NextNonQueryResult = 1;
@@ -78,9 +78,9 @@ namespace PilotApi.Integration.Tests.Repositories
 		public async Task GetAllAsync_ReturnsMappedEntities_UsingRealSqlBuilderGeneratedQuery_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrderDetailsRepository(dataSourceContext, sqlBuilder);
 
 			var table = new DataTable();
@@ -109,9 +109,9 @@ namespace PilotApi.Integration.Tests.Repositories
 		public async Task GetAsync_BuildsRealParameterizedQuery_AndCommitsTransaction_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrderDetailsRepository(dataSourceContext, sqlBuilder);
 
 			var table = new DataTable();
@@ -141,9 +141,9 @@ namespace PilotApi.Integration.Tests.Repositories
 		public void GetAsync_WithNoIds_ThrowsArgumentException_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrderDetailsRepository(dataSourceContext, sqlBuilder);
 
 			// Act, Assert

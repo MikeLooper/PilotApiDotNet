@@ -28,9 +28,9 @@ namespace PilotApi.Integration.Tests.Services
 		public async Task OrdersService_GetAllAsync_ReturnsMappedDtos_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			var table = new DataTable();
@@ -57,9 +57,9 @@ namespace PilotApi.Integration.Tests.Services
 		public async Task OrdersService_GetByIdAsync_ReturnsMappedDto_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			var table = new DataTable();
@@ -85,9 +85,9 @@ namespace PilotApi.Integration.Tests.Services
 		public void OrdersService_GetByIdAsync_WithEmptyIds_ThrowsArgumentException_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			var testObject = new OrdersService(
@@ -103,9 +103,9 @@ namespace PilotApi.Integration.Tests.Services
 		public async Task OrdersService_InsertAsync_MapsDtoToEntity_AndReturnsResult_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			var table = new DataTable();
@@ -135,9 +135,9 @@ namespace PilotApi.Integration.Tests.Services
 		public void OrdersService_InsertAsync_WithNullModel_ThrowsArgumentException_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			var testObject = new OrdersService(
@@ -153,9 +153,9 @@ namespace PilotApi.Integration.Tests.Services
 		public async Task OrdersService_UpdateAsync_MapsDtoToEntity_AndReturnsSuccess_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			fakeConnection.NextNonQueryResult = 1;
@@ -181,9 +181,9 @@ namespace PilotApi.Integration.Tests.Services
 		public async Task OrdersService_DeleteAsync_ReturnsSuccess_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			fakeConnection.NextNonQueryResult = 1;
@@ -204,9 +204,9 @@ namespace PilotApi.Integration.Tests.Services
 		public void OrdersService_DeleteAsync_WithEmptyIds_ThrowsArgumentException_Test()
 		{
 			// arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var sqlBuilder = IntegrationTestDoublesUtilities.GetSqlBuilder();
-			using var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
+			var dataSourceContext = IntegrationTestDoublesUtilities.GetDataSourceContext(fakeConnection, sqlBuilder);
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			var testObject = new OrdersService(

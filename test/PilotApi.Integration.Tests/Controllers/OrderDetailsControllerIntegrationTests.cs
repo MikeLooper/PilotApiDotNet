@@ -33,9 +33,9 @@ namespace PilotApi.Integration.Tests.Controllers
 		public async Task Add_WhenRepositoryInsertSucceeds_ReturnsCreatedAtActionWithNewId_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var service = IntegrationTestDoublesUtilities.GetOrderDetailsService(fakeConnection);
-			using var controller = new OrderDetailsController(service);
+			var controller = new OrderDetailsController(service);
 
 			var table = new DataTable();
 			table.Columns.Add("Id", typeof(int));
@@ -60,9 +60,9 @@ namespace PilotApi.Integration.Tests.Controllers
 		public async Task Delete_WhenRepositoryReturnsError_ReturnsBadRequestWithWarningHeader_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var service = IntegrationTestDoublesUtilities.GetOrderDetailsService(fakeConnection);
-			using var controller = new OrderDetailsController(service);
+			var controller = new OrderDetailsController(service);
 
 			fakeConnection.NextNonQueryResult = 0;
 
@@ -84,9 +84,9 @@ namespace PilotApi.Integration.Tests.Controllers
 		public async Task GetAll_WhenRepositoryReturnsEntities_ReturnsOkWithMappedDtos_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var service = IntegrationTestDoublesUtilities.GetOrderDetailsService(fakeConnection);
-			using var controller = new OrderDetailsController(service);
+			var controller = new OrderDetailsController(service);
 
 			var table = new DataTable();
 			table.Columns.Add(nameof(OrderDetailsEntity.ProductID), typeof(int));
@@ -112,9 +112,9 @@ namespace PilotApi.Integration.Tests.Controllers
 		public async Task GetById_WhenRepositoryReturnsEntity_ReturnsOkWithMappedDto_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var service = IntegrationTestDoublesUtilities.GetOrderDetailsService(fakeConnection);
-			using var controller = new OrderDetailsController(service);
+			var controller = new OrderDetailsController(service);
 
 			var table = new DataTable();
 			table.Columns.Add(nameof(OrderDetailsEntity.ProductID), typeof(int));
@@ -138,9 +138,9 @@ namespace PilotApi.Integration.Tests.Controllers
 		public async Task GetById_WhenRepositoryReturnsNull_ReturnsNotFound_Test()
 		{
 			// Arrange
-			using var fakeConnection = new FakeDbConnection();
+			var fakeConnection = new FakeDbConnection();
 			var service = IntegrationTestDoublesUtilities.GetOrderDetailsService(fakeConnection);
-			using var controller = new OrderDetailsController(service);
+			var controller = new OrderDetailsController(service);
 
 			fakeConnection.NextQueryResult = new DataTable();
 
