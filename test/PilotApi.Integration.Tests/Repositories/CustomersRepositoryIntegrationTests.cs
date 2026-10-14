@@ -141,7 +141,7 @@ namespace PilotApi.Integration.Tests.Repositories
 			var repository = IntegrationTestDoublesUtilities.GetCustomersRepository(dataSourceContext, sqlBuilder);
 
 			// Act, Assert
-			Assert.ThrowsAsync<ArgumentException>(async () => await repository.GetAsync(Array.Empty<string>()));
+			_ = Assert.ThrowsAsync<ArgumentException>(async () => await repository.GetAsync(Array.Empty<string>()));
 		}
 	}
 }

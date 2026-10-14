@@ -52,7 +52,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			OpenApiContactConfiguration sourceConfiguration = null;
 
 			// Act
-			TestDelegate action = () =>
+			var action = () =>
 			{
 				new OpenApiContactConfiguration(sourceConfiguration);
 			};

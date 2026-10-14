@@ -69,7 +69,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			ApplicationConfiguration sourceConfiguration = null;
 
 			// Act
-			TestDelegate action = () =>
+			var action = () =>
 			{
 				new ApplicationConfiguration(sourceConfiguration);
 			};

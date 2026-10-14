@@ -66,7 +66,7 @@ namespace PilotApi.Repositories.Tests.Repositories
 			var repository = GetRepository();
 
 			// Act & Assert
-			Assert.ThrowsAsync<ArgumentException>(() => repository.GetRoleByUserIdAsync(userId));
+			_ = Assert.ThrowsAsync<ArgumentException>(() => repository.GetRoleByUserIdAsync(userId));
 		}
 	}
 }

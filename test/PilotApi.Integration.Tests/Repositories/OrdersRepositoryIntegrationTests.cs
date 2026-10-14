@@ -141,7 +141,7 @@ namespace PilotApi.Integration.Tests.Repositories
 			var repository = IntegrationTestDoublesUtilities.GetOrdersRepository(dataSourceContext, sqlBuilder);
 
 			// Act, Assert
-			Assert.ThrowsAsync<ArgumentException>(async () => await repository.GetAsync(Array.Empty<int>()));
+			_ = Assert.ThrowsAsync<ArgumentException>(async () => await repository.GetAsync(Array.Empty<int>()));
 		}
 	}
 }

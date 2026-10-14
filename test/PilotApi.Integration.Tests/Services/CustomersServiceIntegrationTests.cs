@@ -99,7 +99,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			Assert.ThrowsAsync<ArgumentException>(async () => await testObject.GetByIdAsync(Array.Empty<string>()));
+			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.GetByIdAsync(Array.Empty<string>()));
 		}
 
 		[Test]
@@ -151,7 +151,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			Assert.ThrowsAsync<ArgumentException>(async () => await testObject.InsertAsync<string>(null!));
+			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.InsertAsync<string>(null!));
 		}
 
 		[Test]
