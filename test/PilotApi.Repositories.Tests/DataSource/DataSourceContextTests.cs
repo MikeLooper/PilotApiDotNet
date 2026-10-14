@@ -310,7 +310,7 @@ namespace PilotApi.Repositories.Tests.DataSource
 				TestingSharedDoublesUtilities.GetApplicationConfiguration(DataSourceTypes.Unrecognized), new MockSqlBuilder());
 
 			// Act
-			var action = () => dataSourceContext.GetConnection(false);
+			Action action = () => dataSourceContext.GetConnection(false);
 
 			// Assert
 			Assert.That(action, Throws.TypeOf<InvalidOperationException>());

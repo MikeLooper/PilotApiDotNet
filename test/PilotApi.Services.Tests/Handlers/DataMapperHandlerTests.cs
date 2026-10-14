@@ -382,7 +382,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var dto = new UnsupportedDto();
 
 			// Act
-			AsyncTestDelegate action = async () => await handler.MapDtoToEntityAsync<UnsupportedDto, CategoriesEntity>(dto);
+			Func<Task> action = async () => await handler.MapDtoToEntityAsync<UnsupportedDto, CategoriesEntity>(dto);
 
 			// Assert
 			Assert.That(action, Throws.TypeOf<InvalidOperationException>());
@@ -396,7 +396,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var entity = new UnsupportedEntity();
 
 			// Act
-			AsyncTestDelegate action = async () => await handler.MapEntityToDtoAsync<CategoriesDto, UnsupportedEntity>(entity);
+			Func<Task> action = async () => await handler.MapEntityToDtoAsync<CategoriesDto, UnsupportedEntity>(entity);
 
 			// Assert
 			Assert.That(action, Throws.TypeOf<InvalidOperationException>());

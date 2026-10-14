@@ -65,7 +65,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			OpenApiConfiguration sourceConfiguration = null;
 
 			// Act
-			TestDelegate action = () =>
+			Action action = () =>
 			{
 				new OpenApiConfiguration(sourceConfiguration);
 			};

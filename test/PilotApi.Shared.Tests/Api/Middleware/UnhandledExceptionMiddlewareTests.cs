@@ -84,7 +84,7 @@ namespace PilotApi.Web.Tests.Middleware
 			context.Features.Set<IHttpResponseFeature>(new StartedHttpResponseFeature());
 
 			// Act
-			var exception = Assert.ThrowsAsync<UserException>(async () => await middleware.InvokeAsync(context));
+			var exception = await Assert.ThrowsAsync<UserException>(async () => await middleware.InvokeAsync(context));
 
 			// Assert
 			Assert.That(exception, Is.SameAs(originalException));

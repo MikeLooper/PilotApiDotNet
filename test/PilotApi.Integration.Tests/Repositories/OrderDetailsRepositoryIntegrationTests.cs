@@ -138,7 +138,7 @@ namespace PilotApi.Integration.Tests.Repositories
 		}
 
 		[Test]
-		public void GetAsync_WithNoIds_ThrowsArgumentException_Test()
+		public async Task GetAsync_WithNoIds_ThrowsArgumentException_Test()
 		{
 			// Arrange
 			var fakeConnection = new FakeDbConnection();
@@ -147,7 +147,7 @@ namespace PilotApi.Integration.Tests.Repositories
 			var repository = IntegrationTestDoublesUtilities.GetOrderDetailsRepository(dataSourceContext, sqlBuilder);
 
 			// Act, Assert
-			Assert.ThrowsAsync<ArgumentException>(async () => await repository.GetAsync(Array.Empty<int>()));
+			_ = await Assert.ThrowsAsync<ArgumentException>(async () => await repository.GetAsync(Array.Empty<int>()));
 		}
 	}
 }

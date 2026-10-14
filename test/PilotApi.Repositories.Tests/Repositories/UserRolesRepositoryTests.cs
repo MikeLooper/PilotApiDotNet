@@ -60,13 +60,13 @@ namespace PilotApi.Repositories.Tests.Repositories
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("   ")]
-		public void UserRolesRepository_GetRoleByUserIdAsync_WithInvalidUserId_ThrowsArgumentException_Test(string? userId)
+		public async Task UserRolesRepository_GetRoleByUserIdAsync_WithInvalidUserId_ThrowsArgumentException_Test(string? userId)
 		{
 			// Arrange
 			var repository = GetRepository();
 
 			// Act & Assert
-			Assert.ThrowsAsync<ArgumentException>(() => repository.GetRoleByUserIdAsync(userId));
+			_ = await Assert.ThrowsAsync<ArgumentException>(() => repository.GetRoleByUserIdAsync(userId));
 		}
 	}
 }
