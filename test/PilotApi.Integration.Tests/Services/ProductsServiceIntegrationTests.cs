@@ -82,7 +82,7 @@ namespace PilotApi.Integration.Tests.Services
 		}
 
 		[Test]
-		public void ProductsService_GetByIdAsync_WithEmptyIds_ThrowsArgumentException_Test()
+		public async Task ProductsService_GetByIdAsync_WithEmptyIds_ThrowsArgumentException_Test()
 		{
 			// arrange
 			var fakeConnection = new FakeDbConnection();
@@ -96,7 +96,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.GetByIdAsync(Array.Empty<int>()));
+			_ = await Assert.ThrowsAsync<ArgumentException>(async () => await testObject.GetByIdAsync(Array.Empty<int>()));
 		}
 
 		[Test]
@@ -132,7 +132,7 @@ namespace PilotApi.Integration.Tests.Services
 		}
 
 		[Test]
-		public void ProductsService_InsertAsync_WithNullModel_ThrowsArgumentException_Test()
+		public async Task ProductsService_InsertAsync_WithNullModel_ThrowsArgumentException_Test()
 		{
 			// arrange
 			var fakeConnection = new FakeDbConnection();
@@ -146,7 +146,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.InsertAsync<int>(null!));
+			_ = await Assert.ThrowsAsync<ArgumentException>(async () => await testObject.InsertAsync<int>(null!));
 		}
 
 		[Test]
@@ -201,7 +201,7 @@ namespace PilotApi.Integration.Tests.Services
 		}
 
 		[Test]
-		public void ProductsService_DeleteAsync_WithEmptyIds_ThrowsArgumentException_Test()
+		public async Task ProductsService_DeleteAsync_WithEmptyIds_ThrowsArgumentException_Test()
 		{
 			// arrange
 			var fakeConnection = new FakeDbConnection();
@@ -215,7 +215,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.DeleteAsync(Array.Empty<int>()));
+			_ = await Assert.ThrowsAsync<ArgumentException>(async () => await testObject.DeleteAsync(Array.Empty<int>()));
 		}
 	}
 }

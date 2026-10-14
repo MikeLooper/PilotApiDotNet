@@ -85,7 +85,7 @@ namespace PilotApi.Integration.Tests.Services
 		}
 
 		[Test]
-		public void CustomersService_GetByIdAsync_WithEmptyIds_ThrowsArgumentException_Test()
+		public async Task CustomersService_GetByIdAsync_WithEmptyIds_ThrowsArgumentException_Test()
 		{
 			// arrange
 			var fakeConnection = new FakeDbConnection();
@@ -99,7 +99,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.GetByIdAsync(Array.Empty<string>()));
+			_ = await Assert.ThrowsAsync<ArgumentException>(async () => await testObject.GetByIdAsync(Array.Empty<string>()));
 		}
 
 		[Test]
@@ -137,7 +137,7 @@ namespace PilotApi.Integration.Tests.Services
 		}
 
 		[Test]
-		public void CustomersService_InsertAsync_WithNullModel_ThrowsArgumentException_Test()
+		public async Task CustomersService_InsertAsync_WithNullModel_ThrowsArgumentException_Test()
 		{
 			// arrange
 			var fakeConnection = new FakeDbConnection();
@@ -151,7 +151,7 @@ namespace PilotApi.Integration.Tests.Services
 				new DataMapperHandler());
 
 			// act & assert
-			_ = Assert.ThrowsAsync<ArgumentException>(async () => await testObject.InsertAsync<string>(null!));
+			_ = await Assert.ThrowsAsync<ArgumentException>(async () => await testObject.InsertAsync<string>(null!));
 		}
 
 		[Test]

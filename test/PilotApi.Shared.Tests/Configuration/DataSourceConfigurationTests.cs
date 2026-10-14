@@ -58,7 +58,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			DataSourceConfiguration sourceConfiguration = null;
 
 			// Act
-			var action = () =>
+			Action action = () =>
 			{
 				new DataSourceConfiguration(sourceConfiguration);
 			};

@@ -69,7 +69,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			DataConnectionConfiguration sourceConfiguration = null;
 
 			// Act
-			var action = () =>
+			Action action = () =>
 			{
 				new DataConnectionConfiguration(sourceConfiguration);
 			};
