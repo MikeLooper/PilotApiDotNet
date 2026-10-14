@@ -97,7 +97,12 @@ namespace PilotApi.Shared.OpenApi.Transformers
 
 			var xmlPath = Path.ChangeExtension(assemblyLocation, ".xml");
 
-			return this.xmlDocCache.GetOrAdd(xmlPath, path => File.Exists(path) ? XDocument.Load(path) : null);
+			if (!File.Exists(xmlPath))
+			{
+				return null;
+			}
+
+			return this.xmlDocCache.GetOrAdd(xmlPath, path => XDocument.Load(path));
 		}
 	}
 }
