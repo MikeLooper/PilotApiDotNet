@@ -38,6 +38,12 @@ namespace PilotApi.Web.Controllers.V1
 		/// <summary>
 		/// Gets all DTO objects from the category table.
 		/// </summary>
+		/// <param name="page">
+		/// The page number to retrieve.
+		/// </param>
+		/// <param name="pageSize">
+		/// The number of items per page.
+		/// </param>
 		/// <param name="cancellationToken">
 		/// A token that can be used to cancel the operation.
 		/// </param>
