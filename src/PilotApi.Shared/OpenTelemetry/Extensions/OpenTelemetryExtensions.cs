@@ -67,7 +67,9 @@ namespace PilotApi.Shared.OpenApi.Extensions
 			builder.Services.AddOpenTelemetry()
 					.ConfigureResource(r => r.AddService(
 						serviceName: applicationConfiguration.OpenApi.Title,
-						serviceVersion: applicationConfiguration.OpenApi.Version))
+						serviceVersion: applicationConfiguration.OpenApi.Version,
+						// A generated ID would override OTEL_RESOURCE_ATTRIBUTES, giving a new instance on every restart.
+						autoGenerateServiceInstanceId: false))
 					.WithLogging(logging =>			// send records to Grafana Loki via OpenTelemetry Collector
 									{
 										logging.AddOtlpExporter(options => ConfigureOtlpExporter(options, "v1/logs"));
