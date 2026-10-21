@@ -126,7 +126,7 @@ namespace PilotApi.Web.Controllers.V1
 		/// </returns>
 		[HttpPost]
 		[Route("add")]
-		[ProducesResponseType<AddResponseInt>(StatusCodes.Status201Created)]
+		[ProducesResponseType<AddResponseOrderDetails>(StatusCodes.Status201Created)]
 		public async Task<IActionResult> Add(
 			[Required][FromBody] OrderDetailsDto model,
 			CancellationToken cancellationToken)

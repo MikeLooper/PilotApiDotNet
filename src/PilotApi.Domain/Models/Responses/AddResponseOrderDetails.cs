@@ -28,12 +28,12 @@
 		}
 
 		/// <summary>
-		/// Gets or sets the Id of the new record, or 0 if the add failed.
+		/// Gets or sets the OrderId of the new record, or 0 if the add failed.
 		/// </summary>
 		public int OrderId { get; set; }
 
 		/// <summary>
-		/// Gets or sets the Id of the new record, or 0 if the add failed.
+		/// Gets or sets the ProductId of the new record, or 0 if the add failed.
 		/// </summary>
 		public int ProductId { get; set; }
 
