@@ -36,6 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PilotApi.Web.Tests", "test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{731B674F-12B0-48F8-8CC2-E0A79C7760DD}"
 	ProjectSection(SolutionItems) = preProject
+		shared\PilotSharedSource\OpenAPI\PilotApi_v1.yaml = shared\PilotSharedSource\OpenAPI\PilotApi_v1.yaml
 		README.md = README.md
 	EndProjectSection
 EndProject

@@ -51,9 +51,10 @@ namespace PilotApi.Integration.Tests.Controllers
 			var createdResult = actionResult as CreatedAtActionResult;
 			Assert.That(createdResult, Is.Not.Null);
 			Assert.That(createdResult!.StatusCode, Is.EqualTo(201));
-			var addResponse = createdResult.Value as AddResponseInt;
+			var addResponse = createdResult.Value as AddResponseOrderDetails;
 			Assert.That(addResponse, Is.Not.Null);
-			Assert.That(addResponse!.Id, Is.EqualTo(1));
+			Assert.That(addResponse!.OrderId, Is.EqualTo(10248));
+			Assert.That(addResponse!.ProductId, Is.EqualTo(1));
 		}
 
 		[Test]
