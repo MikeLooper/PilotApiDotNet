@@ -126,7 +126,7 @@ namespace PilotApi.Web.Controllers.V1
 		/// </returns>
 		[HttpPost]
 		[Route("add")]
-		[ProducesResponseType<AddResponseInt>(StatusCodes.Status201Created)]
+		[ProducesResponseType<AddResponseOrderDetails>(StatusCodes.Status201Created)]
 		public async Task<IActionResult> Add(
 			[Required][FromBody] OrderDetailsDto model,
 			CancellationToken cancellationToken)
@@ -146,7 +146,7 @@ namespace PilotApi.Web.Controllers.V1
 			return this.CreatedAtAction(
 				nameof(this.GetById), 
 				new { productId = model.ProductID, orderId = model.OrderID }, 
-				new AddResponseInt(retrieveResponse.Result));
+				new AddResponseOrderDetails(model.OrderID, model.ProductID));
 		}
 
 		/// <summary>
