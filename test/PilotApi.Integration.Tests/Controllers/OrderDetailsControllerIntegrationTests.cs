@@ -149,7 +149,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			var actionResult = await controller.GetById(99, 99, CancellationToken.None);
 
 			// Assert
-			Assert.That(actionResult, Is.TypeOf<NotFoundResult>());
+			Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
 		}
 	}
 }

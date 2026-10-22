@@ -27,11 +27,6 @@ namespace PilotApi.Web.Controllers
 	///			[Required][FromRoute] int id)
 	///		{
 	///			var result = await this.Service.GetByIdAsync(id);
-	///			if (result == null)
-	///			{
-	///				return this.NotFound();
-	///			}
-	///
 	///			return this.Ok(result);
 	///		}
 	///	}
@@ -49,7 +44,13 @@ namespace PilotApi.Web.Controllers
 		/// <summary>
 		/// Gets or sets the API version to apply to an operation.
 		/// </summary>
-		[FromHeader(Name = "ApiVersion")]
+		[FromHeader(Name = "X-Api-Version")]
 		public string? ApiVersion { get; set; }
+
+		/// <summary>
+		/// Gets or sets the unique identifier used for tracing a transaction across microservices.
+		/// </summary>
+		[FromHeader(Name = "X-Correlation-Id")]
+		public string? CorrelationId { get; set; }
 	}
 }
