@@ -10,7 +10,10 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Microsoft.OpenApi" />
+		<PackageReference Include="Microsoft.OpenApi.YamlReader" />
 		<PackageReference Include="Moq" />
 		<PackageReference Include="NUnit" />
 		<PackageReference Include="NUnit.Analyzers">
@@ -28,4 +31,14 @@
 	  <ProjectReference Include="..\..\src\PilotApi.Shared\PilotApi.Shared.csproj" />
 	  <ProjectReference Include="..\..\src\PilotApi.Web\PilotApi.Web.csproj" />
 	</ItemGroup>
+
+	<!--
+	  WebApplicationFactory<Program> runs PilotApi.Web in-process using the "testhost" entry assembly.
+	  ManualXmlCommentsOperationTransformer looks for "<EntryAssemblyName>.xml" next to the entry assembly,
+	  so PilotApi.Web's generated XML documentation file is copied alongside the test host under the name
+	  it expects ("testhost.xml") so that OpenAPI document generation succeeds during integration tests.
+	-->
+	<Target Name="CopyWebXmlDocForTestHost" AfterTargets="Build">
+		<Copy Condition="Exists('$(OutDir)PilotApi.Web.xml')" SourceFiles="$(OutDir)PilotApi.Web.xml" DestinationFiles="$(OutDir)testhost.xml" SkipUnchangedFiles="true" />
+	</Target>
 </Project>
