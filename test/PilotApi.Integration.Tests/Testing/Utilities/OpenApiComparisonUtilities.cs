@@ -74,6 +74,7 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 			var expectedContactName = expectedInfo.Contact?.Name;
 			var actualContactName = actualInfo.Contact?.Name;
 			CompareValue("Info.Contact.Name", expectedContactName, actualContactName, result.Errors);
+			CompareValue("Info.Contact.Url", expectedInfo.Contact?.Url?.ToString(), actualInfo.Contact?.Url?.ToString(), result.Errors);
 
 			var expectedLicenseName = expectedInfo.License?.Name;
 			var actualLicenseName = actualInfo.License?.Name;
