@@ -235,7 +235,7 @@ The data source values for Production are included in the docker-deploy config f
                 "Name": "Michael Looper",
                 "URL": "https://github.com/MikeLooper/PilotApiDotNet"
             },
-            "Description": "A proof of concept API to explore best-practices and new ideas (.NET/C#)",
+            "Description": "A proof of concept API to explore best-practices and new ideas.",
             "License": "MIT",
             "Summary": "Proof of concept API",
             "Version": "0.1.1"

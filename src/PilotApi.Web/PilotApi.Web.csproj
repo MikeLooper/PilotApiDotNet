@@ -13,6 +13,10 @@
 	<ProjectReference Include="..\PilotApi.Services\PilotApi.Services.csproj" />
 	<ProjectReference Include="..\PilotApi.Shared\PilotApi.Shared.csproj" />
 </ItemGroup>
+
+<ItemGroup>
+	<InternalsVisibleTo Include="PilotApi.Integration.Tests" />
+</ItemGroup>
 	
 <ItemGroup>
   <Content Update="appsettings.Development.json">

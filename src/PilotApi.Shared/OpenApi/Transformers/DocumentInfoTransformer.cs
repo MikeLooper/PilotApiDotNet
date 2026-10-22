@@ -53,15 +53,18 @@ namespace PilotApi.Shared.OpenApi.Transformers
 			document.Info.Title = applicationConfiguration.OpenApi.Title;
 			document.Info.Version = this.ApiVersion.MajorVersion.ToString();
 
-			var summaryText = $"{applicationConfiguration.OpenApi.Summary} (v: {applicationConfiguration.OpenApi.Version})";
+			//var summaryText = $"{applicationConfiguration.OpenApi.Summary} (v: {applicationConfiguration.OpenApi.Version})";
 
-			// Scalar's UI does not render Info.Summary (only Info.Description is displayed), while Swagger UI
-			// renders both Info.Summary and Info.Description. To avoid the summary appearing twice in Swagger
-			// UI while still surfacing it in Scalar, merge the summary into the description and leave
-			// Info.Summary unset.
-			document.Info.Description = string.IsNullOrWhiteSpace(applicationConfiguration.OpenApi.Description)
-				? summaryText
-				: $"{summaryText}\n\n{applicationConfiguration.OpenApi.Description}";
+			//// Scalar's UI does not render Info.Summary (only Info.Description is displayed), while Swagger UI
+			//// renders both Info.Summary and Info.Description. To avoid the summary appearing twice in Swagger
+			//// UI while still surfacing it in Scalar, merge the summary into the description and leave
+			//// Info.Summary unset.
+			//document.Info.Description = string.IsNullOrWhiteSpace(applicationConfiguration.OpenApi.Description)
+			//	? summaryText
+			//	: $"{summaryText}\n\n{applicationConfiguration.OpenApi.Description}";
+			
+			document.Info.Description = applicationConfiguration.OpenApi.Description;
+			document.Info.Summary = applicationConfiguration.OpenApi.Summary;
 			//document.Info.TermsOfService = new Uri("https://example.com");
 
 			// Set developer contact info
