@@ -134,7 +134,7 @@ namespace PilotApi.Integration.Tests.Controllers
 		}
 
 		[Test]
-		public async Task GetById_WhenRepositoryReturnsNull_ReturnsNotFound_Test()
+		public async Task GetById_WhenRepositoryReturnsNull_ReturnsOk_Test()
 		{
 			// Arrange
 			var fakeConnection = new FakeDbConnection();

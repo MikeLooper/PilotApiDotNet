@@ -57,7 +57,7 @@ namespace PilotApi.Shared.Api.Extensions
 			services.AddApiVersioning(options =>
 			{
 				options.ApiVersionReader = ApiVersionReader.Combine(
-					new HeaderApiVersionReader("api-version"),
+					new HeaderApiVersionReader(HeaderConstants.ApiVersionHeaderName),
 					new QueryStringApiVersionReader(),
 					new UrlSegmentApiVersionReader());
 				options.AssumeDefaultVersionWhenUnspecified = true;

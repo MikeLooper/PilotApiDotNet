@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
+using PilotApi.Shared.Constants;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace PilotApi.Shared.OpenApi.Transformers
 				var versionParameter = operation.Parameters
 							.FirstOrDefault(p =>
 									!string.IsNullOrWhiteSpace(p.Name) &&
-									p.Name.Equals("api-version", StringComparison.OrdinalIgnoreCase));
+									p.Name.Equals(HeaderConstants.ApiVersionHeaderName, StringComparison.OrdinalIgnoreCase));
 
 				if (versionParameter != null)
 				{
