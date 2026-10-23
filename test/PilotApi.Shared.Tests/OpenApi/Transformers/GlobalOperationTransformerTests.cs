@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using NUnit.Framework;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.OpenApi.Transformers;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -79,9 +81,73 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 			await transformer.TransformAsync(operation, context, default);
 
 			// Assert
-			Assert.That(operation.Parameters, Has.Count.EqualTo(1));
+			Assert.That(operation.Parameters, Has.Count.EqualTo(2));
 			Assert.That(operation.Parameters[0].Name, Is.EqualTo("X-Api-Version"));
 			Assert.That(operation.Parameters, Has.None.Matches<OpenApiParameter>(parameter => parameter.Name == "api-version"));
+		}
+
+		[Test]
+		public async Task GlobalOperationTransformer_TransformAsync_FormatsExistingCorrelationIdHeaderAsUuid_Test()
+		{
+			// Arrange
+			var transformer = new GlobalOperationTransformer();
+			var operation = new OpenApiOperation
+			{
+				Parameters =
+				[
+					new OpenApiParameter
+					{
+						Name = HeaderConstants.CorrelationIdHeaderName,
+						In = ParameterLocation.Header,
+						Schema = new OpenApiSchema
+						{
+							Type = JsonSchemaType.String,
+							Format = "other"
+						}
+					}
+				]
+			};
+			var actionDescriptor = new ControllerActionDescriptor
+			{
+				ControllerTypeInfo = typeof(GlobalOperationTransformerTests).GetTypeInfo(),
+				MethodInfo = typeof(GlobalOperationTransformerTests).GetMethod(nameof(TestAction))!
+			};
+			var context = (OpenApiOperationTransformerContext)Activator.CreateInstance(typeof(OpenApiOperationTransformerContext))!;
+			typeof(OpenApiOperationTransformerContext).GetProperty(nameof(OpenApiOperationTransformerContext.Description))!
+				.SetValue(context, new ApiDescription { ActionDescriptor = actionDescriptor });
+
+			// Act
+			await transformer.TransformAsync(operation, context, default);
+
+			// Assert
+			var correlationIdParameter = operation.Parameters.Single(parameter =>
+				parameter.Name == HeaderConstants.CorrelationIdHeaderName);
+			Assert.That(correlationIdParameter.Schema!.Format, Is.EqualTo("uuid"));
+		}
+
+		[Test]
+		public async Task GlobalOperationTransformer_TransformAsync_AddsCorrelationIdHeaderWithUuidFormat_Test()
+		{
+			// Arrange
+			var transformer = new GlobalOperationTransformer();
+			var operation = new OpenApiOperation { Parameters = [] };
+			var actionDescriptor = new ControllerActionDescriptor
+			{
+				ControllerTypeInfo = typeof(GlobalOperationTransformerTests).GetTypeInfo(),
+				MethodInfo = typeof(GlobalOperationTransformerTests).GetMethod(nameof(TestAction))!
+			};
+			var context = (OpenApiOperationTransformerContext)Activator.CreateInstance(typeof(OpenApiOperationTransformerContext))!;
+			typeof(OpenApiOperationTransformerContext).GetProperty(nameof(OpenApiOperationTransformerContext.Description))!
+				.SetValue(context, new ApiDescription { ActionDescriptor = actionDescriptor });
+
+			// Act
+			await transformer.TransformAsync(operation, context, default);
+
+			// Assert
+			var correlationIdParameter = operation.Parameters.Single(parameter =>
+				parameter.Name == HeaderConstants.CorrelationIdHeaderName);
+			Assert.That(correlationIdParameter.In, Is.EqualTo(ParameterLocation.Header));
+			Assert.That(correlationIdParameter.Schema!.Format, Is.EqualTo("uuid"));
 		}
 
 		[AllowAnonymous]
@@ -91,5 +157,8 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 
 		[FromHeader(Name = "X-Api-Version")]
 		public string? ApiVersion { get; set; }
+
+		[FromHeader(Name = HeaderConstants.CorrelationIdHeaderName)]
+		public string? CorrelationId { get; set; }
 	}
 }
