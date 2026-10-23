@@ -65,22 +65,6 @@ namespace PilotApi.Shared.OpenApi.Extensions
 				options.Protocol = OtlpExportProtocol.HttpProtobuf;
 			}
 
-			builder.Logging.AddOpenTelemetry(options =>
-			{
-				// Tell OpenTelemetry to parse ASP.NET Core's built-in HTTP request context scopes into log attributes.
-				options.IncludeScopes = true;
-
-				// Capture the fully rendered human-readable message string
-				options.IncludeFormattedMessage = true;
-
-				// add custom logging processors
-				options.SetResourceBuilder(
-							ResourceBuilder.CreateDefault()
-								.AddService(applicationConfiguration.OpenApi.Title))
-								.AddProcessor(new EnrichLogsWithCustomRequestDataProcessor(new HttpContextAccessor()))
-								.AddProcessor(new LogExceptionStackTraceProcessor());
-			});
-
 			builder.Services.AddOpenTelemetry()
 					.ConfigureResource(r => r.AddService(
 						serviceName: applicationConfiguration.OpenApi.Title,
@@ -89,12 +73,27 @@ namespace PilotApi.Shared.OpenApi.Extensions
 						autoGenerateServiceInstanceId: false))
 					.WithLogging(logging =>			// send records to Grafana Loki via OpenTelemetry Collector
 									{
+										logging
+												.SetResourceBuilder(
+													ResourceBuilder.CreateDefault()
+														.AddService(applicationConfiguration.OpenApi.Title))
+												.AddProcessor(new EnrichLogsWithCustomRequestDataProcessor(new HttpContextAccessor()))
+												.AddProcessor(new LogExceptionStackTraceProcessor());
+
 										logging.AddOtlpExporter(options => ConfigureOtlpExporter(options, "v1/logs"));
 
 										if (builder.Environment.IsDevelopment())
 										{
 											logging.AddConsoleExporter();
 										}
+									},
+									options =>
+									{
+										// Tell OpenTelemetry to parse ASP.NET Core's built-in HTTP request context scopes into log attributes.
+										options.IncludeScopes = true;
+
+										// Capture the fully rendered human-readable message string
+										options.IncludeFormattedMessage = true;
 									}
 					)
 					.WithMetrics(metrics =>			// send records to Grafana Mimir (Prometheus) via OpenTelemetry Collector
