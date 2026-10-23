@@ -48,8 +48,7 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 		/// <summary>
 		/// Compares the Info section of the expected and actual OpenAPI documents and records any differences in the result.
-		/// Document metadata (info, servers, tags) is treated as a Warn-level mismatch, and descriptions/examples are
-		/// treated as Info-level.
+		/// Title, summary, contact, and license metadata are treated as Warn-level mismatches, while the description is treated as Info-level.
 		/// </summary>
 		/// <param name="expected">The expected OpenAPI document.</param>
 		/// <param name="actual">The actual OpenAPI document.</param>
