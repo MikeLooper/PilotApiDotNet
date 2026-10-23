@@ -12,7 +12,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// Gets or sets the category ID of the product.
 		/// This property is nullable, indicating that a product may not belong to any category.
 		/// </summary>
-		public int? CategoryID { get; set; }
+		public int? CategoryId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the discontinued status of the product.
@@ -22,7 +22,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the product.
 		/// </summary>
-		public int? ProductID { get; set; }
+		public int? ProductId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the product.
@@ -43,7 +43,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the supplier ID of the product.
 		/// </summary>
-		public int? SupplierID { get; set; }
+		public int? SupplierId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the unit price of the product.
@@ -63,13 +63,13 @@ namespace PilotApi.Domain.Models.Dto
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{nameof(this.CategoryID)}={this.CategoryID}, " +
+			return $"{nameof(this.CategoryId)}={this.CategoryId}, " +
 				$"{nameof(this.Discontinued)}={this.Discontinued}, " +
-				$"{nameof(this.ProductID)}={this.ProductID}, " +
+				$"{nameof(this.ProductId)}={this.ProductId}, " +
 				$"{nameof(this.ProductName)}={this.ProductName}, " +
 				$"{nameof(this.QuantityPerUnit)}={this.QuantityPerUnit}, " +
 				$"{nameof(this.ReorderLevel)}={this.ReorderLevel}, " +
-				$"{nameof(this.SupplierID)}={this.SupplierID}, " +
+				$"{nameof(this.SupplierId)}={this.SupplierId}, " +
 				$"{nameof(this.UnitPrice)}={this.UnitPrice}, " +
 				$"{nameof(this.UnitsInStock)}={this.UnitsInStock}, " +
 				$"{nameof(this.UnitsOnOrder)}={this.UnitsOnOrder}";

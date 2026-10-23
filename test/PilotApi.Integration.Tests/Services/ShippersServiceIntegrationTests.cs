@@ -76,7 +76,7 @@ namespace PilotApi.Integration.Tests.Services
 			var result = await testObject.GetByIdAsync(new[] { 2 });
 
 			// assert
-			Assert.That(result!.Result!.ShipperID, Is.EqualTo(2));
+			Assert.That(result!.Result!.ShipperId, Is.EqualTo(2));
 			Assert.That(result.Result!.CompanyName, Is.EqualTo("United Package"));
 		}
 
@@ -164,7 +164,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new ShippersDto { ShipperID = 1, CompanyName = "Updated Shipping" };
+			var dto = new ShippersDto { ShipperId = 1, CompanyName = "Updated Shipping" };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);

@@ -158,7 +158,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new CategoriesEntity
 				{
-					CategoryID = asCategories.CategoryID,
+					CategoryID = asCategories.CategoryId,
 					CategoryName = asCategories.CategoryName,
 					Description = asCategories.Description,
 					Picture = asCategories.Picture
@@ -194,7 +194,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new CategoriesDto
 				{
-					CategoryID = asCategories.CategoryID,
+					CategoryId = asCategories.CategoryID,
 					CategoryName = asCategories.CategoryName,
 					Description = asCategories.Description,
 					Picture = asCategories.Picture
@@ -230,7 +230,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new CustomersEntity
 				{
-					CustomerID = asCustomers.CustomerID,
+					CustomerID = asCustomers.CustomerId,
 					CompanyName = asCustomers.CompanyName,
 					ContactName = asCustomers.ContactName,
 					ContactTitle = asCustomers.ContactTitle,
@@ -273,7 +273,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new CustomersDto
 				{
-					CustomerID = asCustomers.CustomerID,
+					CustomerId = asCustomers.CustomerID,
 					CompanyName = asCustomers.CompanyName,
 					ContactName = asCustomers.ContactName,
 					ContactTitle = asCustomers.ContactTitle,
@@ -320,7 +320,7 @@ namespace PilotApi.Services.Handlers
 					BirthDate = asEmployees.BirthDate,
 					City = asEmployees.City,
 					Country = asEmployees.Country,
-					EmployeeID = asEmployees.EmployeeID,
+					EmployeeID = asEmployees.EmployeeId,
 					Extension = asEmployees.Extension,
 					FirstName = asEmployees.FirstName,
 					HireDate = asEmployees.HireDate,
@@ -370,7 +370,7 @@ namespace PilotApi.Services.Handlers
 					BirthDate = asEmployees.BirthDate,
 					City = asEmployees.City,
 					Country = asEmployees.Country,
-					EmployeeID = asEmployees.EmployeeID,
+					EmployeeId = asEmployees.EmployeeID,
 					Extension = asEmployees.Extension,
 					FirstName = asEmployees.FirstName,
 					HireDate = asEmployees.HireDate,
@@ -416,8 +416,8 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new OrderDetailsEntity
 				{
-					OrderID = asOrderDetails.OrderID,
-					ProductID = asOrderDetails.ProductID,
+					OrderID = asOrderDetails.OrderId,
+					ProductID = asOrderDetails.ProductId,
 					UnitPrice = asOrderDetails.UnitPrice,
 					Quantity = asOrderDetails.Quantity,
 					Discount = asOrderDetails.Discount
@@ -453,8 +453,8 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new OrderDetailsDto
 				{
-					OrderID = asOrderDetails.OrderID,
-					ProductID = asOrderDetails.ProductID,
+					OrderId = asOrderDetails.OrderID,
+					ProductId = asOrderDetails.ProductID,
 					UnitPrice = asOrderDetails.UnitPrice,
 					Quantity = asOrderDetails.Quantity,
 					Discount = asOrderDetails.Discount
@@ -490,9 +490,9 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new OrdersEntity
 				{
-					OrderID = asOrders.OrderID,
-					CustomerID = asOrders.CustomerID,
-					EmployeeID = asOrders.EmployeeID,
+					OrderID = asOrders.OrderId,
+					CustomerID = asOrders.CustomerId,
+					EmployeeID = asOrders.EmployeeId,
 					OrderDate = asOrders.OrderDate,
 					RequiredDate = asOrders.RequiredDate,
 					ShippedDate = asOrders.ShippedDate,
@@ -536,9 +536,9 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new OrdersDto
 				{
-					OrderID = asOrders.OrderID,
-					CustomerID = asOrders.CustomerID,
-					EmployeeID = asOrders.EmployeeID,
+					OrderId = asOrders.OrderID,
+					CustomerId = asOrders.CustomerID,
+					EmployeeId = asOrders.EmployeeID,
 					OrderDate = asOrders.OrderDate,
 					RequiredDate = asOrders.RequiredDate,
 					ShippedDate = asOrders.ShippedDate,
@@ -582,10 +582,10 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new ProductsEntity
 				{
-					ProductID = asProducts.ProductID,
+					ProductID = asProducts.ProductId,
 					ProductName = asProducts.ProductName,
-					SupplierID = asProducts.SupplierID,
-					CategoryID = asProducts.CategoryID,
+					SupplierID = asProducts.SupplierId,
+					CategoryID = asProducts.CategoryId,
 					QuantityPerUnit = asProducts.QuantityPerUnit,
 					UnitPrice = asProducts.UnitPrice,
 					UnitsInStock = asProducts.UnitsInStock,
@@ -624,10 +624,10 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new ProductsDto
 				{
-					ProductID = asProducts.ProductID,
+					ProductId = asProducts.ProductID,
 					ProductName = asProducts.ProductName,
-					SupplierID = asProducts.SupplierID,
-					CategoryID = asProducts.CategoryID,
+					SupplierId = asProducts.SupplierID,
+					CategoryId = asProducts.CategoryID,
 					QuantityPerUnit = asProducts.QuantityPerUnit,
 					UnitPrice = asProducts.UnitPrice,
 					UnitsInStock = asProducts.UnitsInStock,
@@ -666,7 +666,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new ShippersEntity
 				{
-					ShipperID = asShippers.ShipperID,
+					ShipperID = asShippers.ShipperId,
 					CompanyName = asShippers.CompanyName,
 					Phone = asShippers.Phone
 				};
@@ -701,7 +701,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new ShippersDto
 				{
-					ShipperID = asShippers.ShipperID,
+					ShipperId = asShippers.ShipperID,
 					CompanyName = asShippers.CompanyName,
 					Phone = asShippers.Phone
 				};
@@ -736,7 +736,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newEntity = new SuppliersEntity
 				{
-					SupplierID = asSuppliers.SupplierID,
+					SupplierID = asSuppliers.SupplierId,
 					CompanyName = asSuppliers.CompanyName,
 					ContactName = asSuppliers.ContactName,
 					ContactTitle = asSuppliers.ContactTitle,
@@ -780,7 +780,7 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new SuppliersDto
 				{
-					SupplierID = asSuppliers.SupplierID,
+					SupplierId = asSuppliers.SupplierID,
 					CompanyName = asSuppliers.CompanyName,
 					ContactName = asSuppliers.ContactName,
 					ContactTitle = asSuppliers.ContactTitle,

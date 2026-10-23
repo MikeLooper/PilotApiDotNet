@@ -78,7 +78,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var handler = new DataMapperHandler();
 			var dto = new CategoriesDto
 			{
-				CategoryID = 1,
+				CategoryId = 1,
 				CategoryName = "Beverages",
 				Description = "Soft drinks",
 				Picture = new byte[] { 1, 2, 3 }
@@ -89,7 +89,7 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.CategoryID, Is.EqualTo(dto.CategoryID));
+			Assert.That(result!.CategoryID, Is.EqualTo(dto.CategoryId));
 			Assert.That(result.CategoryName, Is.EqualTo(dto.CategoryName));
 			Assert.That(result.Description, Is.EqualTo(dto.Description));
 			Assert.That(result.Picture, Is.EqualTo(dto.Picture));
@@ -120,7 +120,7 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.CustomerID, Is.EqualTo(entity.CustomerID));
+			Assert.That(result!.CustomerId, Is.EqualTo(entity.CustomerID));
 			Assert.That(result.CompanyName, Is.EqualTo(entity.CompanyName));
 			Assert.That(result.ContactName, Is.EqualTo(entity.ContactName));
 			Assert.That(result.ContactTitle, Is.EqualTo(entity.ContactTitle));
@@ -140,7 +140,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var handler = new DataMapperHandler();
 			var dto = new EmployeesDto
 			{
-				EmployeeID = 7,
+				EmployeeId = 7,
 				FirstName = "Nancy",
 				LastName = "Davolio",
 				Title = "Sales Representative",
@@ -165,7 +165,7 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.EmployeeID, Is.EqualTo(dto.EmployeeID));
+			Assert.That(result!.EmployeeID, Is.EqualTo(dto.EmployeeId));
 			Assert.That(result.FirstName, Is.EqualTo(dto.FirstName));
 			Assert.That(result.LastName, Is.EqualTo(dto.LastName));
 			Assert.That(result.Title, Is.EqualTo(dto.Title));
@@ -204,8 +204,8 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.OrderID, Is.EqualTo(entity.OrderID));
-			Assert.That(result.ProductID, Is.EqualTo(entity.ProductID));
+			Assert.That(result!.OrderId, Is.EqualTo(entity.OrderID));
+			Assert.That(result.ProductId, Is.EqualTo(entity.ProductID));
 			Assert.That(result.UnitPrice, Is.EqualTo(entity.UnitPrice));
 			Assert.That(result.Quantity, Is.EqualTo(entity.Quantity));
 			Assert.That(result.Discount, Is.EqualTo(entity.Discount));
@@ -218,9 +218,9 @@ namespace PilotApi.Services.Tests.Handlers
 			var handler = new DataMapperHandler();
 			var dto = new OrdersDto
 			{
-				OrderID = 10248,
-				CustomerID = "VINET",
-				EmployeeID = 5,
+				OrderId = 10248,
+				CustomerId = "VINET",
+				EmployeeId = 5,
 				OrderDate = new DateTime(2024, 1, 2),
 				RequiredDate = new DateTime(2024, 1, 9),
 				ShippedDate = new DateTime(2024, 1, 5),
@@ -239,9 +239,9 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.OrderID, Is.EqualTo(dto.OrderID));
-			Assert.That(result.CustomerID, Is.EqualTo(dto.CustomerID));
-			Assert.That(result.EmployeeID, Is.EqualTo(dto.EmployeeID));
+			Assert.That(result!.OrderID, Is.EqualTo(dto.OrderId));
+			Assert.That(result.CustomerID, Is.EqualTo(dto.CustomerId));
+			Assert.That(result.EmployeeID, Is.EqualTo(dto.EmployeeId));
 			Assert.That(result.OrderDate, Is.EqualTo(dto.OrderDate));
 			Assert.That(result.RequiredDate, Is.EqualTo(dto.RequiredDate));
 			Assert.That(result.ShippedDate, Is.EqualTo(dto.ShippedDate));
@@ -279,10 +279,10 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.ProductID, Is.EqualTo(entity.ProductID));
+			Assert.That(result!.ProductId, Is.EqualTo(entity.ProductID));
 			Assert.That(result.ProductName, Is.EqualTo(entity.ProductName));
-			Assert.That(result.SupplierID, Is.EqualTo(entity.SupplierID));
-			Assert.That(result.CategoryID, Is.EqualTo(entity.CategoryID));
+			Assert.That(result.SupplierId, Is.EqualTo(entity.SupplierID));
+			Assert.That(result.CategoryId, Is.EqualTo(entity.CategoryID));
 			Assert.That(result.QuantityPerUnit, Is.EqualTo(entity.QuantityPerUnit));
 			Assert.That(result.UnitPrice, Is.EqualTo(entity.UnitPrice));
 			Assert.That(result.UnitsInStock, Is.EqualTo(entity.UnitsInStock));
@@ -298,7 +298,7 @@ namespace PilotApi.Services.Tests.Handlers
 			var handler = new DataMapperHandler();
 			var dto = new ShippersDto
 			{
-				ShipperID = 2,
+				ShipperId = 2,
 				CompanyName = "United Package",
 				Phone = "(503) 555-3199"
 			};
@@ -308,7 +308,7 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.ShipperID, Is.EqualTo(dto.ShipperID));
+			Assert.That(result!.ShipperID, Is.EqualTo(dto.ShipperId));
 			Assert.That(result.CompanyName, Is.EqualTo(dto.CompanyName));
 			Assert.That(result.Phone, Is.EqualTo(dto.Phone));
 		}
@@ -339,7 +339,7 @@ namespace PilotApi.Services.Tests.Handlers
 
 			// Assert
 			Assert.That(result, Is.Not.Null);
-			Assert.That(result!.SupplierID, Is.EqualTo(entity.SupplierID));
+			Assert.That(result!.SupplierId, Is.EqualTo(entity.SupplierID));
 			Assert.That(result.CompanyName, Is.EqualTo(entity.CompanyName));
 			Assert.That(result.ContactName, Is.EqualTo(entity.ContactName));
 			Assert.That(result.ContactTitle, Is.EqualTo(entity.ContactTitle));
@@ -370,8 +370,8 @@ namespace PilotApi.Services.Tests.Handlers
 			// Assert
 			Assert.That(result, Is.Not.Null);
 			Assert.That(result!.Count(), Is.EqualTo(2));
-			Assert.That(result.ElementAt(0).CategoryID, Is.EqualTo(1));
-			Assert.That(result.ElementAt(1).CategoryID, Is.EqualTo(2));
+			Assert.That(result.ElementAt(0).CategoryId, Is.EqualTo(1));
+			Assert.That(result.ElementAt(1).CategoryId, Is.EqualTo(2));
 		}
 
 		[Test]

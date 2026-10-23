@@ -68,7 +68,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier of the supplier.
 		/// </summary>
-		public int? SupplierID { get; set; }
+		public int? SupplierId { get; set; }
 
 		/// <inheritdoc/>
 		public override string ToString()
@@ -84,7 +84,7 @@ namespace PilotApi.Domain.Models.Dto
 				$"{nameof(this.Phone)}={this.Phone}, " +
 				$"{nameof(this.PostalCode)}={this.PostalCode}, " +
 				$"{nameof(this.Region)}={this.Region}, " +
-				$"{nameof(this.SupplierID)}={this.SupplierID}";
+				$"{nameof(this.SupplierId)}={this.SupplierId}";
 		}
 	}
 }

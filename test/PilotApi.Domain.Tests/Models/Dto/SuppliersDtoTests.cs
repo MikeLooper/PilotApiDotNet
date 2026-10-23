@@ -22,7 +22,7 @@ namespace PilotApi.Domain.Tests.Models.Dto
 				Phone = "555-9999",
 				PostalCode = "83702",
 				Region = "ID",
-				SupplierID = 11,
+				SupplierId = 11,
 			};
 
 			Assert.That(dto.Address, Is.EqualTo("500 Supply Ave"));
@@ -36,8 +36,8 @@ namespace PilotApi.Domain.Tests.Models.Dto
 			Assert.That(dto.Phone, Is.EqualTo("555-9999"));
 			Assert.That(dto.PostalCode, Is.EqualTo("83702"));
 			Assert.That(dto.Region, Is.EqualTo("ID"));
-			Assert.That(dto.SupplierID, Is.EqualTo(11));
-			Assert.That(dto.ToString(), Is.EqualTo("Address=500 Supply Ave, City=Boise, CompanyName=Exotic Liquids, ContactName=Charlotte Cooper, ContactTitle=Purchasing Manager, Country=USA, Fax=555-8888, HomePage=https://example.test/supplier, Phone=555-9999, PostalCode=83702, Region=ID, SupplierID=11"));
+			Assert.That(dto.SupplierId, Is.EqualTo(11));
+			Assert.That(dto.ToString(), Is.EqualTo("Address=500 Supply Ave, City=Boise, CompanyName=Exotic Liquids, ContactName=Charlotte Cooper, ContactTitle=Purchasing Manager, Country=USA, Fax=555-8888, HomePage=https://example.test/supplier, Phone=555-9999, PostalCode=83702, Region=ID, SupplierId=11"));
 		}
 	}
 }

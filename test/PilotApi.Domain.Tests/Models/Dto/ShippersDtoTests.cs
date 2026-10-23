@@ -13,13 +13,13 @@ namespace PilotApi.Domain.Tests.Models.Dto
 			{
 				CompanyName = "Speedy Express",
 				Phone = "555-7777",
-				ShipperID = 3,
+				ShipperId = 3,
 			};
 
 			Assert.That(dto.CompanyName, Is.EqualTo("Speedy Express"));
 			Assert.That(dto.Phone, Is.EqualTo("555-7777"));
-			Assert.That(dto.ShipperID, Is.EqualTo(3));
-			Assert.That(dto.ToString(), Is.EqualTo("CompanyName=Speedy Express, Phone=555-7777, ShipperID=3"));
+			Assert.That(dto.ShipperId, Is.EqualTo(3));
+			Assert.That(dto.ToString(), Is.EqualTo("CompanyName=Speedy Express, Phone=555-7777, ShipperId=3"));
 		}
 	}
 }

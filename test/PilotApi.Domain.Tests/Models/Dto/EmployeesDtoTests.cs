@@ -19,7 +19,7 @@ namespace PilotApi.Domain.Tests.Models.Dto
 				BirthDate = birthDate,
 				City = "Tacoma",
 				Country = "USA",
-				EmployeeID = 5,
+				EmployeeId = 5,
 				Extension = "123",
 				FirstName = "Nancy",
 				HireDate = hireDate,
@@ -35,7 +35,7 @@ namespace PilotApi.Domain.Tests.Models.Dto
 				TitleOfCourtesy = "Ms.",
 			};
 
-			Assert.That(dto.ToString(), Is.EqualTo($"Address=456 Market St, BirthDate={birthDate}, City=Tacoma, Country=USA, EmployeeID=5, Extension=123, FirstName=Nancy, HireDate={hireDate}, HomePhone=555-3333, LastName=Davolio, Notes=Top performer, Photo={StringConstants.LogNull}, PhotoPath=/photos/nancy.jpg, PostalCode=98402, Region=WA, ReportsTo=1, Title=Sales Representative, TitleOfCourtesy=Ms."));
+			Assert.That(dto.ToString(), Is.EqualTo($"Address=456 Market St, BirthDate={birthDate}, City=Tacoma, Country=USA, EmployeeId=5, Extension=123, FirstName=Nancy, HireDate={hireDate}, HomePhone=555-3333, LastName=Davolio, Notes=Top performer, Photo={StringConstants.LogNull}, PhotoPath=/photos/nancy.jpg, PostalCode=98402, Region=WA, ReportsTo=1, Title=Sales Representative, TitleOfCourtesy=Ms."));
 		}
 
 		[Test]
@@ -50,7 +50,7 @@ namespace PilotApi.Domain.Tests.Models.Dto
 				BirthDate = birthDate,
 				City = "Redmond",
 				Country = "USA",
-				EmployeeID = 7,
+				EmployeeId = 7,
 				Extension = "456",
 				FirstName = "Andrew",
 				HireDate = hireDate,
@@ -70,7 +70,7 @@ namespace PilotApi.Domain.Tests.Models.Dto
 			Assert.That(dto.BirthDate, Is.EqualTo(birthDate));
 			Assert.That(dto.City, Is.EqualTo("Redmond"));
 			Assert.That(dto.Country, Is.EqualTo("USA"));
-			Assert.That(dto.EmployeeID, Is.EqualTo(7));
+			Assert.That(dto.EmployeeId, Is.EqualTo(7));
 			Assert.That(dto.Extension, Is.EqualTo("456"));
 			Assert.That(dto.FirstName, Is.EqualTo("Andrew"));
 			Assert.That(dto.HireDate, Is.EqualTo(hireDate));

@@ -17,7 +17,7 @@ namespace PilotApi.Domain.Tests.Models.Dto
 				ContactName = "Jane Doe",
 				ContactTitle = "Manager",
 				Country = "USA",
-				CustomerID = "ALFKI",
+				CustomerId = "ALFKI",
 				Fax = "555-2222",
 				Phone = "555-1111",
 				PostalCode = "98101",
@@ -30,12 +30,12 @@ namespace PilotApi.Domain.Tests.Models.Dto
 			Assert.That(dto.ContactName, Is.EqualTo("Jane Doe"));
 			Assert.That(dto.ContactTitle, Is.EqualTo("Manager"));
 			Assert.That(dto.Country, Is.EqualTo("USA"));
-			Assert.That(dto.CustomerID, Is.EqualTo("ALFKI"));
+			Assert.That(dto.CustomerId, Is.EqualTo("ALFKI"));
 			Assert.That(dto.Fax, Is.EqualTo("555-2222"));
 			Assert.That(dto.Phone, Is.EqualTo("555-1111"));
 			Assert.That(dto.PostalCode, Is.EqualTo("98101"));
 			Assert.That(dto.Region, Is.EqualTo("WA"));
-			Assert.That(dto.ToString(), Is.EqualTo("Address=123 Main St, City=Seattle, CompanyName=Northwind, ContactName=Jane Doe, ContactTitle=Manager, Country=USA, CustomerID=ALFKI, Fax=555-2222, Phone=555-1111, PostalCode=98101, Region=WA"));
+			Assert.That(dto.ToString(), Is.EqualTo("Address=123 Main St, City=Seattle, CompanyName=Northwind, ContactName=Jane Doe, ContactTitle=Manager, Country=USA, CustomerId=ALFKI, Fax=555-2222, Phone=555-1111, PostalCode=98101, Region=WA"));
 		}
 	}
 }

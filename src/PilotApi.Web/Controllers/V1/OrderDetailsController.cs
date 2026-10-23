@@ -135,8 +135,8 @@ namespace PilotApi.Web.Controllers.V1
 
 			return this.CreatedAtAction(
 				nameof(this.GetById), 
-				new { productId = model.ProductID, orderId = model.OrderID }, 
-				new AddResponseOrderDetails(model.OrderID, model.ProductID));
+				new { productId = model.ProductId, orderId = model.OrderId }, 
+				new AddResponseOrderDetails(model.OrderId, model.ProductId));
 		}
 
 		/// <summary>

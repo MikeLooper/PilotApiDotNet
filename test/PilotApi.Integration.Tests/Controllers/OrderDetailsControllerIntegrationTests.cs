@@ -42,7 +42,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			table.Rows.Add(1);
 			fakeConnection.NextQueryResult = table;
 
-			var model = new OrderDetailsDto { ProductID = 1, OrderID = 10248, UnitPrice = 14.0m, Quantity = 12 };
+			var model = new OrderDetailsDto { ProductId = 1, OrderId = 10248, UnitPrice = 14.0m, Quantity = 12 };
 
 			// Act
 			var actionResult = await controller.Add(model, CancellationToken.None);

@@ -55,8 +55,15 @@ namespace PilotApi.Shared.OpenApi.Transformers
 						? headerProperty.Property.Name
 						: headerProperty.FromHeader.Name;
 
-					if (operation.Parameters.Any(p => p.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase)))
+					var existingParameter = operation.Parameters.FirstOrDefault(p => p.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase));
+					if (existingParameter != null)
 					{
+						if (headerName.Equals(HeaderConstants.CorrelationIdHeaderName, StringComparison.OrdinalIgnoreCase)
+							&& existingParameter.Schema is OpenApiSchema existingSchema)
+						{
+							existingSchema.Format = "uuid";
+						}
+
 						continue;
 					}
 
@@ -67,7 +74,10 @@ namespace PilotApi.Shared.OpenApi.Transformers
 						Required = headerProperty.Property.GetCustomAttribute<RequiredAttribute>() != null,
 						Schema = new OpenApiSchema
 						{
-							Type = JsonSchemaType.String
+							Type = JsonSchemaType.String,
+							Format = headerName.Equals(HeaderConstants.CorrelationIdHeaderName, StringComparison.OrdinalIgnoreCase)
+								? "uuid"
+								: null
 						}
 					});
 				}

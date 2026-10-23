@@ -79,7 +79,7 @@ namespace PilotApi.Integration.Tests.Services
 			var result = await testObject.GetByIdAsync(new[] { 2 });
 
 			// assert
-			Assert.That(result!.Result!.EmployeeID, Is.EqualTo(2));
+			Assert.That(result!.Result!.EmployeeId, Is.EqualTo(2));
 			Assert.That(result.Result!.LastName, Is.EqualTo("Fuller"));
 		}
 
@@ -167,7 +167,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new EmployeesDto { EmployeeID = 4, FirstName = "Margaret", LastName = "Peacock" };
+			var dto = new EmployeesDto { EmployeeId = 4, FirstName = "Margaret", LastName = "Peacock" };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);

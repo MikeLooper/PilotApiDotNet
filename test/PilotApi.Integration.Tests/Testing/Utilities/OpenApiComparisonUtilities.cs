@@ -48,6 +48,8 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 		/// <summary>
 		/// Compares the Info section of the expected and actual OpenAPI documents and records any differences in the result.
+		/// Document metadata (info, servers, tags) is treated as a Warn-level mismatch, and descriptions/examples are
+		/// treated as Info-level.
 		/// </summary>
 		/// <param name="expected">The expected OpenAPI document.</param>
 		/// <param name="actual">The actual OpenAPI document.</param>
@@ -59,26 +61,26 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 			if (expectedInfo == null || actualInfo == null)
 			{
-				result.Errors.Add("The Info section is missing from the expected or actual document.");
+				result.Warnings.Add("The Info section is missing from the expected or actual document.");
 				return;
 			}
 
-			CompareValue(nameof(expectedInfo.Title), expectedInfo.Title, actualInfo.Title, result.Errors);
-			CompareValue(nameof(expectedInfo.Description), expectedInfo.Description, actualInfo.Description, result.Errors);
-			CompareValue(nameof(expectedInfo.Summary), expectedInfo.Summary, actualInfo.Summary, result.Errors);
+			CompareValue(nameof(expectedInfo.Title), expectedInfo.Title, actualInfo.Title, result.Warnings);
+			CompareValue(nameof(expectedInfo.Description), expectedInfo.Description, actualInfo.Description, result.Infos);
+			CompareValue(nameof(expectedInfo.Summary), expectedInfo.Summary, actualInfo.Summary, result.Warnings);
 
 			var expectedContactEmail = expectedInfo.Contact?.Email;
 			var actualContactEmail = actualInfo.Contact?.Email;
-			CompareValue("Info.Contact.Email", expectedContactEmail, actualContactEmail, result.Errors);
+			CompareValue("Info.Contact.Email", expectedContactEmail, actualContactEmail, result.Warnings);
 
 			var expectedContactName = expectedInfo.Contact?.Name;
 			var actualContactName = actualInfo.Contact?.Name;
-			CompareValue("Info.Contact.Name", expectedContactName, actualContactName, result.Errors);
-			CompareValue("Info.Contact.Url", expectedInfo.Contact?.Url?.ToString(), actualInfo.Contact?.Url?.ToString(), result.Errors);
+			CompareValue("Info.Contact.Name", expectedContactName, actualContactName, result.Warnings);
+			CompareValue("Info.Contact.Url", expectedInfo.Contact?.Url?.ToString(), actualInfo.Contact?.Url?.ToString(), result.Warnings);
 
 			var expectedLicenseName = expectedInfo.License?.Name;
 			var actualLicenseName = actualInfo.License?.Name;
-			CompareValue("Info.License.Name", expectedLicenseName, actualLicenseName, result.Errors);
+			CompareValue("Info.License.Name", expectedLicenseName, actualLicenseName, result.Warnings);
 		}
 
 		/// <summary>
@@ -110,7 +112,7 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 			{
 				if (!expectedPaths.ContainsKey(actualPathKey))
 				{
-					result.Errors.Add($"Path '{actualPathKey}' is implemented by the application but is missing from the expected specification.");
+					result.Warnings.Add($"Path '{actualPathKey}' is implemented by the application but is missing from the expected specification.");
 				}
 			}
 		}
@@ -152,7 +154,7 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 			{
 				if (!expectedOperations.ContainsKey(actualOperationPair.Key))
 				{
-					result.Errors.Add($"Operation '{actualOperationPair.Key} {pathKey}' is implemented by the application but is missing from the expected specification.");
+					result.Warnings.Add($"Operation '{actualOperationPair.Key} {pathKey}' is implemented by the application but is missing from the expected specification.");
 				}
 			}
 		}
@@ -182,13 +184,22 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 			foreach (var expectedName in expectedNames)
 			{
+				var expectedParameter = expectedParameters.First(p => p.Name == expectedName);
+
 				if (!actualNames.Contains(expectedName))
 				{
-					result.Errors.Add($"Parameter '{expectedName}' on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+					if (expectedParameter.Required)
+					{
+						result.Errors.Add($"Required parameter '{expectedName}' on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+					}
+					else
+					{
+						result.Warnings.Add($"Optional parameter '{expectedName}' on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+					}
+
 					continue;
 				}
 
-				var expectedParameter = expectedParameters.First(p => p.Name == expectedName);
 				var actualParameter = actualParameters.First(p => p.Name == expectedName);
 
 				if (expectedParameter.Required != actualParameter.Required)
@@ -197,13 +208,91 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 						$"Parameter '{expectedName}' on operation '{method} {pathKey}' has Required={expectedParameter.Required} in the expected " +
 						$"specification but Required={actualParameter.Required} in the application.");
 				}
+
+				CompareSchema($"Parameter '{expectedName}' on operation '{method} {pathKey}'", expectedParameter.Schema, actualParameter.Schema, result);
 			}
 
 			foreach (var actualName in actualNames)
 			{
 				if (!expectedNames.Contains(actualName))
 				{
-					result.Errors.Add($"Parameter '{actualName}' on operation '{method} {pathKey}' is implemented by the application but is missing from the expected specification.");
+					result.Warnings.Add($"Parameter '{actualName}' on operation '{method} {pathKey}' is implemented by the application but is missing from the expected specification.");
+				}
+			}
+
+			CompareRequestBody(pathKey, method, expectedOperation, actualOperation, result);
+		}
+
+		/// <summary>
+		/// Compares the request body of expected and actual operations, including the required flag and the schema of
+		/// each shared media type.
+		/// </summary>
+		private static void CompareRequestBody(
+			string pathKey,
+			HttpMethod method,
+			OpenApiOperation expectedOperation,
+			OpenApiOperation actualOperation,
+			OpenApiComparisonResult result)
+		{
+			var expectedBody = expectedOperation.RequestBody;
+			var actualBody = actualOperation.RequestBody;
+
+			if (expectedBody == null && actualBody == null)
+			{
+				return;
+			}
+
+			if (expectedBody != null && actualBody == null)
+			{
+				result.Errors.Add($"Request body on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+				return;
+			}
+
+			if (expectedBody == null)
+			{
+				result.Warnings.Add($"Request body on operation '{method} {pathKey}' is implemented by the application but is missing from the expected specification.");
+				return;
+			}
+
+			if (expectedBody.Required != actualBody.Required)
+			{
+				result.Errors.Add(
+					$"Request body on operation '{method} {pathKey}' has Required={expectedBody.Required} in the expected " +
+					$"specification but Required={actualBody.Required} in the application.");
+			}
+
+			CompareMediaTypes($"Request body on operation '{method} {pathKey}'", expectedBody.Content, actualBody.Content, result);
+		}
+
+		/// <summary>
+		/// Compares a set of media type entries (as used by request bodies and responses), checking media type
+		/// presence and the schema of each shared media type.
+		/// </summary>
+		private static void CompareMediaTypes(
+			string context,
+			IDictionary<string, OpenApiMediaType> expectedContent,
+			IDictionary<string, OpenApiMediaType> actualContent,
+			OpenApiComparisonResult result)
+		{
+			expectedContent ??= new Dictionary<string, OpenApiMediaType>();
+			actualContent ??= new Dictionary<string, OpenApiMediaType>();
+
+			foreach (var expectedMediaTypeKey in expectedContent.Keys)
+			{
+				if (!actualContent.TryGetValue(expectedMediaTypeKey, out var actualMediaType))
+				{
+					result.Errors.Add($"{context} defines media type '{expectedMediaTypeKey}' in the expected specification but it is missing from the application.");
+					continue;
+				}
+
+				CompareSchema($"{context} media type '{expectedMediaTypeKey}'", expectedContent[expectedMediaTypeKey].Schema, actualMediaType.Schema, result);
+			}
+
+			foreach (var actualMediaTypeKey in actualContent.Keys)
+			{
+				if (!expectedContent.ContainsKey(actualMediaTypeKey))
+				{
+					result.Errors.Add($"{context} implements media type '{actualMediaTypeKey}' in the application but it is missing from the expected specification.");
 				}
 			}
 		}
@@ -231,17 +320,34 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 			foreach (var expectedStatusCode in expectedResponses.Keys)
 			{
-				if (!actualResponses.ContainsKey(expectedStatusCode))
+				var isSuccessResponse = expectedStatusCode.StartsWith("2", StringComparison.Ordinal);
+
+				if (!actualResponses.TryGetValue(expectedStatusCode, out var actualResponse))
 				{
-					result.Errors.Add($"Response status code '{expectedStatusCode}' on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+					if (isSuccessResponse)
+					{
+						result.Errors.Add($"Response status code '{expectedStatusCode}' on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+					}
+					else
+					{
+						result.Warnings.Add($"Response status code '{expectedStatusCode}' on operation '{method} {pathKey}' is defined in the expected specification but is missing from the application.");
+					}
+
+					continue;
 				}
+
+				CompareMediaTypes(
+					$"Response '{expectedStatusCode}' on operation '{method} {pathKey}'",
+					expectedResponses[expectedStatusCode].Content,
+					actualResponse.Content,
+					result);
 			}
 
 			foreach (var actualStatusCode in actualResponses.Keys)
 			{
 				if (!expectedResponses.ContainsKey(actualStatusCode))
 				{
-					result.Errors.Add($"Response status code '{actualStatusCode}' on operation '{method} {pathKey}' is implemented by the application but is missing from the expected specification.");
+					result.Warnings.Add($"Response status code '{actualStatusCode}' on operation '{method} {pathKey}' is implemented by the application but is missing from the expected specification.");
 				}
 			}
 		}
@@ -276,14 +382,12 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 		}
 
 		/// <summary>
-		/// Compares component schemas between the expected and actual OpenAPI documents, records warnings for schemas missing
-		/// on either side, and compares properties for schemas present in both.
+		/// Compares component schemas between the expected and actual OpenAPI documents, records errors for schemas missing
+		/// from the application and warnings for extra schemas, and compares properties for schemas present in both.
 		/// </summary>
-		/// <remarks>Treats missing component schema collections as empty and performs a two-way presence
-		/// check.</remarks>
 		/// <param name="expected">OpenAPI document that defines the expected component schemas.</param>
 		/// <param name="actual">OpenAPI document that provides the implemented component schemas.</param>
-		/// <param name="result">Comparison result container that receives schema-related warnings.</param>
+		/// <param name="result">Comparison result container that receives schema-related findings.</param>
 		private static void CompareComponentSchemas(OpenApiDocument expected, OpenApiDocument actual, OpenApiComparisonResult result)
 		{
 			var expectedSchemas = expected.Components?.Schemas ?? new Dictionary<string, IOpenApiSchema>();
@@ -291,13 +395,13 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 			foreach (var expectedSchemaKey in expectedSchemas.Keys)
 			{
-				if (!actualSchemas.ContainsKey(expectedSchemaKey))
+				if (!actualSchemas.TryGetValue(expectedSchemaKey, out var actualSchema))
 				{
-					result.Warnings.Add($"Schema '{expectedSchemaKey}' is defined in the expected specification but is missing from the application.");
+					result.Errors.Add($"Schema '{expectedSchemaKey}' is defined in the expected specification but is missing from the application.");
 					continue;
 				}
 
-				CompareSchemaProperties(expectedSchemaKey, expectedSchemas[expectedSchemaKey], actualSchemas[expectedSchemaKey], result);
+				CompareSchema($"Schema '{expectedSchemaKey}'", expectedSchemas[expectedSchemaKey], actualSchema, result);
 			}
 
 			foreach (var actualSchemaKey in actualSchemas.Keys)
@@ -310,17 +414,187 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 		}
 
 		/// <summary>
-		/// Compares the property keys defined on the expected and actual schemas and records warnings for missing properties
-		/// on either side.
+		/// Compares two schemas for structural equivalence, recording Error-level mismatches for missing schemas/properties,
+		/// base type differences, nullability, required lists, format, patterns, defaults, enum, and oneOf/anyOf/allOf
+		/// differences, Warn-level mismatches for extra properties, and Info-level mismatches for alternate types and
+		/// component names.
 		/// </summary>
-		/// <remarks>Only property presence is checked; property types, formats, and nested schema details are not
-		/// compared.</remarks>
-		/// <param name="schemaKey">Schema identifier used in warning messages.</param>
+		private static void CompareSchema(
+			string context,
+			IOpenApiSchema expectedSchema,
+			IOpenApiSchema actualSchema,
+			OpenApiComparisonResult result)
+		{
+			if (expectedSchema == null && actualSchema == null)
+			{
+				return;
+			}
+
+			if (expectedSchema == null || actualSchema == null)
+			{
+				result.Errors.Add($"{context} schema is missing in the expected or actual document.");
+				return;
+			}
+
+			var expectedReferenceId = (expectedSchema as OpenApiSchemaReference)?.Reference?.Id;
+			var actualReferenceId = (actualSchema as OpenApiSchemaReference)?.Reference?.Id;
+
+			if (!string.Equals(expectedReferenceId, actualReferenceId, StringComparison.Ordinal))
+			{
+				result.Infos.Add($"{context} component name mismatch. Expected: '{expectedReferenceId}', Actual: '{actualReferenceId}'.");
+			}
+
+			if (!string.IsNullOrEmpty(expectedReferenceId) && !string.IsNullOrEmpty(actualReferenceId))
+			{
+				// Both sides reference a named component; detailed comparison already occurs when the component itself is compared.
+				return;
+			}
+
+			CompareSchemaType(context, expectedSchema, actualSchema, result);
+
+			if (!string.Equals(expectedSchema.Format, actualSchema.Format, StringComparison.Ordinal))
+			{
+				result.Errors.Add($"{context} Format mismatch. Expected: '{expectedSchema.Format}', Actual: '{actualSchema.Format}'.");
+			}
+
+			if (!string.Equals(expectedSchema.Pattern, actualSchema.Pattern, StringComparison.Ordinal))
+			{
+				result.Errors.Add($"{context} Pattern mismatch. Expected: '{expectedSchema.Pattern}', Actual: '{actualSchema.Pattern}'.");
+			}
+
+			var expectedDefault = expectedSchema.Default?.ToJsonString();
+			var actualDefault = actualSchema.Default?.ToJsonString();
+			if (!string.Equals(expectedDefault, actualDefault, StringComparison.Ordinal))
+			{
+				result.Errors.Add($"{context} Default mismatch. Expected: '{expectedDefault}', Actual: '{actualDefault}'.");
+			}
+
+			CompareEnumValues(context, expectedSchema.Enum, actualSchema.Enum, result);
+			CompareSchemaList(context, "allOf", expectedSchema.AllOf, actualSchema.AllOf, result);
+			CompareSchemaList(context, "oneOf", expectedSchema.OneOf, actualSchema.OneOf, result);
+			CompareSchemaList(context, "anyOf", expectedSchema.AnyOf, actualSchema.AnyOf, result);
+
+			CompareBaseType(context, expectedSchema, actualSchema, result);
+			CompareRequiredProperties(context, expectedSchema, actualSchema, result);
+			CompareValue($"{context} Description", expectedSchema.Description, actualSchema.Description, result.Infos);
+
+			CompareSchemaProperties(context, expectedSchema, actualSchema, result);
+
+			if (expectedSchema.Items != null || actualSchema.Items != null)
+			{
+				CompareSchema($"{context} Items", expectedSchema.Items, actualSchema.Items, result);
+			}
+		}
+
+		/// <summary>
+		/// Compares the <c>Type</c> of two schemas. An exact match is required unless the only difference is that one
+		/// side declares a broader union of alternate types (for example <c>[integer, string]</c> vs <c>integer</c>), in
+		/// which case the mismatch is Info-level instead of Error-level.
+		/// </summary>
+		private static void CompareSchemaType(string context, IOpenApiSchema expectedSchema, IOpenApiSchema actualSchema, OpenApiComparisonResult result)
+		{
+			if (expectedSchema.Type == actualSchema.Type)
+			{
+				return;
+			}
+
+			if (expectedSchema.Type.HasValue && actualSchema.Type.HasValue)
+			{
+				result.Infos.Add($"{context} Type mismatch (alternate types). Expected: '{expectedSchema.Type}', Actual: '{actualSchema.Type}'.");
+				return;
+			}
+
+			result.Errors.Add($"{context} Type mismatch. Expected: '{expectedSchema.Type}', Actual: '{actualSchema.Type}'.");
+		}
+
+		/// <summary>
+		/// Compares the enum value lists of two schemas for equivalence, recording an Error-level mismatch when they differ.
+		/// </summary>
+		private static void CompareEnumValues(string context, IList<System.Text.Json.Nodes.JsonNode> expectedEnum, IList<System.Text.Json.Nodes.JsonNode> actualEnum, OpenApiComparisonResult result)
+		{
+			var expectedValues = (expectedEnum ?? new List<System.Text.Json.Nodes.JsonNode>()).Select(n => n?.ToJsonString()).ToList();
+			var actualValues = (actualEnum ?? new List<System.Text.Json.Nodes.JsonNode>()).Select(n => n?.ToJsonString()).ToList();
+
+			if (!expectedValues.SequenceEqual(actualValues, StringComparer.Ordinal))
+			{
+				result.Errors.Add($"{context} Enum mismatch. Expected: [{string.Join(", ", expectedValues)}], Actual: [{string.Join(", ", actualValues)}].");
+			}
+		}
+
+		/// <summary>
+		/// Compares the number of entries and, pairwise, the schemas within an <c>allOf</c>/<c>oneOf</c>/<c>anyOf</c> list.
+		/// </summary>
+		private static void CompareSchemaList(
+			string context,
+			string keyword,
+			IList<IOpenApiSchema> expectedList,
+			IList<IOpenApiSchema> actualList,
+			OpenApiComparisonResult result)
+		{
+			var expected = expectedList ?? new List<IOpenApiSchema>();
+			var actual = actualList ?? new List<IOpenApiSchema>();
+
+			if (expected.Count != actual.Count)
+			{
+				result.Errors.Add($"{context} {keyword} count mismatch. Expected: {expected.Count}, Actual: {actual.Count}.");
+				return;
+			}
+
+			for (var index = 0; index < expected.Count; index++)
+			{
+				CompareSchema($"{context} {keyword}[{index}]", expected[index], actual[index], result);
+			}
+		}
+
+		/// <summary>
+		/// Compares the base type (the first referenced schema in an <c>allOf</c> composition, if any) of two schemas.
+		/// </summary>
+		private static void CompareBaseType(string context, IOpenApiSchema expectedSchema, IOpenApiSchema actualSchema, OpenApiComparisonResult result)
+		{
+			var expectedBaseType = expectedSchema.AllOf?.OfType<OpenApiSchemaReference>().FirstOrDefault()?.Reference?.Id;
+			var actualBaseType = actualSchema.AllOf?.OfType<OpenApiSchemaReference>().FirstOrDefault()?.Reference?.Id;
+
+			if (!string.Equals(expectedBaseType, actualBaseType, StringComparison.Ordinal))
+			{
+				result.Errors.Add($"{context} base type mismatch. Expected: '{expectedBaseType}', Actual: '{actualBaseType}'.");
+			}
+		}
+
+		/// <summary>
+		/// Compares the required property lists and nullability of two schemas.
+		/// </summary>
+		private static void CompareRequiredProperties(string context, IOpenApiSchema expectedSchema, IOpenApiSchema actualSchema, OpenApiComparisonResult result)
+		{
+			var expectedRequired = expectedSchema.Required ?? new HashSet<string>();
+			var actualRequired = actualSchema.Required ?? new HashSet<string>();
+
+			if (!expectedRequired.SetEquals(actualRequired))
+			{
+				result.Errors.Add(
+					$"{context} Required list mismatch. Expected: [{string.Join(", ", expectedRequired.OrderBy(v => v, StringComparer.Ordinal))}], " +
+					$"Actual: [{string.Join(", ", actualRequired.OrderBy(v => v, StringComparer.Ordinal))}].");
+			}
+
+			var expectedNullable = expectedSchema.Type.HasValue && expectedSchema.Type.Value.HasFlag(JsonSchemaType.Null);
+			var actualNullable = actualSchema.Type.HasValue && actualSchema.Type.Value.HasFlag(JsonSchemaType.Null);
+
+			if (expectedNullable != actualNullable)
+			{
+				result.Errors.Add($"{context} nullability mismatch. Expected nullable: {expectedNullable}, Actual nullable: {actualNullable}.");
+			}
+		}
+
+		/// <summary>
+		/// Compares the property sets defined on the expected and actual schemas, recording an Error for a property missing
+		/// from the application and a Warn for an extra property implemented by the application. Properties present on both
+		/// sides are compared recursively.
+		/// </summary>
+		/// <param name="context">Context label used in finding messages.</param>
 		/// <param name="expectedSchema">Schema from the expected specification.</param>
 		/// <param name="actualSchema">Schema implemented by the application.</param>
-		/// <param name="result">Comparison result that collects warning messages.</param>
+		/// <param name="result">Comparison result that collects findings.</param>
 		private static void CompareSchemaProperties(
-			string schemaKey,
+			string context,
 			IOpenApiSchema expectedSchema,
 			IOpenApiSchema actualSchema,
 			OpenApiComparisonResult result)
@@ -330,17 +604,20 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 			foreach (var expectedPropertyKey in expectedProperties.Keys)
 			{
-				if (!actualProperties.ContainsKey(expectedPropertyKey))
+				if (!actualProperties.TryGetValue(expectedPropertyKey, out var actualProperty))
 				{
-					result.Warnings.Add($"Property '{expectedPropertyKey}' on schema '{schemaKey}' is defined in the expected specification but is missing from the application.");
+					result.Errors.Add($"Property '{expectedPropertyKey}' on {context} is defined in the expected specification but is missing from the application.");
+					continue;
 				}
+
+				CompareSchema($"Property '{expectedPropertyKey}' on {context}", expectedProperties[expectedPropertyKey], actualProperty, result);
 			}
 
 			foreach (var actualPropertyKey in actualProperties.Keys)
 			{
 				if (!expectedProperties.ContainsKey(actualPropertyKey))
 				{
-					result.Warnings.Add($"Property '{actualPropertyKey}' on schema '{schemaKey}' is implemented by the application but is missing from the expected specification.");
+					result.Warnings.Add($"Property '{actualPropertyKey}' on {context} is implemented by the application but is missing from the expected specification.");
 				}
 			}
 		}

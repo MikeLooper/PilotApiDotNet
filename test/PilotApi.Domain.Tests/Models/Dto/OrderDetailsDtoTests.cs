@@ -12,18 +12,18 @@ namespace PilotApi.Domain.Tests.Models.Dto
 			OrderDetailsDto dto = new()
 			{
 				Discount = 0.15f,
-				OrderID = 12,
-				ProductID = 34,
+				OrderId = 12,
+				ProductId = 34,
 				Quantity = 5,
 				UnitPrice = 19.95m,
 			};
 
 			Assert.That(dto.Discount, Is.EqualTo(0.15f));
-			Assert.That(dto.OrderID, Is.EqualTo(12));
-			Assert.That(dto.ProductID, Is.EqualTo(34));
+			Assert.That(dto.OrderId, Is.EqualTo(12));
+			Assert.That(dto.ProductId, Is.EqualTo(34));
 			Assert.That(dto.Quantity, Is.EqualTo(5));
 			Assert.That(dto.UnitPrice, Is.EqualTo(19.95m));
-			Assert.That(dto.ToString(), Is.EqualTo("Discount=0.15, OrderID=12, ProductID=34, Quantity=5, UnitPrice=19.95"));
+			Assert.That(dto.ToString(), Is.EqualTo("Discount=0.15, OrderId=12, ProductId=34, Quantity=5, UnitPrice=19.95"));
 		}
 	}
 }

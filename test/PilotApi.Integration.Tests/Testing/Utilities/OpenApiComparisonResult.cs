@@ -16,5 +16,10 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 		/// Gets the list of differences considered informational/non-blocking (Warn level).
 		/// </summary>
 		public List<string> Warnings { get; } = new List<string>();
+
+		/// <summary>
+		/// Gets the list of differences considered purely informational and non-blocking (Info level).
+		/// </summary>
+		public List<string> Infos { get; } = new List<string>();
 	}
 }
