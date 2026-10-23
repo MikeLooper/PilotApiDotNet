@@ -54,6 +54,11 @@ namespace PilotApi.Integration.Tests.OpenApi
 				TestContext.Out.WriteLine($"WARN: {warning}");
 			}
 
+			foreach (var info in comparisonResult.Infos)
+			{
+				TestContext.Out.WriteLine($"INFO: {info}");
+			}
+
 			// Assert
 			Assert.That(
 				comparisonResult.Errors,
