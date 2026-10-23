@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.Exceptions;
 using PilotApi.Shared.Logging;
+using PilotApi.Shared.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -61,7 +64,9 @@ namespace PilotApi.Shared.Api.Middleware
 					Detail = uExc.Message,
 					Instance = context.Request.Path
 				};
-		
+
+				this.AddRequestExtensions(context, problemDetails);
+
 				context.Response.ContentType = "application/json";
 				context.Response.StatusCode = problemDetails.Status.Value;
 
@@ -80,12 +85,23 @@ namespace PilotApi.Shared.Api.Middleware
 					Detail = loggingCorrelation.UserMessage,
 					Instance = context.Request.Path
 				};
-		
+
+				this.AddRequestExtensions(context, problemDetails);
+
 				context.Response.ContentType = "application/json";
 				context.Response.StatusCode = problemDetails.Status.Value;
 
 				await context.Response.WriteAsJsonAsync(problemDetails);
 			}
+		}
+
+		private void AddRequestExtensions(HttpContext context, ProblemDetails problemDetails)
+		{
+			var requestSettings = context.RequestServices.GetRequiredService<RequestSettings>();
+
+			problemDetails.Extensions.Add(ExtensionsConstants.CorrelationId, requestSettings.CorrelationId);
+			problemDetails.Extensions.Add(ExtensionsConstants.RequestId, requestSettings.RequestId);
+			problemDetails.Extensions.Add(ExtensionsConstants.Timestamp, DateTime.UtcNow);
 		}
 	}
 }
