@@ -270,12 +270,12 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 		/// </summary>
 		private static void CompareMediaTypes(
 			string context,
-			IDictionary<string, OpenApiMediaType> expectedContent,
-			IDictionary<string, OpenApiMediaType> actualContent,
+			IDictionary<string, IOpenApiMediaType> expectedContent,
+			IDictionary<string, IOpenApiMediaType> actualContent,
 			OpenApiComparisonResult result)
 		{
-			expectedContent ??= new Dictionary<string, OpenApiMediaType>();
-			actualContent ??= new Dictionary<string, OpenApiMediaType>();
+			expectedContent ??= new Dictionary<string, IOpenApiMediaType>();
+			actualContent ??= new Dictionary<string, IOpenApiMediaType>();
 
 			foreach (var expectedMediaTypeKey in expectedContent.Keys)
 			{
