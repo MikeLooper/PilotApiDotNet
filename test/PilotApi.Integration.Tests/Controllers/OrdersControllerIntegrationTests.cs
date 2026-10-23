@@ -42,7 +42,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			table.Rows.Add(10248);
 			fakeConnection.NextQueryResult = table;
 
-			var model = new OrdersDto { CustomerID = "VINET" };
+			var model = new OrdersDto { CustomerId = "VINET" };
 
 			// Act
 			var actionResult = await controller.Add(model, CancellationToken.None);
@@ -104,7 +104,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			var dtos = okResult!.Value as IReadOnlyList<OrdersDto>;
 			Assert.That(dtos, Is.Not.Null);
 			Assert.That(dtos!, Has.Count.EqualTo(2));
-			Assert.That(dtos![0].CustomerID, Is.EqualTo("VINET"));
+			Assert.That(dtos![0].CustomerId, Is.EqualTo("VINET"));
 		}
 
 		[Test]
@@ -150,7 +150,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			Assert.That(okResult, Is.Not.Null);
 			var dto = okResult!.Value as OrdersDto;
 			Assert.That(dto, Is.Not.Null);
-			Assert.That(dto!.CustomerID, Is.EqualTo("HANAR"));
+			Assert.That(dto!.CustomerId, Is.EqualTo("HANAR"));
 		}
 
 		[Test]

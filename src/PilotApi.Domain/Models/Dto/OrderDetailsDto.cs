@@ -19,13 +19,13 @@ namespace PilotApi.Domain.Models.Dto
 		/// Gets or sets the ID of the order associated with the order detail.
 		/// </summary>
 		[Required]
-		public int OrderID { get; set; }
+		public int OrderId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the ID of the product associated with the order detail.
 		/// </summary>
 		[Required]
-		public int ProductID { get; set; }
+		public int ProductId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the quantity of the product ordered in the order detail.
@@ -43,8 +43,8 @@ namespace PilotApi.Domain.Models.Dto
 		public override string ToString()
 		{
 			return $"{nameof(this.Discount)}={this.Discount}, " +
-				$"{nameof(this.OrderID)}={this.OrderID}, " +
-				$"{nameof(this.ProductID)}={this.ProductID}, " +
+				$"{nameof(this.OrderId)}={this.OrderId}, " +
+				$"{nameof(this.ProductId)}={this.ProductId}, " +
 				$"{nameof(this.Quantity)}={this.Quantity}, " +
 				$"{nameof(this.UnitPrice)}={this.UnitPrice}";
 		}

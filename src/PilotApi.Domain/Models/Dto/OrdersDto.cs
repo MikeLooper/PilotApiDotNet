@@ -12,12 +12,12 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the customer ID associated with the order.
 		/// </summary>
-		public string? CustomerID { get; set; }
+		public string? CustomerId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the employee ID associated with the order.
 		/// </summary>
-		public int? EmployeeID { get; set; }
+		public int? EmployeeId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the freight cost for the order.
@@ -32,7 +32,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the order.
 		/// </summary>
-		public int? OrderID { get; set; }
+		public int? OrderId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the date when the order is required to be delivered.
@@ -82,11 +82,11 @@ namespace PilotApi.Domain.Models.Dto
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{nameof(this.CustomerID)}={this.CustomerID}, " +
-				$"{nameof(this.EmployeeID)}={this.EmployeeID}, " +
+			return $"{nameof(this.CustomerId)}={this.CustomerId}, " +
+				$"{nameof(this.EmployeeId)}={this.EmployeeId}, " +
 				$"{nameof(this.Freight)}={this.Freight}, " +
 				$"{nameof(this.OrderDate)}={this.OrderDate}, " +
-				$"{nameof(this.OrderID)}={this.OrderID}, " +
+				$"{nameof(this.OrderId)}={this.OrderId}, " +
 				$"{nameof(this.RequiredDate)}={this.RequiredDate}, " +
 				$"{nameof(this.ShipAddress)}={this.ShipAddress}, " +
 				$"{nameof(this.ShipCity)}={this.ShipCity}, " +

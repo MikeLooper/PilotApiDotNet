@@ -77,7 +77,7 @@ namespace PilotApi.Integration.Tests.Services
 			var result = await testObject.GetByIdAsync(new[] { 2 });
 
 			// assert
-			Assert.That(result!.Result!.ProductID, Is.EqualTo(2));
+			Assert.That(result!.Result!.ProductId, Is.EqualTo(2));
 			Assert.That(result.Result!.ProductName, Is.EqualTo("Chang"));
 		}
 
@@ -165,7 +165,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new ProductsDto { ProductID = 3, ProductName = "Aniseed Syrup", Discontinued = true };
+			var dto = new ProductsDto { ProductId = 3, ProductName = "Aniseed Syrup", Discontinued = true };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);

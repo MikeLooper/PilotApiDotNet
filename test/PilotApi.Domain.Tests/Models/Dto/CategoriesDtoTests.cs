@@ -12,13 +12,13 @@ namespace PilotApi.Domain.Tests.Models.Dto
 		{
 			CategoriesDto dto = new()
 			{
-				CategoryID = 1,
+				CategoryId = 1,
 				CategoryName = "Beverages",
 				Description = "Soft drinks",
 				Picture = null,
 			};
 
-			Assert.That(dto.ToString(), Is.EqualTo($"CategoryID=1, CategoryName=Beverages, Description=Soft drinks, Picture={StringConstants.LogNull}"));
+			Assert.That(dto.ToString(), Is.EqualTo($"CategoryId=1, CategoryName=Beverages, Description=Soft drinks, Picture={StringConstants.LogNull}"));
 		}
 
 		[Test]
@@ -27,17 +27,17 @@ namespace PilotApi.Domain.Tests.Models.Dto
 			byte[] picture = [1, 2, 3];
 			CategoriesDto dto = new()
 			{
-				CategoryID = 2,
+				CategoryId = 2,
 				CategoryName = "Condiments",
 				Description = "Sauces",
 				Picture = picture,
 			};
 
-			Assert.That(dto.CategoryID, Is.EqualTo(2));
+			Assert.That(dto.CategoryId, Is.EqualTo(2));
 			Assert.That(dto.CategoryName, Is.EqualTo("Condiments"));
 			Assert.That(dto.Description, Is.EqualTo("Sauces"));
 			Assert.That(dto.Picture, Is.SameAs(picture));
-			Assert.That(dto.ToString(), Is.EqualTo($"CategoryID=2, CategoryName=Condiments, Description=Sauces, Picture={StringConstants.HasContents}"));
+			Assert.That(dto.ToString(), Is.EqualTo($"CategoryId=2, CategoryName=Condiments, Description=Sauces, Picture={StringConstants.HasContents}"));
 		}
 	}
 }

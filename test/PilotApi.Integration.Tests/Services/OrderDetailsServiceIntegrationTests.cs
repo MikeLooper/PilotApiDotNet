@@ -20,7 +20,7 @@ namespace PilotApi.Integration.Tests.Services
 	/// <remarks>
 	/// Each test builds its own local, disposable set of dependencies (via <see cref="IntegrationTestDoublesUtilities"/>)
 	/// rather than sharing state through class-level fields, to avoid any risk of cross-test data corruption.
-	/// The composite key is ordered (ProductID, OrderID), matching <see cref="PilotApi.Repositories.Repositories.OrderDetailsRepository"/>'s
+	/// The composite key is ordered (ProductId, OrderId), matching <see cref="PilotApi.Repositories.Repositories.OrderDetailsRepository"/>'s
 	/// <c>KeyColumnNames</c> definition.
 	/// </remarks>
 	[TestFixture]
@@ -53,8 +53,8 @@ namespace PilotApi.Integration.Tests.Services
 
 			// assert
 			Assert.That(result!.Result!.Count, Is.EqualTo(1));
-			Assert.That(result.Result![0].OrderID, Is.EqualTo(10248));
-			Assert.That(result.Result![0].ProductID, Is.EqualTo(11));
+			Assert.That(result.Result![0].OrderId, Is.EqualTo(10248));
+			Assert.That(result.Result![0].ProductId, Is.EqualTo(11));
 		}
 
 		[Test]
@@ -82,8 +82,8 @@ namespace PilotApi.Integration.Tests.Services
 			var result = await testObject.GetByIdAsync(new[] { 42, 10249 });
 
 			// assert
-			Assert.That(result!.Result!.OrderID, Is.EqualTo(10249));
-			Assert.That(result.Result!.ProductID, Is.EqualTo(42));
+			Assert.That(result!.Result!.OrderId, Is.EqualTo(10249));
+			Assert.That(result.Result!.ProductId, Is.EqualTo(42));
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new OrderDetailsDto { OrderID = 10250, ProductID = 5, Quantity = 3, UnitPrice = 21.5m, Discount = 0.1f };
+			var dto = new OrderDetailsDto { OrderId = 10250, ProductId = 5, Quantity = 3, UnitPrice = 21.5m, Discount = 0.1f };
 
 			// act
 			var result = await testObject.InsertAsync<int>(dto);
@@ -171,7 +171,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new OrderDetailsDto { OrderID = 10251, ProductID = 22, Quantity = 6 };
+			var dto = new OrderDetailsDto { OrderId = 10251, ProductId = 22, Quantity = 6 };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);

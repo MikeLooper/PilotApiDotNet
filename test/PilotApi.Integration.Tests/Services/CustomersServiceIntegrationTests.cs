@@ -51,7 +51,7 @@ namespace PilotApi.Integration.Tests.Services
 			// assert
 			Assert.IsNotNull(result);
 			Assert.That(result!.Result!.Count, Is.EqualTo(1));
-			Assert.That(result.Result![0].CustomerID, Is.EqualTo("ALFKI"));
+			Assert.That(result.Result![0].CustomerId, Is.EqualTo("ALFKI"));
 			Assert.That(result.Result![0].City, Is.EqualTo("Berlin"));
 		}
 
@@ -80,7 +80,7 @@ namespace PilotApi.Integration.Tests.Services
 
 			// assert
 			Assert.IsNotNull(result);
-			Assert.That(result!.Result!.CustomerID, Is.EqualTo("ANATR"));
+			Assert.That(result!.Result!.CustomerId, Is.EqualTo("ANATR"));
 			Assert.That(result.Result!.CompanyName, Is.EqualTo("Ana Trujillo"));
 		}
 
@@ -122,7 +122,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new CustomersDto { CustomerID = "NEWCO", CompanyName = "New Company" };
+			var dto = new CustomersDto { CustomerId = "NEWCO", CompanyName = "New Company" };
 
 			// act
 			var result = await testObject.InsertAsync<string>(dto);
@@ -170,7 +170,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new CustomersDto { CustomerID = "ALFKI", CompanyName = "Updated Name" };
+			var dto = new CustomersDto { CustomerId = "ALFKI", CompanyName = "Updated Name" };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);

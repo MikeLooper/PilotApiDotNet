@@ -50,7 +50,7 @@ namespace PilotApi.Integration.Tests.Services
 
 			// assert
 			Assert.That(result!.Result!.Count, Is.EqualTo(1));
-			Assert.That(result.Result![0].CustomerID, Is.EqualTo("VINET"));
+			Assert.That(result.Result![0].CustomerId, Is.EqualTo("VINET"));
 		}
 
 		[Test]
@@ -77,8 +77,8 @@ namespace PilotApi.Integration.Tests.Services
 			var result = await testObject.GetByIdAsync(new[] { 10249 });
 
 			// assert
-			Assert.That(result!.Result!.OrderID, Is.EqualTo(10249));
-			Assert.That(result.Result!.CustomerID, Is.EqualTo("TOMSP"));
+			Assert.That(result!.Result!.OrderId, Is.EqualTo(10249));
+			Assert.That(result.Result!.CustomerId, Is.EqualTo("TOMSP"));
 		}
 
 		[Test]
@@ -118,7 +118,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new OrdersDto { CustomerID = "ALFKI", ShipCity = "Berlin" };
+			var dto = new OrdersDto { CustomerId = "ALFKI", ShipCity = "Berlin" };
 
 			// act
 			var result = await testObject.InsertAsync<int>(dto);
@@ -165,7 +165,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new OrdersDto { OrderID = 10248, ShipCity = "Paris" };
+			var dto = new OrdersDto { OrderId = 10248, ShipCity = "Paris" };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);

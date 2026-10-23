@@ -43,7 +43,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// Gets or sets the unique identifier of the customer.
 		/// </summary>
 		[Required]
-		public string? CustomerID { get; set; }
+		public string? CustomerId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the fax number of the customer.
@@ -74,7 +74,7 @@ namespace PilotApi.Domain.Models.Dto
 				$"{nameof(this.ContactName)}={this.ContactName}, " +
 				$"{nameof(this.ContactTitle)}={this.ContactTitle}, " +
 				$"{nameof(this.Country)}={this.Country}, " +
-				$"{nameof(this.CustomerID)}={this.CustomerID}, " +
+				$"{nameof(this.CustomerId)}={this.CustomerId}, " +
 				$"{nameof(this.Fax)}={this.Fax}, " +
 				$"{nameof(this.Phone)}={this.Phone}, " +
 				$"{nameof(this.PostalCode)}={this.PostalCode}, " +

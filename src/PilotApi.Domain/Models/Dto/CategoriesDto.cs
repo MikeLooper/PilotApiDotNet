@@ -12,7 +12,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the ID of the category.
 		/// </summary>
-		public int? CategoryID { get; set; }
+		public int? CategoryId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the category.
@@ -33,7 +33,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{nameof(this.CategoryID)}={this.CategoryID}, " +
+			return $"{nameof(this.CategoryId)}={this.CategoryId}, " +
 				$"{nameof(this.CategoryName)}={this.CategoryName}, " +
 				$"{nameof(this.Description)}={this.Description}, " +
 				$"{nameof(this.Picture)}={(this.Picture == null ? StringConstants.LogNull : StringConstants.HasContents)}";

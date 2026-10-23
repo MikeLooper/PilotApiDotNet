@@ -1,4 +1,6 @@
-﻿namespace PilotApi.Domain.Models.Responses
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PilotApi.Domain.Models.Responses
 {
 	/// <summary>
 	/// A response model for the Add method (OrderDetails).
@@ -30,11 +32,13 @@
 		/// <summary>
 		/// Gets or sets the OrderId of the new record, or 0 if the add failed.
 		/// </summary>
+		[Required]
 		public int OrderId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the ProductId of the new record, or 0 if the add failed.
 		/// </summary>
+		[Required]
 		public int ProductId { get; set; }
 
 		/// <inheritdoc/>

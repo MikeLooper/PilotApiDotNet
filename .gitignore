@@ -8,3 +8,4 @@ TestResults/
 /.vscode
 Claude.md
 /.agents
+/skills-lock.json

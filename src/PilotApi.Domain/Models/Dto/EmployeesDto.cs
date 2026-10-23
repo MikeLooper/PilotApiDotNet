@@ -33,7 +33,7 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the employee.
 		/// </summary>
-		public int? EmployeeID { get; set; }
+		public int? EmployeeId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the extension number of the employee's phone.
@@ -109,7 +109,7 @@ namespace PilotApi.Domain.Models.Dto
 				$"{nameof(this.BirthDate)}={this.BirthDate}, " +
 				$"{nameof(this.City)}={this.City}, " +
 				$"{nameof(this.Country)}={this.Country}, " +
-				$"{nameof(this.EmployeeID)}={this.EmployeeID}, " +
+				$"{nameof(this.EmployeeId)}={this.EmployeeId}, " +
 				$"{nameof(this.Extension)}={this.Extension}, " +
 				$"{nameof(this.FirstName)}={this.FirstName}, " +
 				$"{nameof(this.HireDate)}={this.HireDate}, " +

@@ -21,14 +21,14 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the unique identifier for the shipper.
 		/// </summary>
-		public int? ShipperID { get; set; }
+		public int? ShipperId { get; set; }
 
 		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{nameof(this.CompanyName)}={this.CompanyName}, " +
 				$"{nameof(this.Phone)}={this.Phone}, " +
-				$"{nameof(this.ShipperID)}={this.ShipperID}";
+				$"{nameof(this.ShipperId)}={this.ShipperId}";
 		}
 	}
 }

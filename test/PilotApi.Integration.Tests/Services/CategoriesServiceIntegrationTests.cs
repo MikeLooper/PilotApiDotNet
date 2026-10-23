@@ -51,7 +51,7 @@ namespace PilotApi.Integration.Tests.Services
 			Assert.IsNotNull(result);
 			Assert.IsFalse(result!.IsError);
 			Assert.That(result.Result!.Count, Is.EqualTo(1));
-			Assert.That(result.Result![0].CategoryID, Is.EqualTo(1));
+			Assert.That(result.Result![0].CategoryId, Is.EqualTo(1));
 			Assert.That(result.Result![0].CategoryName, Is.EqualTo("Beverages"));
 		}
 
@@ -80,7 +80,7 @@ namespace PilotApi.Integration.Tests.Services
 
 			// assert
 			Assert.IsNotNull(result);
-			Assert.That(result!.Result!.CategoryID, Is.EqualTo(2));
+			Assert.That(result!.Result!.CategoryId, Is.EqualTo(2));
 			Assert.That(result.Result!.CategoryName, Is.EqualTo("Condiments"));
 		}
 
@@ -170,7 +170,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new CategoriesDto { CategoryID = 3, CategoryName = "Grains" };
+			var dto = new CategoriesDto { CategoryId = 3, CategoryName = "Grains" };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);
@@ -199,7 +199,7 @@ namespace PilotApi.Integration.Tests.Services
 				repository,
 				new DataMapperHandler());
 
-			var dto = new CategoriesDto { CategoryID = 99, CategoryName = "Unknown" };
+			var dto = new CategoriesDto { CategoryId = 99, CategoryName = "Unknown" };
 
 			// act
 			var result = await testObject.UpdateAsync(dto);
