@@ -33,8 +33,7 @@ namespace PilotApi.Shared.OpenTelemetry.Processors
 			this.httpContextAccessor = httpContextAccessor;
 		}
 
-		/// <summary>
-		/// Enriches the log record with user and request correlation attributes at the end of processing.`
+		/// Enriches the log record with user and request correlation attributes at the end of processing.
 		/// </summary>
 		/// <remarks>
 		/// Adds correlation and request identifiers when request settings are available from the current HTTP
