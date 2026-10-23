@@ -127,7 +127,9 @@ namespace PilotApi.Shared.OpenApi.Extensions
 
 														if (requestSettings != null)
 														{
-															activity.SetTag(OtelActivityTagsConstants.CorrelationId, requestSettings.CorrelationId);
+															var correlationId = request.Headers[HeaderConstants.CorrelationIdHeaderName].ToString();
+															activity.SetTag(OtelActivityTagsConstants.CorrelationId,
+																string.IsNullOrEmpty(correlationId) ? requestSettings.CorrelationId : correlationId);
 															activity.SetTag(OtelActivityTagsConstants.RequestId, requestSettings.RequestId);
 														}
 													};
