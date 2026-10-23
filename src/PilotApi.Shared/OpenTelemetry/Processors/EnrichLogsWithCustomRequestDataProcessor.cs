@@ -13,7 +13,6 @@ namespace PilotApi.Shared.OpenTelemetry.Processors
 	/// </summary>
 	public class EnrichLogsWithCustomRequestDataProcessor : BaseProcessor<LogRecord>
 	{
-		private readonly string processorName;
 		private readonly IHttpContextAccessor httpContextAccessor;
 
 		/// <summary>
@@ -22,14 +21,8 @@ namespace PilotApi.Shared.OpenTelemetry.Processors
 		/// <param name="httpContextAccessor">
 		/// Provides access to the current <see cref="HttpContext"/>.
 		/// </param>
-		/// <param name="processorName">
-		/// Specifies the processor name used to identify this log enrichment processor.
-		/// </param>
-		public EnrichLogsWithCustomRequestDataProcessor(
-			IHttpContextAccessor httpContextAccessor, 
-			string processorName = "EnrichLogsWithCustomRequestDataProcessor")
+		public EnrichLogsWithCustomRequestDataProcessor(IHttpContextAccessor httpContextAccessor)
 		{
-			this.processorName = processorName;
 			this.httpContextAccessor = httpContextAccessor;
 		}
 

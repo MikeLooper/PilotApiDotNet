@@ -11,17 +11,11 @@ namespace PilotApi.Shared.OpenTelemetry.Processors
 	/// </summary>
 	public class LogExceptionStackTraceProcessor : BaseProcessor<LogRecord>
 	{
-		private readonly string processorName;
-
 		/// <summary>
 		/// Initializes a new instance of the <c>LogExceptionStackTraceProcessor</c> class.
 		/// </summary>
-		/// <param name="name">
-		/// Name used to identify the processor. Defaults to <c>"LogExceptionStackTraceProcessor"</c> when not provided.
-		/// </param>
-		public LogExceptionStackTraceProcessor(string name = "LogExceptionStackTraceProcessor")
+		public LogExceptionStackTraceProcessor()
 		{
-			this.processorName = name;
 		}
 
 		/// <summary>
