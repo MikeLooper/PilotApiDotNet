@@ -159,6 +159,7 @@ namespace PilotApi.Shared.Api.Extensions
 
 			// custom
 			builder.Services.AddProblemDetails();
+			builder.Services.AddHttpContextAccessor();
 			var serviceProvider = builder.Services.BuildServiceProvider();
 			builder.OpenTelemetryWebApplicationBuilder(serviceProvider);
 			builder.OpenApiWebApplicationBuilder(serviceProvider);

@@ -77,7 +77,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 												.SetResourceBuilder(
 													ResourceBuilder.CreateDefault()
 														.AddService(applicationConfiguration.OpenApi.Title))
-												.AddProcessor(new EnrichLogsWithCustomRequestDataProcessor(new HttpContextAccessor()))
+												.AddProcessor(new EnrichLogsWithCustomRequestDataProcessor(serviceProvider.GetRequiredService<IHttpContextAccessor>()))
 												.AddProcessor(new LogExceptionStackTraceProcessor());
 
 										logging.AddOtlpExporter(options => ConfigureOtlpExporter(options, "v1/logs"));
