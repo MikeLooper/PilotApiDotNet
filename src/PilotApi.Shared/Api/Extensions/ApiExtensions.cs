@@ -104,8 +104,8 @@ namespace PilotApi.Shared.Api.Extensions
 			}
 
 			// custom
-			webApp.UseMiddleware<RequestSettingsMiddleware>();
 			webApp.UseMiddleware<UnhandledExceptionMiddleware>();
+			webApp.UseMiddleware<RequestSettingsMiddleware>();
 			webApp.OpenApiWebApplication();
 			webApp.LoggingWebApplication();
 			webApp.SwaggerWebApplication();
