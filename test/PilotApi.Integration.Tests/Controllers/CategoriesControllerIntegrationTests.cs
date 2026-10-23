@@ -109,6 +109,27 @@ namespace PilotApi.Integration.Tests.Controllers
 		}
 
 		[Test]
+		public async Task GetAll_WhenRepositoryReturnsNoEntities_ReturnsOkWithEmptyList_Test()
+		{
+			// Arrange
+			var fakeConnection = new FakeDbConnection();
+			var service = IntegrationTestDoublesUtilities.GetCategoriesService(fakeConnection);
+			var controller = new CategoriesController(service);
+
+			fakeConnection.NextQueryResult = new DataTable();
+
+			// Act
+			var actionResult = await controller.GetAll(cancellationToken: CancellationToken.None);
+
+			// Assert
+			var okResult = actionResult as OkObjectResult;
+			Assert.That(okResult, Is.Not.Null);
+			var dtos = okResult!.Value as IReadOnlyList<CategoriesDto>;
+			Assert.That(dtos, Is.Not.Null);
+			Assert.That(dtos, Is.Empty);
+		}
+
+		[Test]
 		public async Task GetById_WhenRepositoryReturnsEntity_ReturnsOkWithMappedDto_Test()
 		{
 			// Arrange
