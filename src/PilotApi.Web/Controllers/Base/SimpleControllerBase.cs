@@ -36,6 +36,7 @@ namespace PilotApi.Web.Controllers
 	[Produces("application/json")]
 	[Consumes("application/json")]
 	[Route("v{version:apiVersion}/[controller]")]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType<string>(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType<string>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
