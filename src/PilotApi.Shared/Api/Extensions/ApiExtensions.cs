@@ -5,9 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PilotApi.Shared.Api.Middleware;
 using PilotApi.Shared.Api.Transformers;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.Handlers;
 using PilotApi.Shared.Helpers;
 using PilotApi.Shared.Logging.Extensions;
+using PilotApi.Shared.Models;
 using PilotApi.Shared.OpenApi.Extensions;
 using PilotApi.Shared.Swagger.Extensions;
 using System;
@@ -20,6 +22,31 @@ namespace PilotApi.Shared.Api.Extensions
 	public static class ApiExtensions
 	{
 		/// <summary>
+		/// Add ProblemDetails processing.
+		/// </summary>
+		/// <param name="services">
+		/// A list of service objects.
+		/// </param>
+		public static void AddProblemDetails(this IServiceCollection services)
+		{
+			services.AddProblemDetails(opts =>
+			{
+				opts.CustomizeProblemDetails = ctx =>
+				{
+					// Helps to correlate logs and errors with the specific request.
+					var requestSettings = ctx.HttpContext.RequestServices.GetRequiredService<RequestSettings>();
+
+					ctx.ProblemDetails.Extensions.Add(ExtensionsConstants.CorrelationId, requestSettings.CorrelationId);
+					ctx.ProblemDetails.Extensions.Add(ExtensionsConstants.RequestId, requestSettings.RequestId);
+					ctx.ProblemDetails.Extensions.Add(ExtensionsConstants.Timestamp, DateTime.UtcNow);
+
+					// the <ExtensionsConstants.TraceId> element is already assigned by this point, a value like the following:
+					//		00-<OTEL Activity.TraceId>-<OTEL Activity.ParentSpanId>-01
+				};
+			});
+		}
+
+		/// <summary>
 		/// Add versioning processing.
 		/// </summary>
 		/// <param name="services">
@@ -30,7 +57,7 @@ namespace PilotApi.Shared.Api.Extensions
 			services.AddApiVersioning(options =>
 			{
 				options.ApiVersionReader = ApiVersionReader.Combine(
-					new HeaderApiVersionReader("api-version"),
+					new HeaderApiVersionReader(HeaderConstants.ApiVersionHeaderName),
 					new QueryStringApiVersionReader(),
 					new UrlSegmentApiVersionReader());
 				options.AssumeDefaultVersionWhenUnspecified = true;
@@ -78,6 +105,7 @@ namespace PilotApi.Shared.Api.Extensions
 
 			// custom
 			webApp.UseMiddleware<UnhandledExceptionMiddleware>();
+			webApp.UseMiddleware<RequestSettingsMiddleware>();
 			webApp.OpenApiWebApplication();
 			webApp.LoggingWebApplication();
 			webApp.SwaggerWebApplication();
@@ -93,7 +121,6 @@ namespace PilotApi.Shared.Api.Extensions
 				// Controllers not registered; skip mapping
 			}
 		}
-
 		/// <summary>
 		/// WebApplicationBuilder setup for the application.
 		/// </summary>
@@ -131,6 +158,8 @@ namespace PilotApi.Shared.Api.Extensions
 			});
 
 			// custom
+			builder.Services.AddProblemDetails();
+			builder.Services.AddHttpContextAccessor();
 			var serviceProvider = builder.Services.BuildServiceProvider();
 			builder.OpenTelemetryWebApplicationBuilder(serviceProvider);
 			builder.OpenApiWebApplicationBuilder(serviceProvider);
@@ -138,6 +167,7 @@ namespace PilotApi.Shared.Api.Extensions
 
 			// services
 			builder.Services.AddTransient<ISqlBuilder, SqlBuilder>();
+			builder.Services.AddScoped<RequestSettings>();
 		}
 
 		/// <summary>

@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using PilotApi.Shared.Api.Middleware;
+using PilotApi.Shared.Constants;
 using PilotApi.Shared.Exceptions;
+using PilotApi.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +30,11 @@ namespace PilotApi.Web.Tests.Middleware
 			var middleware = new UnhandledExceptionMiddleware(next, logger);
 			var context = new DefaultHttpContext();
 			context.Response.Body = new MemoryStream();
+			var requestSettings = new RequestSettings();
+			using var serviceProvider = new ServiceCollection()
+				.AddSingleton(requestSettings)
+				.BuildServiceProvider();
+			context.RequestServices = serviceProvider;
 
 			// Act
 			await middleware.InvokeAsync(context);
@@ -52,6 +60,11 @@ namespace PilotApi.Web.Tests.Middleware
 			var context = new DefaultHttpContext();
 			context.Request.Path = "/test/path";
 			context.Response.Body = new MemoryStream();
+			var requestSettings = new RequestSettings();
+			using var serviceProvider = new ServiceCollection()
+				.AddSingleton(requestSettings)
+				.BuildServiceProvider();
+			context.RequestServices = serviceProvider;
 
 			// Act
 			await middleware.InvokeAsync(context);
@@ -69,6 +82,9 @@ namespace PilotApi.Web.Tests.Middleware
 			Assert.That(root.GetProperty("status").GetInt32(), Is.EqualTo(StatusCodes.Status500InternalServerError));
 			Assert.That(root.GetProperty("detail").GetString(), Does.StartWith("An error occurred. The error details can be found in the log with the following correlation ID: "));
 			Assert.That(root.GetProperty("instance").GetString(), Is.EqualTo("/test/path"));
+			Assert.That(root.GetProperty(ExtensionsConstants.CorrelationId).GetString(), Is.EqualTo(requestSettings.CorrelationId));
+			Assert.That(root.GetProperty(ExtensionsConstants.RequestId).GetString(), Is.EqualTo(requestSettings.RequestId));
+			Assert.That(root.GetProperty(ExtensionsConstants.Timestamp).GetDateTime(), Is.Not.EqualTo(default(DateTime)));
 		}
 
 		[Test]

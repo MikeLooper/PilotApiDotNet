@@ -108,6 +108,27 @@ namespace PilotApi.Integration.Tests.Controllers
 		}
 
 		[Test]
+		public async Task GetAll_WhenRepositoryReturnsNoEntities_ReturnsOkWithEmptyList_Test()
+		{
+			// Arrange
+			var fakeConnection = new FakeDbConnection();
+			var service = IntegrationTestDoublesUtilities.GetOrdersService(fakeConnection);
+			var controller = new OrdersController(service);
+
+			fakeConnection.NextQueryResult = new DataTable();
+
+			// Act
+			var actionResult = await controller.GetAll(cancellationToken: CancellationToken.None);
+
+			// Assert
+			var okResult = actionResult as OkObjectResult;
+			Assert.That(okResult, Is.Not.Null);
+			var dtos = okResult!.Value as IReadOnlyList<OrdersDto>;
+			Assert.That(dtos, Is.Not.Null);
+			Assert.That(dtos, Is.Empty);
+		}
+
+		[Test]
 		public async Task GetById_WhenRepositoryReturnsEntity_ReturnsOkWithMappedDto_Test()
 		{
 			// Arrange
@@ -133,7 +154,7 @@ namespace PilotApi.Integration.Tests.Controllers
 		}
 
 		[Test]
-		public async Task GetById_WhenRepositoryReturnsNull_ReturnsNotFound_Test()
+		public async Task GetById_WhenRepositoryReturnsNull_ReturnsOk_Test()
 		{
 			// Arrange
 			var fakeConnection = new FakeDbConnection();
@@ -146,7 +167,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			var actionResult = await controller.GetById(99, CancellationToken.None);
 
 			// Assert
-			Assert.That(actionResult, Is.TypeOf<NotFoundResult>());
+			Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
 		}
 	}
 }

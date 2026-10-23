@@ -23,6 +23,17 @@ namespace PilotApi.Web.Tests.Controllers.Base
 		}
 
 		[Test]
+		public void SimpleControllerBase_CorrelationId_SetValue_GetReturnsSameValue_Test()
+		{
+			var controller = new TestSimpleController
+			{
+				CorrelationId = "correlation-id"
+			};
+
+			Assert.That(controller.CorrelationId, Is.EqualTo("correlation-id"));
+		}
+
+		[Test]
 		public void SimpleControllerBase_ApiVersion_DefaultValue_IsNull_Test()
 		{
 			var controller = new TestSimpleController();

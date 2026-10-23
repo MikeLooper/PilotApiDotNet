@@ -65,12 +65,7 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			if (retrieveResponse.Result == null)
-			{
-				return this.NotFound();
-			}
-
-			return this.Ok(retrieveResponse.Result
+			return this.Ok(retrieveResponse.Result?
 				.ToList()
 				.AsReadOnly());
 		}
@@ -99,11 +94,6 @@ namespace PilotApi.Web.Controllers.V1
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
 				return this.BadRequest();
-			}
-
-			if (retrieveResponse.Result == null)
-			{
-				return this.NotFound();
 			}
 
 			return this.Ok(retrieveResponse.Result);
@@ -158,8 +148,7 @@ namespace PilotApi.Web.Controllers.V1
 		/// </returns>
 		[HttpPut]
 		[Route("update")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Update(
 			[Required][FromBody] EmployeesDto model,
 			CancellationToken cancellationToken)
@@ -188,7 +177,6 @@ namespace PilotApi.Web.Controllers.V1
 		[HttpDelete]
 		[Route("delete/{employeeId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Delete(
 			[Required][FromRoute] int employeeId,
 			CancellationToken cancellationToken)
