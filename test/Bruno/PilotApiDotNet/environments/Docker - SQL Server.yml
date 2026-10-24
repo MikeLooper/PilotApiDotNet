@@ -1,5 +1,5 @@
 name: Docker - SQL Server
 variables:
   - name: Host
-    value: http://localhost:55101/
+    value: http://localhost:11001/
     description: "The base URL for the API under test"

@@ -1,13 +1,17 @@
+using Asp.Versioning;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using PilotApi.Shared.Api.Extensions;
 using PilotApi.Shared.Configuration;
+using PilotApi.Shared.Constants;
 using System;
 
 namespace PilotApi.Shared.Tests.Api.Extensions
 {
 	[TestFixture]
-	public class ApiExtensionsTests
+	public class ApiExtensionsTests : TestBase
 	{
 		private static SecurityConfiguration GetSecurityConfiguration()
 		{
@@ -32,6 +36,64 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 
 			// Assert
 			Assert.NotNull(serviceProvider);
+		}
+
+		[Test]
+		public void ApiExtensions_AddVersioning_QueryStringReader_ResolvesVersion_Test()
+		{
+			// Arrange
+			var services = new ServiceCollection();
+			services.AddVersioning();
+			var serviceProvider = services.BuildServiceProvider();
+			var context = new DefaultHttpContext { RequestServices = serviceProvider };
+			var request = context.Request;
+			request.QueryString = new QueryString("?api-version=2.0");
+			var reader = serviceProvider.GetRequiredService<IOptions<ApiVersioningOptions>>().Value.ApiVersionReader;
+
+			// Act
+			var versions = reader.Read(request);
+
+			// Assert
+			Assert.That(versions, Is.EqualTo(new[] { "2.0" }));
+		}
+
+		[Test]
+		public void ApiExtensions_AddVersioning_UrlSegmentReader_ResolvesVersion_Test()
+		{
+			// Arrange
+			var services = new ServiceCollection();
+			services.AddVersioning();
+			var serviceProvider = services.BuildServiceProvider();
+			var context = new DefaultHttpContext { RequestServices = serviceProvider };
+			context.Request.RouteValues["version"] = "2.0";
+			context.ApiVersioningFeature.RawRequestedApiVersions = new[] { "2.0" };
+			var request = context.Request;
+			var reader = serviceProvider.GetRequiredService<IOptions<ApiVersioningOptions>>().Value.ApiVersionReader;
+
+			// Act
+			var versions = reader.Read(request);
+
+			// Assert
+			Assert.That(versions, Is.EqualTo(new[] { "2.0" }));
+		}
+
+		[Test]
+		public void ApiExtensions_AddVersioning_HeaderReader_DoesNotResolveVersion_Test()
+		{
+			// Arrange
+			var services = new ServiceCollection();
+			services.AddVersioning();
+			var serviceProvider = services.BuildServiceProvider();
+			var context = new DefaultHttpContext { RequestServices = serviceProvider };
+			var request = context.Request;
+			request.Headers[HeaderConstants.ApiVersionHeaderName] = "2.0";
+			var reader = serviceProvider.GetRequiredService<IOptions<ApiVersioningOptions>>().Value.ApiVersionReader;
+
+			// Act
+			var versions = reader.Read(request);
+
+			// Assert
+			Assert.That(versions, Is.Empty);
 		}
 
 		[Test]
@@ -83,4 +145,3 @@ namespace PilotApi.Shared.Tests.Api.Extensions
 		}
 	}
 }
-

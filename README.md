@@ -395,7 +395,7 @@ When false, the same failures do not block the request — it proceeds to the co
 
 ##### BaseUrl
 
-The base URL of the Security server. Example (local development): "http://localhost:55001". Example (Docker deployment): "http://local-keycloak:8080".
+The base URL of the Security server. Example (local development): "http://localhost:11141". Example (Docker deployment): "http://local-keycloak:8080".
 
 ##### Realm
 
@@ -566,7 +566,7 @@ All endpoints are secured with a Security-issued JWT (OAuth2), except `/healthch
 For local development, obtain an access token directly from Security using the Resource Owner Password grant:
 
 ```
-curl -X POST "http://localhost:55001/realms/local-realm/protocol/openid-connect/token" \
+curl -X POST "http://localhost:11141/realms/local-realm/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=password" \
   -d "client_id=local-client" \
@@ -611,7 +611,7 @@ This API only validates bearer tokens; it does not issue or refresh them (it is 
 When a request fails with `401` because the access token expired, the client must call Security's token endpoint again with `grant_type=refresh_token` (using the `refresh_token` value returned alongside the original `access_token`) to obtain a new `access_token`, then retry the original request:
 
 ```
-curl -X POST "http://localhost:55001/realms/local-realm/protocol/openid-connect/token" \
+curl -X POST "http://localhost:11141/realms/local-realm/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=refresh_token" \
   -d "client_id=local-client" \

@@ -37,7 +37,7 @@ Follow the existing hand-rolled config pattern exactly (`ConfigurationBase` → 
 ```csharp
 public interface IKeycloakConfiguration : IConfigurationBase
 {
-    string? BaseUrl { get; set; }     // e.g. "http://localhost:55001"
+    string? BaseUrl { get; set; }     // e.g. "http://localhost:11141"
     string? Realm { get; set; }       // "local-realm"
     string? ClientId { get; set; }    // "local-client"
     bool RequireHttpsMetadata { get; set; }
@@ -63,7 +63,7 @@ public interface IKeycloakConfiguration : IConfigurationBase
 Keycloak = new KeycloakConfiguration
 {
     Active = true,
-    BaseUrl = "http://localhost:55001",
+    BaseUrl = "http://localhost:11141",
     Realm = "local-realm",
     ClientId = "local-client",
     RequireHttpsMetadata = false
@@ -87,7 +87,7 @@ Keycloak = new KeycloakConfiguration
 `src/PilotApi.Web/appsettings.Development.json` — add (only `BaseUrl` differs by environment, per standard config layering):
 ```json
 "Keycloak": {
-    "BaseUrl": "http://localhost:55001",
+    "BaseUrl": "http://localhost:11141",
     "RequireHttpsMetadata": false
 }
 ```
@@ -338,12 +338,12 @@ Reuses the existing `StringConstants.Redacted` constant — no new one needed.
 
 In the existing `## Usage` section (`README.md`, currently ~lines 475-485, Swagger/OpenAPI content only), add a `### Calling a Secured Endpoint` subsection before the closing `back to top` footer, in the same style as the rest of the doc:
 - All endpoints are secured except `/healthcheck` and `/about`.
-- `curl` example: obtain a token from `http://localhost:55001/realms/local-realm/protocol/openid-connect/token` (password grant, `client_id=local-client`), then call a business endpoint with `Authorization: Bearer <access_token>`.
+- `curl` example: obtain a token from `http://localhost:11141/realms/local-realm/protocol/openid-connect/token` (password grant, `client_id=local-client`), then call a business endpoint with `Authorization: Bearer <access_token>`.
 - Explain the role table (`reader_user`→ReadOnly/GET, `working_user`→ReadWrite/GET+POST+PUT, `working_admin`→Admin/all) and that role comes from `preferred_username`, not Keycloak role claims.
 - Explain `401` (no/invalid token) vs `403` (insufficient role) vs the `Active=false` bypass-with-`Warning`-header behavior.
 - **Token expiry & refresh**: state plainly that the API only validates tokens and never issues or refreshes them. When a request fails with `401` because the access token expired, the client must call Keycloak's token endpoint again with `grant_type=refresh_token` (using the `refresh_token` value returned alongside the original `access_token`) to obtain a new `access_token`, then retry:
     ```
-    curl -X POST "http://localhost:55001/realms/local-realm/protocol/openid-connect/token" \
+    curl -X POST "http://localhost:11141/realms/local-realm/protocol/openid-connect/token" \
       -H "Content-Type: application/x-www-form-urlencoded" \
       -d "grant_type=refresh_token" \
       -d "client_id=local-client" \
@@ -357,7 +357,7 @@ Also mirror the new `Keycloak` config section into the README's "Example configu
 
 1. `dotnet build` the solution — confirm no compile errors (watch for the `FrameworkReference` contingency noted in §1).
 2. `dotnet test` the whole solution — all tests pass, including the updated `ApiExtensionsTests` and all new test files from §9.
-3. Manually run the API against local Keycloak (`http://localhost:55001`, realm `local-realm`, client `local-client`):
+3. Manually run the API against local Keycloak (`http://localhost:11141`, realm `local-realm`, client `local-client`):
    - Call `/healthcheck` and `/about` with no token → 200 (unaffected).
    - Call a business `GET` endpoint with no token, `Keycloak.Active=true` → 401.
    - Call a business `GET` endpoint with a `reader_user` token → 200; same token against a `POST`/`PUT`/`DELETE` → 403.

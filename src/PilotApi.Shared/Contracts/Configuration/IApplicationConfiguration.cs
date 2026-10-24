@@ -32,7 +32,7 @@ namespace PilotApi.Shared.Contracts.Configuration
 	///		],
 	///		"Security": {
 	///			"Active": true,
-	///			"BaseUrl": "http://localhost:55001",
+	///			"BaseUrl": "http://localhost:11141",
 	///			"Realm": "local-realm",
 	///			"ClientId": "local-client",
 	///			"RequireHttpsMetadata": false,

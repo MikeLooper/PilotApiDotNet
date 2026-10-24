@@ -11,7 +11,7 @@ This implementation will use the standard security patterns and practices for th
 Use the Keycloak IDP (Open source, self-hosted on local Docker).
 - URLs for Keycloak are:
 	- Production: http://local-keycloak:8080
-	- Development: http://localhost:55001
+	- Development: http://localhost:11141
 - Keycloak access:
 	- Realm: local-realm
 	- Client ID: local-client
