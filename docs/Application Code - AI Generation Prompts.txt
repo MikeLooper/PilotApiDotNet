@@ -63,7 +63,7 @@ Requirements:
 
 8.
 Examine the `shared\PilotSharedSource\OpenAPI\PilotApi_v1.yaml` OpenAPI specification.
-Check the application to verify the OpenApi specfication matches the source OpenAPI definition, and correct the code to match the source OpenAPI definition as needed.
+Check the application to verify the OpenApi specification matches the source OpenAPI definition, and correct the code to match the source OpenAPI definition as needed.
 
 Update unit tests and Bruno tests to match any code changes.
 
