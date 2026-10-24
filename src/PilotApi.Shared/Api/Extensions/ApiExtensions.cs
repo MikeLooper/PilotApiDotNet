@@ -56,8 +56,10 @@ namespace PilotApi.Shared.Api.Extensions
 		{
 			services.AddApiVersioning(options =>
 			{
+				// NOTE: the X-Api-Version header (HeaderConstants.ApiVersionHeaderName) is intentionally
+				// not included here. The header is still accepted on requests but is ignored for
+				// version resolution; only the query string and URL segment are used.
 				options.ApiVersionReader = ApiVersionReader.Combine(
-					new HeaderApiVersionReader(HeaderConstants.ApiVersionHeaderName),
 					new QueryStringApiVersionReader(),
 					new UrlSegmentApiVersionReader());
 				options.AssumeDefaultVersionWhenUnspecified = true;

@@ -11,7 +11,7 @@ namespace PilotApi.Shared.Contracts.Configuration
 	/// {
 	///		"Active": true,
 	///		"BaseUrl": "http://local-keycloak:8080",
-	///		"PublicBaseUrl": "http://localhost:55001",
+	///		"PublicBaseUrl": "http://localhost:11141",
 	///		"Realm": "local-realm",
 	///		"ClientId": "local-client",
 	///		"RequireHttpsMetadata": false,
@@ -30,7 +30,7 @@ namespace PilotApi.Shared.Contracts.Configuration
 
 		/// <summary>
 		/// Gets or sets the externally-visible base URL of the Security server, i.e. the one
-		/// clients use to obtain tokens (e.g. "http://localhost:55001"). Tokens carry this value
+		/// clients use to obtain tokens (e.g. "http://localhost:11141"). Tokens carry this value
 		/// as their issuer, so it is what <see cref="PublicAuthority"/> validates against. Falls
 		/// back to <see cref="BaseUrl"/> when not set, which is correct whenever this API and its
 		/// clients reach the Security server the same way (e.g. local development).

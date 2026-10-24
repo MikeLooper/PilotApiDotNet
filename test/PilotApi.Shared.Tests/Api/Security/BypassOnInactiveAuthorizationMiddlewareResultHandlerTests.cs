@@ -23,7 +23,7 @@ namespace PilotApi.Shared.Tests.Api.Security
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 				.AddJwtBearer(options =>
 				{
-					options.Authority = "http://localhost:55001/realms/test-realm";
+					options.Authority = "http://localhost:11141/realms/test-realm";
 					options.Audience = "test-client";
 					options.RequireHttpsMetadata = false;
 				});

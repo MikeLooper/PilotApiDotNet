@@ -32,7 +32,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			{
 				Active = false,
 				BaseUrl = "http://local-keycloak:8080",
-				PublicBaseUrl = "http://localhost:55001",
+				PublicBaseUrl = "http://localhost:11141",
 				Realm = "local-realm",
 				ClientId = "local-client",
 				RequireHttpsMetadata = true,
@@ -45,7 +45,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Assert
 			Assert.That(result.Active, Is.False);
 			Assert.That(result.BaseUrl, Is.EqualTo("http://local-keycloak:8080"));
-			Assert.That(result.PublicBaseUrl, Is.EqualTo("http://localhost:55001"));
+			Assert.That(result.PublicBaseUrl, Is.EqualTo("http://localhost:11141"));
 			Assert.That(result.Realm, Is.EqualTo("local-realm"));
 			Assert.That(result.ClientId, Is.EqualTo("local-client"));
 			Assert.That(result.RequireHttpsMetadata, Is.True);
@@ -75,7 +75,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Arrange
 			var config = new SecurityConfiguration
 			{
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://localhost:11141",
 				Realm = "local-realm"
 			};
 
@@ -83,7 +83,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var result = config.Authority;
 
 			// Assert
-			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+			Assert.That(result, Is.EqualTo("http://localhost:11141/realms/local-realm"));
 		}
 
 		[Test]
@@ -92,7 +92,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Arrange
 			var config = new SecurityConfiguration
 			{
-				BaseUrl = "http://localhost:55001/",
+				BaseUrl = "http://localhost:11141/",
 				Realm = "local-realm"
 			};
 
@@ -100,7 +100,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var result = config.Authority;
 
 			// Assert
-			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+			Assert.That(result, Is.EqualTo("http://localhost:11141/realms/local-realm"));
 		}
 
 		[Test]
@@ -109,7 +109,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Arrange
 			var config = new SecurityConfiguration
 			{
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://localhost:11141",
 				Realm = "local-realm"
 			};
 
@@ -117,7 +117,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var result = config.PublicAuthority;
 
 			// Assert
-			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+			Assert.That(result, Is.EqualTo("http://localhost:11141/realms/local-realm"));
 		}
 
 		[Test]
@@ -127,7 +127,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var config = new SecurityConfiguration
 			{
 				BaseUrl = "http://local-keycloak:8080",
-				PublicBaseUrl = "http://localhost:55001",
+				PublicBaseUrl = "http://localhost:11141",
 				Realm = "local-realm"
 			};
 
@@ -135,7 +135,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var result = config.PublicAuthority;
 
 			// Assert
-			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+			Assert.That(result, Is.EqualTo("http://localhost:11141/realms/local-realm"));
 		}
 
 		[Test]
@@ -145,7 +145,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var config = new SecurityConfiguration
 			{
 				BaseUrl = "http://local-keycloak:8080",
-				PublicBaseUrl = "http://localhost:55001/",
+				PublicBaseUrl = "http://localhost:11141/",
 				Realm = "local-realm"
 			};
 
@@ -153,7 +153,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var result = config.PublicAuthority;
 
 			// Assert
-			Assert.That(result, Is.EqualTo("http://localhost:55001/realms/local-realm"));
+			Assert.That(result, Is.EqualTo("http://localhost:11141/realms/local-realm"));
 		}
 
 		[Test]
@@ -165,7 +165,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Act
 			config.Active = false;
 			config.BaseUrl = "http://local-keycloak:8080";
-			config.PublicBaseUrl = "http://localhost:55001";
+			config.PublicBaseUrl = "http://localhost:11141";
 			config.Realm = "local-realm";
 			config.ClientId = "local-client";
 			config.RequireHttpsMetadata = true;
@@ -174,7 +174,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Assert
 			Assert.That(config.Active, Is.False);
 			Assert.That(config.BaseUrl, Is.EqualTo("http://local-keycloak:8080"));
-			Assert.That(config.PublicBaseUrl, Is.EqualTo("http://localhost:55001"));
+			Assert.That(config.PublicBaseUrl, Is.EqualTo("http://localhost:11141"));
 			Assert.That(config.Realm, Is.EqualTo("local-realm"));
 			Assert.That(config.ClientId, Is.EqualTo("local-client"));
 			Assert.That(config.RequireHttpsMetadata, Is.True);
@@ -189,7 +189,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			{
 				Active = true,
 				BaseUrl = "http://local-keycloak:8080",
-				PublicBaseUrl = "http://localhost:55001",
+				PublicBaseUrl = "http://localhost:11141",
 				Realm = "local-realm",
 				ClientId = "local-client",
 				RequireHttpsMetadata = false,
@@ -203,7 +203,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			Assert.NotNull(result);
 			Assert.That(result, Does.Contain("Active=True"));
 			Assert.That(result, Does.Contain("BaseUrl=http://local-keycloak:8080"));
-			Assert.That(result, Does.Contain("PublicBaseUrl=http://localhost:55001"));
+			Assert.That(result, Does.Contain("PublicBaseUrl=http://localhost:11141"));
 			Assert.That(result, Does.Contain("Realm=local-realm"));
 			Assert.That(result, Does.Contain("ClientId=local-client"));
 			Assert.That(result, Does.Contain("RequireHttpsMetadata=False"));
@@ -246,7 +246,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Arrange
 			var config = new SecurityConfiguration
 			{
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://localhost:11141",
 				ClientId = "local-client"
 			};
 			var exceptions = new List<Exception>();
@@ -264,7 +264,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Arrange
 			var config = new SecurityConfiguration
 			{
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://localhost:11141",
 				Realm = "local-realm"
 			};
 			var exceptions = new List<Exception>();
@@ -282,7 +282,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			// Arrange
 			var config = new SecurityConfiguration
 			{
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://localhost:11141",
 				Realm = "local-realm",
 				ClientId = "local-client",
 				ClockSkewSeconds = -1
@@ -303,7 +303,7 @@ namespace PilotApi.Shared.Tests.Configuration
 			var config = new SecurityConfiguration
 			{
 				Active = true,
-				BaseUrl = "http://localhost:55001",
+				BaseUrl = "http://localhost:11141",
 				Realm = "local-realm",
 				ClientId = "local-client",
 				RequireHttpsMetadata = false
