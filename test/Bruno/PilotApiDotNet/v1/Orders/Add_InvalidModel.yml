@@ -1,0 +1,50 @@
+info:
+  name: Add_InvalidModel
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{Host}}v{{version}}/{{controller}}/add"
+  body:
+    type: json
+    data: |-
+      {
+        "customerID": "VINET",
+        "employeeID": 5,
+        "freight": 32.38,
+        "orderDate": "1996-07-04T00:00:00",
+        "requiredDate": "1996-08-01T00:00:00",
+        "shipAddress": "123 Main Street",
+        "shipCity": "Test City",
+        "shipCountry": "France",
+        "shipName": "Test Name",
+        "shippedDate": "1996-07-16T00:00:00",
+        "shipPostalCode": "51100",
+        "shipRegion": null,
+        "shipVia": 0
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return bad request", function () {
+          expect(res.getStatus()).to.equal(400);
+        });
+
+        test("should report shipVia below minimum of 1", function () {
+          const resBody = res.getBody();
+
+          expect(resBody).to.have.property("errors");
+          const errorKeys = Object.keys(resBody.errors).map(key => key.toLowerCase());
+          expect(errorKeys.some(key => key.endsWith("shipvia"))).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

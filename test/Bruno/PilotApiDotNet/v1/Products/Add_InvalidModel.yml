@@ -1,0 +1,46 @@
+info:
+  name: Add_InvalidModel
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{Host}}v{{version}}/{{controller}}/add"
+  body:
+    type: json
+    data: |-
+      {
+        "categoryID": 1,
+        "discontinued": true,
+        "productName": "Test Product",
+        "quantityPerUnit": "lots",
+        "reorderLevel": 11,
+        "supplierID": 1,
+        "unitPrice": 23.45,
+        "unitsInStock": -1,
+        "unitsOnOrder": 34
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return bad request", function () {
+          expect(res.getStatus()).to.equal(400);
+        });
+
+        test("should report unitsInStock below minimum of 0", function () {
+          const resBody = res.getBody();
+
+          expect(resBody).to.have.property("errors");
+          const errorKeys = Object.keys(resBody.errors).map(key => key.toLowerCase());
+          expect(errorKeys.some(key => key.endsWith("unitsinstock"))).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

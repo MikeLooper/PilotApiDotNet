@@ -1,6 +1,7 @@
 using Microsoft.OpenApi;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 
@@ -414,7 +415,8 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 
 		/// <summary>
 		/// Compares two schemas for structural equivalence, recording Error-level mismatches for missing schemas/properties,
-		/// base type differences, nullability, required lists, format, patterns, defaults, enum, and oneOf/anyOf/allOf
+		/// base type differences, nullability, required lists, format, patterns, minimum/maximum, minLength/maxLength,
+		/// defaults, enum, and oneOf/anyOf/allOf
 		/// differences, Warn-level mismatches for extra properties, and Info-level mismatches for alternate types and
 		/// component names.
 		/// </summary>
@@ -461,6 +463,19 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 				result.Errors.Add($"{context} Pattern mismatch. Expected: '{expectedSchema.Pattern}', Actual: '{actualSchema.Pattern}'.");
 			}
 
+			CompareNumericBound(context, "Minimum", expectedSchema.Minimum, actualSchema.Minimum, result);
+			CompareNumericBound(context, "Maximum", expectedSchema.Maximum, actualSchema.Maximum, result);
+
+			if (expectedSchema.MinLength != actualSchema.MinLength)
+			{
+				result.Errors.Add($"{context} MinLength mismatch. Expected: '{expectedSchema.MinLength}', Actual: '{actualSchema.MinLength}'.");
+			}
+
+			if (expectedSchema.MaxLength != actualSchema.MaxLength)
+			{
+				result.Errors.Add($"{context} MaxLength mismatch. Expected: '{expectedSchema.MaxLength}', Actual: '{actualSchema.MaxLength}'.");
+			}
+
 			var expectedDefault = expectedSchema.Default?.ToJsonString();
 			var actualDefault = actualSchema.Default?.ToJsonString();
 			if (!string.Equals(expectedDefault, actualDefault, StringComparison.Ordinal))
@@ -504,6 +519,25 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 			}
 
 			result.Errors.Add($"{context} Type mismatch. Expected: '{expectedSchema.Type}', Actual: '{actualSchema.Type}'.");
+		}
+
+		/// <summary>
+		/// Compares a numeric bound (<c>minimum</c>/<c>maximum</c>) of two schemas by value, so that equivalent
+		/// representations such as <c>1</c> and <c>1.0</c> are treated as equal. Records an Error-level mismatch when they differ.
+		/// </summary>
+		private static void CompareNumericBound(string context, string keyword, string expectedBound, string actualBound, OpenApiComparisonResult result)
+		{
+			var expectedParsed = decimal.TryParse(expectedBound, NumberStyles.Float, CultureInfo.InvariantCulture, out var expectedValue);
+			var actualParsed = decimal.TryParse(actualBound, NumberStyles.Float, CultureInfo.InvariantCulture, out var actualValue);
+
+			var isMatch = expectedParsed && actualParsed
+				? expectedValue == actualValue
+				: string.Equals(expectedBound, actualBound, StringComparison.Ordinal);
+
+			if (!isMatch)
+			{
+				result.Errors.Add($"{context} {keyword} mismatch. Expected: '{expectedBound}', Actual: '{actualBound}'.");
+			}
 		}
 
 		/// <summary>

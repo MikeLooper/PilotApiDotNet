@@ -86,7 +86,7 @@ namespace PilotApi.Web.Controllers.V1
 		[Route("get/{customerId}")]
 		[ProducesResponseType<CustomersDto>(StatusCodes.Status200OK)]
 		public async Task<IActionResult?> GetById(
-			[Required][FromRoute] string customerId,
+			[Required][FromRoute][StringLength(5, MinimumLength = 5)] string customerId,
 			CancellationToken cancellationToken)
 		{
 			var retrieveResponse = await this.Service.GetByIdAsync(new[] { customerId }, cancellationToken);
@@ -178,7 +178,7 @@ namespace PilotApi.Web.Controllers.V1
 		[Route("delete/{customerId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Delete(
-			[Required][FromRoute] string customerId,
+			[Required][FromRoute][StringLength(5, MinimumLength = 5)] string customerId,
 			CancellationToken cancellationToken)
 		{
 			var retrieveResponse = await this.Service.DeleteAsync(new[] { customerId }, cancellationToken);

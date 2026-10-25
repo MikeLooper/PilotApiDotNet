@@ -1,0 +1,48 @@
+info:
+  name: Add_InvalidModel
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{Host}}v{{version}}/{{controller}}/add"
+  body:
+    type: json
+    data: |-
+      {
+        "address": "49 Gilbert St.",
+        "city": "London",
+        "companyName": "Test Company Name That Is Over Forty Chars",
+        "contactName": "Test Name",
+        "contactTitle": "Test Title",
+        "country": "UK",
+        "fax": null,
+        "homePage": null,
+        "phone": "(171) 555-2222",
+        "postalCode": "EC1 4SD",
+        "region": null
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return bad request", function () {
+          expect(res.getStatus()).to.equal(400);
+        });
+
+        test("should report companyName longer than 40 characters", function () {
+          const resBody = res.getBody();
+
+          expect(resBody).to.have.property("errors");
+          const errorKeys = Object.keys(resBody.errors).map(key => key.toLowerCase());
+          expect(errorKeys.some(key => key.endsWith("companyname"))).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

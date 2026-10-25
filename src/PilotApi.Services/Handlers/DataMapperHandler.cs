@@ -195,7 +195,7 @@ namespace PilotApi.Services.Handlers
 				var newDto = new CategoriesDto
 				{
 					CategoryId = asCategories.CategoryID,
-					CategoryName = asCategories.CategoryName,
+					CategoryName = asCategories.CategoryName ?? string.Empty,
 					Description = asCategories.Description,
 					Picture = asCategories.Picture
 				};
@@ -273,8 +273,8 @@ namespace PilotApi.Services.Handlers
 			{
 				var newDto = new CustomersDto
 				{
-					CustomerId = asCustomers.CustomerID,
-					CompanyName = asCustomers.CompanyName,
+					CustomerId = asCustomers.CustomerID ?? string.Empty,
+					CompanyName = asCustomers.CompanyName ?? string.Empty,
 					ContactName = asCustomers.ContactName,
 					ContactTitle = asCustomers.ContactTitle,
 					Address = asCustomers.Address,
@@ -372,10 +372,10 @@ namespace PilotApi.Services.Handlers
 					Country = asEmployees.Country,
 					EmployeeId = asEmployees.EmployeeID,
 					Extension = asEmployees.Extension,
-					FirstName = asEmployees.FirstName,
+					FirstName = asEmployees.FirstName ?? string.Empty,
 					HireDate = asEmployees.HireDate,
 					HomePhone = asEmployees.HomePhone,
-					LastName = asEmployees.LastName,
+					LastName = asEmployees.LastName ?? string.Empty,
 					Notes = asEmployees.Notes,
 					Photo = asEmployees.Photo,
 					PhotoPath = asEmployees.PhotoPath,
@@ -625,7 +625,7 @@ namespace PilotApi.Services.Handlers
 				var newDto = new ProductsDto
 				{
 					ProductId = asProducts.ProductID,
-					ProductName = asProducts.ProductName,
+					ProductName = asProducts.ProductName ?? string.Empty,
 					SupplierId = asProducts.SupplierID,
 					CategoryId = asProducts.CategoryID,
 					QuantityPerUnit = asProducts.QuantityPerUnit,
@@ -702,7 +702,7 @@ namespace PilotApi.Services.Handlers
 				var newDto = new ShippersDto
 				{
 					ShipperId = asShippers.ShipperID,
-					CompanyName = asShippers.CompanyName,
+					CompanyName = asShippers.CompanyName ?? string.Empty,
 					Phone = asShippers.Phone
 				};
 
@@ -781,7 +781,7 @@ namespace PilotApi.Services.Handlers
 				var newDto = new SuppliersDto
 				{
 					SupplierId = asSuppliers.SupplierID,
-					CompanyName = asSuppliers.CompanyName,
+					CompanyName = asSuppliers.CompanyName ?? string.Empty,
 					ContactName = asSuppliers.ContactName,
 					ContactTitle = asSuppliers.ContactTitle,
 					Address = asSuppliers.Address,
