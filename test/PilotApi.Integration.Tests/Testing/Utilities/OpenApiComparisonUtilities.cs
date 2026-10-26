@@ -525,7 +525,7 @@ namespace PilotApi.Integration.Tests.Testing.Utilities
 		/// Compares a numeric bound (<c>minimum</c>/<c>maximum</c>) of two schemas by value, so that equivalent
 		/// representations such as <c>1</c> and <c>1.0</c> are treated as equal. Records an Error-level mismatch when they differ.
 		/// </summary>
-		private static void CompareNumericBound(string context, string keyword, string expectedBound, string actualBound, OpenApiComparisonResult result)
+		private static void CompareNumericBound(string context, string keyword, string? expectedBound, string? actualBound, OpenApiComparisonResult result)
 		{
 			var expectedParsed = decimal.TryParse(expectedBound, NumberStyles.Float, CultureInfo.InvariantCulture, out var expectedValue);
 			var actualParsed = decimal.TryParse(actualBound, NumberStyles.Float, CultureInfo.InvariantCulture, out var actualValue);
