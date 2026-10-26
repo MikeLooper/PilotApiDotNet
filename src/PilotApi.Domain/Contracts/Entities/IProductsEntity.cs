@@ -39,7 +39,7 @@ namespace PilotApi.Domain.Contracts.Entities
 
 		/// <summary>
 		/// Gets or sets the reorder level of the product. 
-		/// This property is required and indicates the minimum quantity of the product that should be kept in stock before reordering.
+		/// This property is optional and, when set, indicates the minimum quantity of the product that should be kept in stock before reordering.
 		/// </summary>
 		short? ReorderLevel { get; set; }
 
