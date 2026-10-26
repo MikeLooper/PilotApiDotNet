@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PilotApi.Shared.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace PilotApi.Web.Controllers
 {
@@ -47,12 +48,14 @@ namespace PilotApi.Web.Controllers
 		/// Gets or sets the API version to apply to an operation.
 		/// </summary>
 		[FromHeader(Name = "X-Api-Version")]
+		[MaxLength(15)]
 		public string? ApiVersion { get; set; }
 
 		/// <summary>
 		/// Gets or sets the unique identifier used for tracing a transaction across microservices.
 		/// </summary>
 		[FromHeader(Name = "X-Correlation-Id")]
+		[MaxLength(40)]
 		public string? CorrelationId { get; set; }
 	}
 }

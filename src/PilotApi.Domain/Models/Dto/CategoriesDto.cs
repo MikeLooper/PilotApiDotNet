@@ -12,13 +12,15 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the ID of the category.
 		/// </summary>
+		[Range(1, int.MaxValue)]
 		public int? CategoryId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the category.
 		/// </summary>
 		[Required]
-		public string? CategoryName { get; set; }
+		[StringLength(15, MinimumLength = 1)]
+		public string CategoryName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets the description of the category.

@@ -33,12 +33,14 @@ namespace PilotApi.Domain.Models.Responses
 		/// Gets or sets the OrderId of the new record, or 0 if the add failed.
 		/// </summary>
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int OrderId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the ProductId of the new record, or 0 if the add failed.
 		/// </summary>
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int ProductId { get; set; }
 
 		/// <inheritdoc/>

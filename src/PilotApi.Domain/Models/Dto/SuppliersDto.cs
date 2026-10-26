@@ -12,37 +12,44 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the address of the supplier.
 		/// </summary>
+		[MaxLength(60)]
 		public string? Address { get; set; }
 
 		/// <summary>
 		/// Gets or sets the city of the supplier.
 		/// </summary>
+		[MaxLength(15)]
 		public string? City { get; set; }
 
 		/// <summary>
 		/// Gets or sets the company name of the supplier.
 		/// </summary>
 		[Required]
-		public string? CompanyName { get; set; }
+		[StringLength(40, MinimumLength = 1)]
+		public string CompanyName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets the contact name of the supplier.
 		/// </summary>
+		[MaxLength(30)]
 		public string? ContactName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the contact title of the supplier.
 		/// </summary>
+		[MaxLength(30)]
 		public string? ContactTitle { get; set; }
 
 		/// <summary>
 		/// Gets or sets the country of the supplier.
 		/// </summary>
+		[MaxLength(15)]
 		public string? Country { get; set; }
 
 		/// <summary>
 		/// Gets or sets the fax number of the supplier.
 		/// </summary>
+		[MaxLength(24)]
 		public string? Fax { get; set; }
 
 		/// <summary>
@@ -53,21 +60,25 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the phone number of the supplier.
 		/// </summary>
+		[MaxLength(24)]
 		public string? Phone { get; set; }
 
 		/// <summary>
 		/// Gets or sets the postal code of the supplier.
 		/// </summary>
+		[MaxLength(10)]
 		public string? PostalCode { get; set; }
 
 		/// <summary>
 		/// Gets or sets the region of the supplier.
 		/// </summary>
+		[MaxLength(15)]
 		public string? Region { get; set; }
 
 		/// <summary>
 		/// Gets or sets the unique identifier of the supplier.
 		/// </summary>
+		[Range(1, int.MaxValue)]
 		public int? SupplierId { get; set; }
 
 		/// <inheritdoc/>

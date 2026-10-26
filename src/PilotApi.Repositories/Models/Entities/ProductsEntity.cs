@@ -42,7 +42,7 @@ namespace PilotApi.Repositories.Models.Entities
 		/// <summary>
 		/// Gets or sets the reorder level of the product.
 		/// </summary>
-		public short ReorderLevel { get; set; }
+		public short? ReorderLevel { get; set; }
 
 		/// <summary>
 		/// Gets or sets the ID of the supplier that provides the product.
@@ -57,12 +57,12 @@ namespace PilotApi.Repositories.Models.Entities
 		/// <summary>
 		/// Gets or sets the number of units of the product that are currently in stock.
 		/// </summary>
-		public short UnitsInStock { get; set; }
+		public short? UnitsInStock { get; set; }
 
 		/// <summary>
 		/// Gets or sets the number of units of the product that are currently on order.
 		/// </summary>
-		public short UnitsOnOrder { get; set; }
+		public short? UnitsOnOrder { get; set; }
 
 		/// <inheritdoc/>
 		public override string ToString()

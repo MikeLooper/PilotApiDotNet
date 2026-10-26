@@ -11,58 +11,69 @@ namespace PilotApi.Domain.Models.Dto
 		/// <summary>
 		/// Gets or sets the address of the customer.
 		/// </summary>
+		[MaxLength(60)]
 		public string? Address { get; set; }
 
 		/// <summary>
 		/// Gets or sets the city of the customer.
 		/// </summary>
+		[MaxLength(15)]
 		public string? City { get; set; }
 
 		/// <summary>
 		/// Gets or sets the company name of the customer.
 		/// </summary>
 		[Required]
-		public string? CompanyName { get; set; }
+		[StringLength(40, MinimumLength = 1)]
+		public string CompanyName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets the contact name of the customer.
 		/// </summary>
+		[MaxLength(30)]
 		public string? ContactName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the contact title of the customer.
 		/// </summary>
+		[MaxLength(30)]
 		public string? ContactTitle { get; set; }
 
 		/// <summary>
 		/// Gets or sets the country of the customer.
 		/// </summary>
+		[MaxLength(15)]
 		public string? Country { get; set; }
 
 		/// <summary>
 		/// Gets or sets the unique identifier of the customer.
 		/// </summary>
 		[Required]
-		public string? CustomerId { get; set; }
+		[StringLength(5, MinimumLength = 5)]
+		public string CustomerId { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets the fax number of the customer.
 		/// </summary>
+		[MaxLength(24)]
 		public string? Fax { get; set; }
 
 		/// <summary>
 		/// Gets or sets the phone number of the customer.
 		/// </summary>
+		[MaxLength(24)]
 		public string? Phone { get; set; }
 
 		/// <summary>
 		/// Gets or sets the postal code of the customer.
 		/// </summary>
+		[MaxLength(10)]
 		public string? PostalCode { get; set; }
 
 		/// <summary>
 		/// Gets or sets the region of the customer.
 		/// </summary>
+		[MaxLength(15)]
 		public string? Region { get; set; }
 
 		/// <inheritdoc/>

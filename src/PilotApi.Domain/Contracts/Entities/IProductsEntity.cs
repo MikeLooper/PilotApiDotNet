@@ -39,9 +39,9 @@ namespace PilotApi.Domain.Contracts.Entities
 
 		/// <summary>
 		/// Gets or sets the reorder level of the product. 
-		/// This property is required and indicates the minimum quantity of the product that should be kept in stock before reordering.
+		/// This property is optional and, when set, indicates the minimum quantity of the product that should be kept in stock before reordering.
 		/// </summary>
-		short ReorderLevel { get; set; }
+		short? ReorderLevel { get; set; }
 
 		/// <summary>
 		/// Gets or sets the ID of the supplier that provides the product.
@@ -56,11 +56,11 @@ namespace PilotApi.Domain.Contracts.Entities
 		/// <summary>
 		/// Gets or sets the number of units of the product that are currently in stock.
 		/// </summary>
-		short UnitsInStock { get; set; }
+		short? UnitsInStock { get; set; }
 
 		/// <summary>
 		/// Gets or sets the number of units of the product that are currently on order.
 		/// </summary>
-		short UnitsOnOrder { get; set; }
+		short? UnitsOnOrder { get; set; }
 	}
 }

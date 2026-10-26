@@ -1,0 +1,42 @@
+info:
+  name: Add_InvalidModel
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{Host}}v{{version}}/{{controller}}/add"
+  body:
+    type: json
+    data: |-
+      {
+        "discount": 1.5,
+        "orderID": 10248,
+        "productID": 12,
+        "quantity": 99,
+        "unitPrice": 99.0
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return bad request", function () {
+          expect(res.getStatus()).to.equal(400);
+        });
+
+        test("should report discount above maximum of 1", function () {
+          const resBody = res.getBody();
+
+          expect(resBody).to.have.property("errors");
+          const errorKeys = Object.keys(resBody.errors).map(key => key.toLowerCase());
+          expect(errorKeys.some(key => key.endsWith("discount"))).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

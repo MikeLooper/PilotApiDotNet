@@ -102,6 +102,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 						options.AddOperationTransformer(new ManualXmlCommentsOperationTransformer(xmlPath));
 						options.AddSchemaTransformer(new ManualXmlCommentsSchemaTransformer(xmlPath));
 						options.AddSchemaTransformer<ProblemDetailsSchemaTransformer>();
+						options.AddSchemaTransformer<NumericSchemaTransformer>();
 					});
 				}
 			}

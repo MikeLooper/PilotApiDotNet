@@ -1,0 +1,48 @@
+info:
+  name: Add_InvalidModel
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{Host}}v{{version}}/{{controller}}/add"
+  body:
+    type: json
+    data: |-
+      {
+        "address": "123 Main Street",
+        "city": "Test City",
+        "companyName": "Test Company",
+        "contactName": "Test Tester",
+        "contactTitle": "Tester",
+        "country": "Germany",
+        "customerID": "XYZ",
+        "fax": "030-0076545",
+        "phone": "030-0074321",
+        "postalCode": "12209",
+        "region": null
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return bad request", function () {
+          expect(res.getStatus()).to.equal(400);
+        });
+
+        test("should report customerId shorter than 5 characters", function () {
+          const resBody = res.getBody();
+
+          expect(resBody).to.have.property("errors");
+          const errorKeys = Object.keys(resBody.errors).map(key => key.toLowerCase());
+          expect(errorKeys.some(key => key.endsWith("customerid"))).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true

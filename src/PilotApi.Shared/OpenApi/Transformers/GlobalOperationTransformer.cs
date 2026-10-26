@@ -55,13 +55,19 @@ namespace PilotApi.Shared.OpenApi.Transformers
 						? headerProperty.Property.Name
 						: headerProperty.FromHeader.Name;
 
+					var maxLength = headerProperty.Property.GetCustomAttribute<MaxLengthAttribute>()?.Length;
+
 					var existingParameter = operation.Parameters.FirstOrDefault(p => p.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase));
 					if (existingParameter != null)
 					{
-						if (headerName.Equals(HeaderConstants.CorrelationIdHeaderName, StringComparison.OrdinalIgnoreCase)
-							&& existingParameter.Schema is OpenApiSchema existingSchema)
+						if (existingParameter.Schema is OpenApiSchema existingSchema)
 						{
-							existingSchema.Format = "uuid";
+							if (headerName.Equals(HeaderConstants.CorrelationIdHeaderName, StringComparison.OrdinalIgnoreCase))
+							{
+								existingSchema.Format = "uuid";
+							}
+
+							existingSchema.MaxLength ??= maxLength;
 						}
 
 						continue;
@@ -77,7 +83,8 @@ namespace PilotApi.Shared.OpenApi.Transformers
 							Type = JsonSchemaType.String,
 							Format = headerName.Equals(HeaderConstants.CorrelationIdHeaderName, StringComparison.OrdinalIgnoreCase)
 								? "uuid"
-								: null
+								: null,
+							MaxLength = maxLength
 						}
 					});
 				}
