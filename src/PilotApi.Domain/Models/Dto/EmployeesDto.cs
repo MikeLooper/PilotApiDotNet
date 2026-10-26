@@ -28,7 +28,7 @@ namespace PilotApi.Domain.Models.Dto
 		public string? City { get; set; }
 
 		/// <summary>
-		/// Gets or sets the region of the employee.
+		/// Gets or sets the country of the employee.
 		/// </summary>
 		[MaxLength(15)]
 		public string? Country { get; set; }
