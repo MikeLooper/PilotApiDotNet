@@ -36,6 +36,8 @@ runtime:
           const resBody = res.getBody();
           
           expect(resBody).to.have.property("id");
+          expect(resBody.id).to.be.a("string");
+          expect(resBody.id).to.have.lengthOf(5);
         });
 
 settings:

@@ -155,7 +155,7 @@ namespace PilotApi.Integration.Tests.Controllers
 		}
 
 		[Test]
-		public async Task GetById_WhenRepositoryReturnsNull_ReturnsOk_Test()
+		public async Task GetById_WhenRepositoryReturnsNull_ReturnsNoContent_Test()
 		{
 			// Arrange
 			var fakeConnection = new FakeDbConnection();
@@ -168,7 +168,7 @@ namespace PilotApi.Integration.Tests.Controllers
 			var actionResult = await controller.GetById(99, CancellationToken.None);
 
 			// Assert
-			Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
+			Assert.That(actionResult, Is.TypeOf<NoContentResult>());
 		}
 	}
 }

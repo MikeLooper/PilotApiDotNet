@@ -8,6 +8,7 @@ using NUnit.Framework;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.OpenApi.Transformers;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -194,6 +195,38 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 			var apiVersionParameter = operation.Parameters.Single(parameter =>
 				parameter.Name == HeaderConstants.ApiVersionHeaderName);
 			Assert.That(apiVersionParameter.Schema!.MaxLength, Is.EqualTo(15));
+		}
+
+		[Test]
+		public async Task GlobalOperationTransformer_TransformAsync_RemovesContentFromNoContentResponse_Test()
+		{
+			// Arrange
+			var transformer = new GlobalOperationTransformer();
+			var noContentResponse = new OpenApiResponse
+			{
+				Content = new Dictionary<string, OpenApiMediaType> { ["application/json"] = new OpenApiMediaType() }
+			};
+			var okResponse = new OpenApiResponse
+			{
+				Content = new Dictionary<string, OpenApiMediaType> { ["application/json"] = new OpenApiMediaType() }
+			};
+			var operation = new OpenApiOperation
+			{
+				Parameters = [],
+				Responses = new OpenApiResponses
+				{
+					["200"] = okResponse,
+					["204"] = noContentResponse
+				}
+			};
+			var context = CreateContext();
+
+			// Act
+			await transformer.TransformAsync(operation, context, default);
+
+			// Assert
+			Assert.That(noContentResponse.Content, Is.Null);
+			Assert.That(okResponse.Content, Has.Count.EqualTo(1));
 		}
 
 		private static OpenApiOperationTransformerContext CreateContext()

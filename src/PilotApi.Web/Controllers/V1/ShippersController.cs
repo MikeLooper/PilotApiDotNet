@@ -49,10 +49,12 @@ namespace PilotApi.Web.Controllers.V1
 		/// </param>
 		/// <returns>
 		/// A read only list of all DTO objects from the shipper table, or null if no objects exist.
+		/// If a Null is returned, a 204 No Content response will be returned to the client.
 		/// </returns>
 		[HttpGet]
 		[Route("get-all")]
 		[ProducesResponseType<IList<ShippersDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult?> GetAll(
 			[FromQuery] int page = 0,
 			[FromQuery] int pageSize = 20,
@@ -65,7 +67,12 @@ namespace PilotApi.Web.Controllers.V1
 				return this.BadRequest();
 			}
 
-			return this.Ok(retrieveResponse.Result?
+			if (retrieveResponse.Result is null)
+			{
+				return this.NoContent();
+			}
+
+			return this.Ok(retrieveResponse.Result
 				.ToList()
 				.AsReadOnly());
 		}
@@ -81,10 +88,12 @@ namespace PilotApi.Web.Controllers.V1
 		/// </param>
 		/// <returns>
 		/// A DTO object of the shipper record with the specified ID, or null if no such object exists.
+		/// If a Null is returned, a 204 No Content response will be returned to the client.
 		/// </returns>
 		[HttpGet]
 		[Route("get/{shipperId}")]
 		[ProducesResponseType<ShippersDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult?> GetById(
 			[Required][FromRoute][Range(1, int.MaxValue)] int shipperId,
 			CancellationToken cancellationToken)
@@ -94,6 +103,11 @@ namespace PilotApi.Web.Controllers.V1
 			{
 				this.Response.Headers["Warning"] = retrieveResponse.ErrorMessage;
 				return this.BadRequest();
+			}
+
+			if (retrieveResponse.Result is null)
+			{
+				return this.NoContent();
 			}
 
 			return this.Ok(retrieveResponse.Result);
