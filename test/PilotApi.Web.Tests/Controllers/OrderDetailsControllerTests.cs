@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using PilotApi.Domain.Contracts.Services;
 using PilotApi.Web.Controllers.V1;
 using PilotApi.Web.Tests.TestDoubles;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PilotApi.Web.Tests.Controllers
 {
@@ -33,6 +36,28 @@ namespace PilotApi.Web.Tests.Controllers
 			};
 
 			Assert.That(controller.ApiVersion, Is.EqualTo("1.0"));
+		}
+
+		[Test]
+		public async Task OrderDetailsController_GetAll_WhenResultIsNull_ReturnsNoContent_Test()
+		{
+			var service = ProxyFactory.CreateNullResult<IOrderDetailsService>();
+			var controller = new OrderDetailsController(service);
+
+			var actionResult = await controller.GetAll();
+
+			Assert.That(actionResult, Is.TypeOf<NoContentResult>());
+		}
+
+		[Test]
+		public async Task OrderDetailsController_GetById_WhenResultIsNull_ReturnsNoContent_Test()
+		{
+			var service = ProxyFactory.CreateNullResult<IOrderDetailsService>();
+			var controller = new OrderDetailsController(service);
+
+			var actionResult = await controller.GetById(1, 1, CancellationToken.None);
+
+			Assert.That(actionResult, Is.TypeOf<NoContentResult>());
 		}
 	}
 }

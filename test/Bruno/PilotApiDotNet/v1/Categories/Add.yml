@@ -33,6 +33,8 @@ runtime:
           const resBody = res.getBody();
           
           expect(resBody).to.have.property("id");
+          expect(resBody.id).to.be.a("number");
+          expect(resBody.id).to.be.at.least(1);
         });
 
 settings:

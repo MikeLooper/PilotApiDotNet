@@ -8,5 +8,10 @@ namespace PilotApi.Web.Tests.TestDoubles
 		{
 			return DispatchProxy.Create<TInterface, NoOpDispatchProxy>();
 		}
+
+		internal static TInterface CreateNullResult<TInterface>() where TInterface : class
+		{
+			return DispatchProxy.Create<TInterface, NullResultDispatchProxy>();
+		}
 	}
 }

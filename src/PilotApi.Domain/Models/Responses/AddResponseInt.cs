@@ -20,7 +20,7 @@ namespace PilotApi.Domain.Models.Responses
 		/// <param name="recordId">
 		/// The Id of the new record, or a 0 if the add failed.
 		/// </param>
-		public AddResponseInt(long recordId)
+		public AddResponseInt(int recordId)
 		{
 			this.Id = recordId;
 		}
@@ -28,8 +28,9 @@ namespace PilotApi.Domain.Models.Responses
 		/// <summary>
 		/// Gets or sets the Id of the new record.
 		/// </summary>
+		[Required]
 		[Range(1, int.MaxValue)]
-		public long Id { get; set; }
+		public int Id { get; set; }
 
 		/// <inheritdoc/>
 		public override string ToString()

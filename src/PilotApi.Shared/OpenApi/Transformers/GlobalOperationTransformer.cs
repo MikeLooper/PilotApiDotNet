@@ -18,6 +18,8 @@ namespace PilotApi.Shared.OpenApi.Transformers
 	/// </summary>
 	public class GlobalOperationTransformer : IOpenApiOperationTransformer
 	{
+		private const string NoContentStatusCode = "204";
+
 		/// <inheritdoc/>
 		public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
 		{
@@ -33,6 +35,14 @@ namespace PilotApi.Shared.OpenApi.Transformers
 				{
 					operation.Parameters.Remove(versionParameter);
 				}
+			}
+
+			// a 204 response has no body, so it must not inherit the controller's media type
+			if (operation.Responses != null &&
+				operation.Responses.TryGetValue(NoContentStatusCode, out var noContentResponse) &&
+				noContentResponse is OpenApiResponse noContentOpenApiResponse)
+			{
+				noContentOpenApiResponse.Content = null;
 			}
 
 			if (context.Description.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)

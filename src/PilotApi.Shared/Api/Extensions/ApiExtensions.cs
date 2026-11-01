@@ -13,6 +13,7 @@ using PilotApi.Shared.Models;
 using PilotApi.Shared.OpenApi.Extensions;
 using PilotApi.Shared.Swagger.Extensions;
 using System;
+using System.Text.Json.Serialization;
 
 namespace PilotApi.Shared.Api.Extensions
 {
@@ -157,7 +158,11 @@ namespace PilotApi.Shared.Api.Extensions
 			{
 				options.Conventions.Add(
 					new RouteTokenTransformerConvention(new LowercaseParameterTransformer()));
-			});
+			})
+			.AddJsonOptions(options => options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict);
+
+			// the OpenAPI document generator reads the HTTP JSON options, not the MVC ones
+			builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict);
 
 			// custom
 			builder.Services.AddProblemDetails();

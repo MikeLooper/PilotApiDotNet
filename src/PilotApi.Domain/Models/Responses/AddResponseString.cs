@@ -28,6 +28,7 @@ namespace PilotApi.Domain.Models.Responses
 		/// <summary>
 		/// Gets or sets the Id of the new record, or 0 if the add failed.
 		/// </summary>
+		[Required]
 		[StringLength(5, MinimumLength = 5)]
 		public string Id { get; set; }
 
