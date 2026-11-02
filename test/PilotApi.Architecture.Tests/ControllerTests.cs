@@ -1,3 +1,4 @@
+using ArchUnitNET.Domain;
 using ArchUnitNET.NUnit;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
@@ -63,9 +64,7 @@ namespace PilotApi.Architecture.Tests
 				.And().ArePublic()
 				.And().AreNoConstructors()
 				.And().DoNotHaveNameStartingWith("About(")
-				.And().DoNotHaveNameStartingWith("Healthcheck(")
-				.And().DoNotHaveNameStartingWith("get_")
-				.And().DoNotHaveNameStartingWith("set_");
+				.And().DoNotHaveNameStartingWith("Healthcheck(");
 
 			ArchUnitUtilities.PrintCollection(domainEndpoints, Architecture);
 
@@ -85,10 +84,9 @@ namespace PilotApi.Architecture.Tests
 				.That().AreDeclaredIn(anonymousControllers)
 				.And().ArePublic()
 				.And().AreNoConstructors()
+				.And().FollowCustomPredicate(m => m.MethodForm == MethodForm.Normal, "are not property accessors")
 				.And().DoNotHaveNameStartingWith("About(")
-				.And().DoNotHaveNameStartingWith("Healthcheck(")
-				.And().DoNotHaveNameStartingWith("get_")
-				.And().DoNotHaveNameStartingWith("set_");
+				.And().DoNotHaveNameStartingWith("Healthcheck(");
 
 			ArchUnitUtilities.PrintCollection(domainEndpointsOnAnonymousControllers, Architecture);
 
