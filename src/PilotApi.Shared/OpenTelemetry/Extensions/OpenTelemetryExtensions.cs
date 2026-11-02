@@ -74,9 +74,6 @@ namespace PilotApi.Shared.OpenApi.Extensions
 					.WithLogging(logging =>			// send records to Grafana Loki via OpenTelemetry Collector
 									{
 										logging
-												.SetResourceBuilder(
-													ResourceBuilder.CreateDefault()
-														.AddService(applicationConfiguration.OpenApi.Title))
 												.AddProcessor(new EnrichLogsWithCustomRequestDataProcessor(serviceProvider.GetRequiredService<IHttpContextAccessor>()))
 												.AddProcessor(new LogExceptionStackTraceProcessor());
 
@@ -115,6 +112,7 @@ namespace PilotApi.Shared.OpenApi.Extensions
 									{
 										tracing
 												.SetSampler(new AlwaysOnSampler())
+												.AddProcessor(new EnrichActivityWithCustomRequestDataProcessor(serviceProvider.GetRequiredService<IHttpContextAccessor>()))
 												.AddSource("PilotApi.Web")		// This activates tracing for your application, if you trace your own activities
 												.AddNpgsql()					// This activates Npgsql's tracing
 												.AddAspNetCoreInstrumentation(options =>
