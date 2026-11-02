@@ -83,7 +83,7 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 			await transformer.TransformAsync(operation, context, default);
 
 			// Assert
-			Assert.That(operation.Parameters, Has.Count.EqualTo(2));
+			Assert.That(operation.Parameters, Has.Count.EqualTo(3));
 			Assert.That(operation.Parameters[0].Name, Is.EqualTo("X-Api-Version"));
 			Assert.That(operation.Parameters, Has.None.Matches<OpenApiParameter>(parameter => parameter.Name == "api-version"));
 		}
@@ -198,6 +198,27 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 		}
 
 		[Test]
+		public async Task GlobalOperationTransformer_TransformAsync_AddsCallerNameHeaderWithMaxLength_Test()
+		{
+			// Arrange
+			var transformer = new GlobalOperationTransformer();
+			var operation = new OpenApiOperation { Parameters = [] };
+			var context = CreateContext();
+
+			// Act
+			await transformer.TransformAsync(operation, context, default);
+
+			// Assert
+			var callerNameParameter = operation.Parameters.Single(parameter =>
+				parameter.Name == HeaderConstants.CallerNameHeaderName);
+			Assert.That(callerNameParameter.In, Is.EqualTo(ParameterLocation.Header));
+			Assert.That(callerNameParameter.Required, Is.False);
+			Assert.That(callerNameParameter.Schema!.Type, Is.EqualTo(JsonSchemaType.String));
+			Assert.That(callerNameParameter.Schema.Format, Is.Null);
+			Assert.That(callerNameParameter.Schema.MaxLength, Is.EqualTo(100));
+		}
+
+		[Test]
 		public async Task GlobalOperationTransformer_TransformAsync_RemovesContentFromNoContentResponse_Test()
 		{
 			// Arrange
@@ -251,6 +272,10 @@ namespace PilotApi.Shared.Tests.OpenApi.Transformers
 		[FromHeader(Name = "X-Api-Version")]
 		[MaxLength(15)]
 		public string? ApiVersion { get; set; }
+
+		[FromHeader(Name = HeaderConstants.CallerNameHeaderName)]
+		[MaxLength(100)]
+		public string? CallerName { get; set; }
 
 		[FromHeader(Name = HeaderConstants.CorrelationIdHeaderName)]
 		[MaxLength(40)]

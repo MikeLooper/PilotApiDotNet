@@ -57,12 +57,15 @@ namespace PilotApi.Architecture.Tests
 
 			// MethodMember.Name includes the parameter signature (e.g. "About(System.Boolean)", "Healthcheck()"),
 			// so excluded action names are matched with a "starts with" check rather than an exact one.
+			// Property accessors (e.g. the request header properties) are not actions, so they are excluded too.
 			var domainEndpoints = MethodMembers()
 				.That().AreDeclaredIn(controllerClasses)
 				.And().ArePublic()
 				.And().AreNoConstructors()
 				.And().DoNotHaveNameStartingWith("About(")
-				.And().DoNotHaveNameStartingWith("Healthcheck(");
+				.And().DoNotHaveNameStartingWith("Healthcheck(")
+				.And().DoNotHaveNameStartingWith("get_")
+				.And().DoNotHaveNameStartingWith("set_");
 
 			ArchUnitUtilities.PrintCollection(domainEndpoints, Architecture);
 
@@ -83,7 +86,9 @@ namespace PilotApi.Architecture.Tests
 				.And().ArePublic()
 				.And().AreNoConstructors()
 				.And().DoNotHaveNameStartingWith("About(")
-				.And().DoNotHaveNameStartingWith("Healthcheck(");
+				.And().DoNotHaveNameStartingWith("Healthcheck(")
+				.And().DoNotHaveNameStartingWith("get_")
+				.And().DoNotHaveNameStartingWith("set_");
 
 			ArchUnitUtilities.PrintCollection(domainEndpointsOnAnonymousControllers, Architecture);
 

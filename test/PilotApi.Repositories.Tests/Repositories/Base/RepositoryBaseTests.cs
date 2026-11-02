@@ -1,6 +1,12 @@
+using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using PilotApi.Repositories.Repositories.Base;
 using PilotApi.Repositories.Models.Entities;
+using PilotApi.Repositories.Tests.Testing.Utilities;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace PilotApi.Repositories.Tests.Repositories.Base
 {
@@ -71,6 +77,56 @@ namespace PilotApi.Repositories.Tests.Repositories.Base
 			// Assert
 			Assert.That(allProperties.Length, Is.GreaterThan(0));
 		}
+
+		[Test]
+		public void RepositoryBase_LogDatabaseCallStart_LogsStartWithRepositoryMethodAndTable_Test()
+		{
+			// Arrange
+			var logger = new Mock<ILogger>();
+			var testObject = RepositoryDoublesUtilities.GetCategoriesRepositorySpy(logger.Object);
+
+			// Act
+			var stopwatch = testObject.LogDatabaseCallStartSpy("GetAllAsync");
+
+			// Assert
+			Assert.That(stopwatch.IsRunning, Is.True);
+			var state = GetSingleLoggedState(logger, LogLevel.Information);
+			Assert.That(state.ToString(), Does.StartWith("Database call start:"));
+			Assert.That(GetValue(state, "Repository"), Is.EqualTo("CategoriesRepositorySpy"));
+			Assert.That(GetValue(state, "DatabaseMethod"), Is.EqualTo("GetAllAsync"));
+			Assert.That(GetValue(state, "TableName"), Is.EqualTo(testObject.TableNameSpy));
+		}
+
+		[Test]
+		public void RepositoryBase_LogDatabaseCallEnd_StopsStopwatchAndLogsEndWithElapsedTime_Test()
+		{
+			// Arrange
+			var logger = new Mock<ILogger>();
+			var testObject = RepositoryDoublesUtilities.GetCategoriesRepositorySpy(logger.Object);
+			var stopwatch = Stopwatch.StartNew();
+
+			// Act
+			testObject.LogDatabaseCallEndSpy("GetAllAsync", stopwatch);
+
+			// Assert
+			Assert.That(stopwatch.IsRunning, Is.False);
+			var state = GetSingleLoggedState(logger, LogLevel.Information);
+			Assert.That(state.ToString(), Does.StartWith("Database call end:"));
+			Assert.That(GetValue(state, "DatabaseMethod"), Is.EqualTo("GetAllAsync"));
+			Assert.That(GetValue(state, "ElapsedMilliseconds"), Is.EqualTo(stopwatch.ElapsedMilliseconds));
+		}
+
+		private static IReadOnlyList<KeyValuePair<string, object?>> GetSingleLoggedState(Mock<ILogger> logger, LogLevel logLevel)
+		{
+			var invocation = logger.Invocations.Single(i => i.Method.Name == nameof(ILogger.Log));
+			Assert.That(invocation.Arguments[0], Is.EqualTo(logLevel));
+
+			return (IReadOnlyList<KeyValuePair<string, object?>>)invocation.Arguments[2];
+		}
+
+		private static object? GetValue(IReadOnlyList<KeyValuePair<string, object?>> state, string key)
+		{
+			return state.Single(kvp => kvp.Key == key).Value;
+		}
 	}
 }
-

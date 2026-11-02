@@ -8,6 +8,7 @@ using PilotApi.Shared.Constants;
 using PilotApi.Shared.Contracts.Configuration;
 using PilotApi.Shared.Utilities;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,6 +41,27 @@ namespace PilotApi.Web.Controllers
 		/// Gets the application configuration object.
 		/// </summary>
 		protected IApplicationConfiguration ApplicationConfiguration { get; }
+
+		/// <summary>
+		/// Gets or sets the API version to apply to an operation.
+		/// </summary>
+		[FromHeader(Name = "X-Api-Version")]
+		[MaxLength(15)]
+		public string? ApiVersion { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the caller.
+		/// </summary>
+		[FromHeader(Name = "X-Caller-Name")]
+		[MaxLength(100)]
+		public string? CallerName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the unique identifier used for tracing a transaction across microservices.
+		/// </summary>
+		[FromHeader(Name = "X-Correlation-Id")]
+		[MaxLength(40)]
+		public string? CorrelationId { get; set; }
 
 		/// <summary>
 		/// Return an OK.

@@ -47,6 +47,11 @@ namespace PilotApi.Shared.OpenTelemetry.Processors
 			{
 				data.SetTag(OtelActivityTagsConstants.CorrelationId, requestSettings.CorrelationId);
 				data.SetTag(OtelActivityTagsConstants.RequestId, requestSettings.RequestId);
+
+				if (!string.IsNullOrEmpty(requestSettings.CallerName))
+				{
+					data.SetTag(OtelActivityTagsConstants.CallerName, requestSettings.CallerName);
+				}
 			}
 		}
 	}

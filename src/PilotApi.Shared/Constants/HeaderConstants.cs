@@ -11,6 +11,11 @@
 		public const string ApiVersionHeaderName = "X-Api-Version";
 
 		/// <summary>
+		/// The header name used for the name of the caller.
+		/// </summary>
+		public const string CallerNameHeaderName = "X-Caller-Name";
+
+		/// <summary>
 		/// The header name used for the correlation ID.
 		/// </summary>
 		public const string CorrelationIdHeaderName = "X-Correlation-Id";

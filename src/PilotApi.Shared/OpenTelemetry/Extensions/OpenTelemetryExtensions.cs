@@ -130,6 +130,13 @@ namespace PilotApi.Shared.OpenApi.Extensions
 																string.IsNullOrEmpty(correlationId) ? requestSettings.CorrelationId : correlationId);
 															activity.SetTag(OtelActivityTagsConstants.RequestId, requestSettings.RequestId);
 														}
+
+														// the server span starts before the middleware runs, so read the caller name header directly
+														var callerName = request.Headers[HeaderConstants.CallerNameHeaderName].ToString();
+														if (!string.IsNullOrEmpty(callerName))
+														{
+															activity.SetTag(OtelActivityTagsConstants.CallerName, callerName);
+														}
 													};
 												})
 												.AddHttpClientInstrumentation()

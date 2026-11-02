@@ -85,10 +85,16 @@ namespace PilotApi.Repositories.Tests.Testing.Utilities
 		/// <summary>
 		/// A spy for the CategoriesRepository class, which allows for testing and verifying interactions with the repository.
 		/// </summary>
+		/// <param name="logger">An optional logger, returned by the logger factory supplied to the repository.</param>
 		/// <returns></returns>
-		public static CategoriesRepositorySpy GetCategoriesRepositorySpy()
+		public static CategoriesRepositorySpy GetCategoriesRepositorySpy(ILogger? logger = null)
 		{
 			var loggerFactory = new Mock<ILoggerFactory>();
+			if (logger != null)
+			{
+				loggerFactory.Setup(s => s.CreateLogger(It.IsAny<string>()))
+					.Returns(logger);
+			}
 
 			var dataConnectionConfiguration = new Mock<IDataConnectionConfiguration>();
 			dataConnectionConfiguration.Setup(s => s.ConnectTimeout)

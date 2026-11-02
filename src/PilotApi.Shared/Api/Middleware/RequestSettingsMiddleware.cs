@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Models;
+using Serilog.Context;
 using System;
 using System.Threading.Tasks;
 
@@ -48,6 +49,12 @@ namespace PilotApi.Shared.Api.Middleware
 				requestSettings.CorrelationId = correlationId.ToString();
 			}
 
+			if (context.Request.Headers.TryGetValue(HeaderConstants.CallerNameHeaderName, out StringValues callerName)
+				&& !StringValues.IsNullOrEmpty(callerName))
+			{
+				requestSettings.CallerName = callerName.ToString();
+			}
+
 			// when the request ends, assign the correlation/request IDs to the response headers
 			context.Response.OnStarting(() =>
 			{
@@ -57,8 +64,15 @@ namespace PilotApi.Shared.Api.Middleware
 				return Task.CompletedTask;
 			});
 
-			// call the next middleware in the pipeline
-			await this.next(context);
+			// for the rest of the request, every Serilog event (endpoint, service and database logging)
+			// carries the correlation/request IDs and caller name; the OpenTelemetry log processor adds the same values
+			using (LogContext.PushProperty(LogContextPropertyConstants.CorrelationId, requestSettings.CorrelationId))
+			using (LogContext.PushProperty(LogContextPropertyConstants.RequestId, requestSettings.RequestId))
+			using (LogContext.PushProperty(LogContextPropertyConstants.CallerName, requestSettings.CallerName))
+			{
+				// call the next middleware in the pipeline
+				await this.next(context);
+			}
 		}
 	}
 }
