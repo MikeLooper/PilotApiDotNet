@@ -49,5 +49,28 @@ namespace PilotApi.Shared.Tests.Models
 			// Assert
 			Assert.That(settings.CorrelationId, Is.EqualTo(correlationId));
 		}
+
+		[Test]
+		public void RequestSettings_CallerName_Default_ShouldBeNull_Test()
+		{
+			// Arrange & Act
+			var settings = new RequestSettings();
+
+			// Assert
+			Assert.That(settings.CallerName, Is.Null);
+		}
+
+		[Test]
+		public void RequestSettings_CallerName_WhenAssigned_ShouldReturnAssignedValue_Test()
+		{
+			// Arrange
+			var settings = new RequestSettings();
+
+			// Act
+			settings.CallerName = "PilotAngularUi";
+
+			// Assert
+			Assert.That(settings.CallerName, Is.EqualTo("PilotAngularUi"));
+		}
 	}
 }

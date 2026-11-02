@@ -1,3 +1,4 @@
+using ArchUnitNET.Domain;
 using ArchUnitNET.NUnit;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +58,7 @@ namespace PilotApi.Architecture.Tests
 
 			// MethodMember.Name includes the parameter signature (e.g. "About(System.Boolean)", "Healthcheck()"),
 			// so excluded action names are matched with a "starts with" check rather than an exact one.
+			// Property accessors (e.g. the request header properties) are not actions, so they are excluded too.
 			var domainEndpoints = MethodMembers()
 				.That().AreDeclaredIn(controllerClasses)
 				.And().ArePublic()
@@ -82,6 +84,7 @@ namespace PilotApi.Architecture.Tests
 				.That().AreDeclaredIn(anonymousControllers)
 				.And().ArePublic()
 				.And().AreNoConstructors()
+				.And().FollowCustomPredicate(m => m.MethodForm == MethodForm.Normal, "are not property accessors")
 				.And().DoNotHaveNameStartingWith("About(")
 				.And().DoNotHaveNameStartingWith("Healthcheck(");
 

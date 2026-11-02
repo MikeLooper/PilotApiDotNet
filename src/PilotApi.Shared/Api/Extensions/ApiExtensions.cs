@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PilotApi.Shared.Api.Filters;
 using PilotApi.Shared.Api.Middleware;
 using PilotApi.Shared.Api.Transformers;
 using PilotApi.Shared.Constants;
@@ -158,6 +159,9 @@ namespace PilotApi.Shared.Api.Extensions
 			{
 				options.Conventions.Add(
 					new RouteTokenTransformerConvention(new LowercaseParameterTransformer()));
+
+				// log the beginning and end of every endpoint call
+				options.Filters.Add<EndpointLoggingFilter>();
 			})
 			.AddJsonOptions(options => options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict);
 

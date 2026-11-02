@@ -12,6 +12,7 @@ using PilotApi.Shared.Handlers;
 using PilotApi.Shared.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -189,6 +190,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.CountAllAsync));
 
 			int result = -1;
 			try
@@ -202,7 +204,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			}
 			catch (Exception exc)
 			{
-				this.Logger.LogError(exc, nameof(this.GetAllAsync));
+				this.Logger.LogError(exc, nameof(this.CountAllAsync));
 				await this.DataSourceContext.RollbackAsync();
 
 				throw;
@@ -211,6 +213,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.CountAllAsync), stopwatch);
 			}
 
 			// Return the retrieved count.
@@ -235,6 +238,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.DeleteAsync));
 
 			string? errorMessage = null;
 			var success = false;
@@ -269,6 +273,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.DeleteAsync), stopwatch);
 			}
 
 			// Return true if at least one record was affected; otherwise, return false.
@@ -290,6 +295,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.GetAllAsync));
 
 			IEnumerable<TEntity>? result = null;
 			try
@@ -312,6 +318,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.GetAllAsync), stopwatch);
 			}
 
 			// Return the retrieved entities.
@@ -337,6 +344,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.GetAsync));
 
 			TEntity? result = null;
 			try
@@ -361,6 +369,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.GetAsync), stopwatch);
 			}
 
 			// Return the retrieved entity (or null if not found).
@@ -402,6 +411,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.InsertAsync));
 
 			TReturn? id = default;
 			try
@@ -459,6 +469,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.InsertAsync), stopwatch);
 			}
 
 			// Return the inserted ID.
@@ -477,6 +488,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.QueryAsync));
 
 			List<TEntity>? result = null;
 			try
@@ -501,6 +513,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.QueryAsync), stopwatch);
 			}
 
 			return new RetrieveResponse<IEnumerable<TEntity>>(result);
@@ -518,6 +531,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.QueryFirstAsync));
 
 			TEntity? result = null;
 			try
@@ -541,6 +555,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.QueryFirstAsync), stopwatch);
 			}
 
 			return new RetrieveResponse<TEntity>(result);
@@ -558,6 +573,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart($"{nameof(this.QuerySingleAsync)}-TMethodType");
 
 			TMethodType? result = default;
 			try
@@ -581,6 +597,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd($"{nameof(this.QuerySingleAsync)}-TMethodType", stopwatch);
 			}
 
 			return new RetrieveResponse<TMethodType>(result);
@@ -598,6 +615,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart($"{nameof(this.QuerySingleAsync)}-TEntity");
 
 			TEntity? result = null;
 			try
@@ -621,6 +639,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd($"{nameof(this.QuerySingleAsync)}-TEntity", stopwatch);
 			}
 
 			return new RetrieveResponse<TEntity>(result);
@@ -654,6 +673,7 @@ namespace PilotApi.Repositories.Repositories.Base
 
 			// Open a data source connection.
 			var connection = this.DataSourceContext.GetConnection();
+			var stopwatch = this.LogDatabaseCallStart(nameof(this.UpdateAsync));
 
 			string? errorMessage = null;
 			var success = false;
@@ -689,6 +709,7 @@ namespace PilotApi.Repositories.Repositories.Base
 			{
 				// data source cleanup
 				connection.Close();
+				this.LogDatabaseCallEnd(nameof(this.UpdateAsync), stopwatch);
 			}
 
 			// Return true if at least one record was affected; otherwise, return false.
@@ -773,6 +794,49 @@ namespace PilotApi.Repositories.Repositories.Base
 			}
 
 			return returnDict;
+		}
+
+		/// <summary>
+		/// Log the beginning of a database call.
+		/// The correlation ID, request ID and caller name are attached to the log event by the request log context.
+		/// </summary>
+		/// <param name="methodName">
+		/// The name of the repository method making the database call.
+		/// </param>
+		/// <returns>
+		/// A running <see cref="Stopwatch"/>, which should be supplied to <see cref="LogDatabaseCallEnd"/>.
+		/// </returns>
+		protected Stopwatch LogDatabaseCallStart(string methodName)
+		{
+			this.Logger.LogInformation(
+				"Database call start: {Repository}.{DatabaseMethod} (Table: {TableName})",
+				this.GetType().Name,
+				methodName,
+				this.TableName);
+
+			return Stopwatch.StartNew();
+		}
+
+		/// <summary>
+		/// Log the end of a database call.
+		/// The correlation ID, request ID and caller name are attached to the log event by the request log context.
+		/// </summary>
+		/// <param name="methodName">
+		/// The name of the repository method making the database call.
+		/// </param>
+		/// <param name="stopwatch">
+		/// The <see cref="Stopwatch"/> returned by <see cref="LogDatabaseCallStart"/>.
+		/// </param>
+		protected void LogDatabaseCallEnd(string methodName, Stopwatch stopwatch)
+		{
+			stopwatch.Stop();
+
+			this.Logger.LogInformation(
+				"Database call end: {Repository}.{DatabaseMethod} (Table: {TableName}) in {ElapsedMilliseconds} ms",
+				this.GetType().Name,
+				methodName,
+				this.TableName,
+				stopwatch.ElapsedMilliseconds);
 		}
 
 		/// <summary>

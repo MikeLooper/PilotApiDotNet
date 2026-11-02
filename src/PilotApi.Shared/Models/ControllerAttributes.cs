@@ -8,9 +8,9 @@ namespace PilotApi.Shared.Models
 	internal class ControllerAttributes
 	{
 		/// <summary>
-		/// Gets or sets the name of the controller.
+		/// Gets or sets the name of the assembly in which the controller is defined.
 		/// </summary>
-		public string? Name { get; set; }
+		public string? AssemblyName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the full name of the controller, including its namespace.
@@ -18,13 +18,22 @@ namespace PilotApi.Shared.Models
 		public string? FullName { get; set; }
 
 		/// <summary>
-		/// Gets or sets the name of the assembly in which the controller is defined.
+		/// Gets or sets the name of the controller.
 		/// </summary>
-		public string? AssemblyName { get; set; }
+		public string? Name { get; set; }
 
 		/// <summary>
 		///	Gets or sets the <see cref="Type"/> of the controller.
 		/// </summary>
 		public Type? Type { get; set; }
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{nameof(this.AssemblyName)}={this.AssemblyName}, " +
+				$"{nameof(this.FullName)}={this.FullName}, " +
+				$"{nameof(this.Name)}={this.Name}, " +
+				$"{nameof(this.Type)}={this.Type}";
+		}
 	}
 }

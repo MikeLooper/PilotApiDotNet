@@ -80,6 +80,42 @@ namespace PilotApi.Shared.Tests.OpenTelemetry.Processors
 				Is.EqualTo("request-id"));
 		}
 
+		[Test]
+		public void EnrichLogsWithCustomRequestDataProcessor_OnEnd_WithCallerName_AddsCallerNameAttribute_Test()
+		{
+			// Arrange
+			var requestSettings = new RequestSettings { CallerName = "PilotAngularUi" };
+
+			// Act
+			var attributes = ProcessLog(CreateAccessor(requestSettings));
+
+			// Assert
+			Assert.That(attributes.Single(attribute => attribute.Key == OtelLogRecordAttributesConstants.CallerName).Value,
+				Is.EqualTo("PilotAngularUi"));
+		}
+
+		[Test]
+		public void EnrichLogsWithCustomRequestDataProcessor_OnEnd_WithoutCallerName_DoesNotAddCallerNameAttribute_Test()
+		{
+			// Arrange & Act
+			var attributes = ProcessLog(CreateAccessor(new RequestSettings()));
+
+			// Assert
+			Assert.That(attributes, Has.None.Matches<KeyValuePair<string, object?>>(
+				attribute => attribute.Key == OtelLogRecordAttributesConstants.CallerName));
+		}
+
+		private static HttpContextAccessor CreateAccessor(RequestSettings requestSettings)
+		{
+			return new HttpContextAccessor
+			{
+				HttpContext = new DefaultHttpContext
+				{
+					RequestServices = new ServiceCollection().AddSingleton(requestSettings).BuildServiceProvider()
+				}
+			};
+		}
+
 		private static IReadOnlyList<KeyValuePair<string, object?>> ProcessLog(IHttpContextAccessor httpContextAccessor)
 		{
 			var attributes = new List<KeyValuePair<string, object?>>();

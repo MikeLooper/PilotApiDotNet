@@ -40,6 +40,33 @@ namespace PilotApi.Shared.Tests.OpenTelemetry.Processors
 		}
 
 		[Test]
+		public void EnrichActivityWithCustomRequestDataProcessor_OnStart_WithCallerName_AddsCallerNameTag_Test()
+		{
+			// Arrange
+			var requestSettings = new RequestSettings { CallerName = "PilotAngularUi" };
+			using var activity = new Activity("test");
+
+			// Act
+			new EnrichActivityWithCustomRequestDataProcessor(CreateAccessor(requestSettings)).OnStart(activity);
+
+			// Assert
+			Assert.That(activity.GetTagItem(OtelActivityTagsConstants.CallerName), Is.EqualTo("PilotAngularUi"));
+		}
+
+		[Test]
+		public void EnrichActivityWithCustomRequestDataProcessor_OnStart_WithoutCallerName_AddsNoCallerNameTag_Test()
+		{
+			// Arrange
+			using var activity = new Activity("test");
+
+			// Act
+			new EnrichActivityWithCustomRequestDataProcessor(CreateAccessor(new RequestSettings())).OnStart(activity);
+
+			// Assert
+			Assert.That(activity.GetTagItem(OtelActivityTagsConstants.CallerName), Is.Null);
+		}
+
+		[Test]
 		public void EnrichActivityWithCustomRequestDataProcessor_OnStart_ServerSpan_AddsNoTags_Test()
 		{
 			// Arrange

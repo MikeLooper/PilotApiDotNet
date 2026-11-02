@@ -4,6 +4,7 @@ using PilotApi.Repositories.Handlers;
 using PilotApi.Repositories.Repositories;
 using PilotApi.Shared.Handlers;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PilotApi.Repositories.Tests.Testing.Doubles
 {
@@ -52,5 +53,9 @@ namespace PilotApi.Repositories.Tests.Testing.Doubles
 		/// A spy property to access the protected TableName property from the base class.
 		/// </summary>
 		public string TableNameSpy { get { return base.TableName; } }
+
+		public Stopwatch LogDatabaseCallStartSpy(string methodName) => base.LogDatabaseCallStart(methodName);
+
+		public void LogDatabaseCallEndSpy(string methodName, Stopwatch stopwatch) => base.LogDatabaseCallEnd(methodName, stopwatch);
 	}
 }

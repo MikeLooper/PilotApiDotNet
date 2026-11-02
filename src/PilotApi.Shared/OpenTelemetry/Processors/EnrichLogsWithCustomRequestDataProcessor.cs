@@ -49,6 +49,12 @@ namespace PilotApi.Shared.OpenTelemetry.Processors
 					OtelLogRecordAttributesConstants.CorrelationId, requestSettings.CorrelationId));
 				attributes.Add(new KeyValuePair<string, object?>(
 					OtelLogRecordAttributesConstants.RequestId, requestSettings.RequestId));
+
+				if (!string.IsNullOrEmpty(requestSettings.CallerName))
+				{
+					attributes.Add(new KeyValuePair<string, object?>(
+						OtelLogRecordAttributesConstants.CallerName, requestSettings.CallerName));
+				}
 			}
 
 			record.Attributes = attributes;

@@ -1,4 +1,5 @@
 .claude
+!.claude/rules
 .vs
 bin/
 logs/
@@ -6,6 +7,5 @@ obj/
 temp/
 TestResults/
 /.vscode
-Claude.md
 /.agents
 /skills-lock.json

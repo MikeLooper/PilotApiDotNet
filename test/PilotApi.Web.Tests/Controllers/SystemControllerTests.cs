@@ -4,6 +4,7 @@ using PilotApi.Shared.Configuration;
 using PilotApi.Shared.Constants;
 using PilotApi.TestingShared.Utilities;
 using PilotApi.Web.Controllers;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace PilotApi.Web.Tests.Controllers
@@ -81,6 +82,23 @@ namespace PilotApi.Web.Tests.Controllers
 			// Assert
 			Assert.That(applicationConfigurationProperty, Is.Not.Null);
 			Assert.That(propertyValue, Is.SameAs(applicationConfiguration));
+		}
+
+		[TestCase(nameof(SystemController.ApiVersion), HeaderConstants.ApiVersionHeaderName, 15)]
+		[TestCase(nameof(SystemController.CallerName), HeaderConstants.CallerNameHeaderName, 100)]
+		[TestCase(nameof(SystemController.CorrelationId), HeaderConstants.CorrelationIdHeaderName, 40)]
+		public void SystemController_HeaderProperty_HasExpectedHeaderNameAndMaxLength_Test(string propertyName, string headerName, int maxLength)
+		{
+			// Arrange
+			var property = typeof(SystemController).GetProperty(propertyName);
+
+			// Act
+			var fromHeader = property?.GetCustomAttribute<FromHeaderAttribute>();
+			var maxLengthAttribute = property?.GetCustomAttribute<MaxLengthAttribute>();
+
+			// Assert
+			Assert.That(fromHeader?.Name, Is.EqualTo(headerName));
+			Assert.That(maxLengthAttribute?.Length, Is.EqualTo(maxLength));
 		}
 	}
 }

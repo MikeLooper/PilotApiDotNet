@@ -6,6 +6,11 @@
 	public static class OtelActivityTagsConstants
 	{
 		/// <summary>
+		/// The key name used for the name of the caller.
+		/// </summary>
+		public const string CallerName = "callerName";
+
+		/// <summary>
 		/// The key name used for the correlation ID.
 		/// </summary>
 		public const string CorrelationId = "correlationId";

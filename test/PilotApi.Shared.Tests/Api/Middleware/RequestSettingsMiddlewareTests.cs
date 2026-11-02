@@ -5,6 +5,8 @@ using NUnit.Framework;
 using PilotApi.Shared.Api.Middleware;
 using PilotApi.Shared.Constants;
 using PilotApi.Shared.Models;
+using PilotApi.Shared.Tests.Testing.Doubles;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -94,6 +96,73 @@ namespace PilotApi.Shared.Tests.Api.Middleware
 
 			// Assert
 			Assert.That(contextSeenByNext, Is.SameAs(context));
+		}
+
+		[Test]
+		public async Task RequestSettingsMiddleware_InvokeAsync_WithCallerNameHeader_ShouldSetCallerName_Test()
+		{
+			// Arrange
+			var context = new DefaultHttpContext();
+			context.Request.Headers[HeaderConstants.CallerNameHeaderName] = "PilotAngularUi";
+			var requestSettings = new RequestSettings();
+			var middleware = new RequestSettingsMiddleware(_ => Task.CompletedTask);
+
+			// Act
+			await middleware.InvokeAsync(context, requestSettings);
+
+			// Assert
+			Assert.That(requestSettings.CallerName, Is.EqualTo("PilotAngularUi"));
+		}
+
+		[Test]
+		public async Task RequestSettingsMiddleware_InvokeAsync_WithoutCallerNameHeader_ShouldLeaveCallerNameNull_Test()
+		{
+			// Arrange
+			var context = new DefaultHttpContext();
+			var requestSettings = new RequestSettings();
+			var middleware = new RequestSettingsMiddleware(_ => Task.CompletedTask);
+
+			// Act
+			await middleware.InvokeAsync(context, requestSettings);
+
+			// Assert
+			Assert.That(requestSettings.CallerName, Is.Null);
+		}
+
+		[Test]
+		public async Task RequestSettingsMiddleware_InvokeAsync_ShouldPushRequestPropertiesOntoLogContextForNextDelegate_Test()
+		{
+			// Arrange
+			var sink = new CapturingLogEventSink();
+			using var logger = new LoggerConfiguration()
+				.Enrich.FromLogContext()
+				.WriteTo.Sink(sink)
+				.CreateLogger();
+			var context = new DefaultHttpContext();
+			context.Request.Headers[HeaderConstants.CallerNameHeaderName] = "PilotAngularUi";
+			var requestSettings = new RequestSettings
+			{
+				CorrelationId = "correlation-id",
+				RequestId = "request-id"
+			};
+			var middleware = new RequestSettingsMiddleware(_ =>
+			{
+				logger.Information("Inside the request");
+				return Task.CompletedTask;
+			});
+
+			// Act
+			await middleware.InvokeAsync(context, requestSettings);
+			logger.Information("After the request");
+
+			// Assert
+			var insideEvent = sink.Events[0];
+			Assert.That(insideEvent.Properties[LogContextPropertyConstants.CorrelationId].ToString(), Is.EqualTo("\"correlation-id\""));
+			Assert.That(insideEvent.Properties[LogContextPropertyConstants.RequestId].ToString(), Is.EqualTo("\"request-id\""));
+			Assert.That(insideEvent.Properties[LogContextPropertyConstants.CallerName].ToString(), Is.EqualTo("\"PilotAngularUi\""));
+
+			var afterEvent = sink.Events[1];
+			Assert.That(afterEvent.Properties.ContainsKey(LogContextPropertyConstants.CorrelationId), Is.False);
 		}
 
 		private static (HttpContext Context, List<(Func<object, Task> Callback, object State)> Callbacks) CreateHttpContextWithResponseCallbacks()

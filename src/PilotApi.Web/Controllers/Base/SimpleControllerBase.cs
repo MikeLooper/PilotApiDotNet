@@ -52,6 +52,13 @@ namespace PilotApi.Web.Controllers
 		public string? ApiVersion { get; set; }
 
 		/// <summary>
+		/// Gets or sets the name of the caller.
+		/// </summary>
+		[FromHeader(Name = "X-Caller-Name")]
+		[MaxLength(100)]
+		public string? CallerName { get; set; }
+
+		/// <summary>
 		/// Gets or sets the unique identifier used for tracing a transaction across microservices.
 		/// </summary>
 		[FromHeader(Name = "X-Correlation-Id")]
