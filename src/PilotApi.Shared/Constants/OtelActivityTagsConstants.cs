@@ -13,6 +13,6 @@
 		/// <summary>
 		/// The key name used for the request ID.
 		/// </summary>
-		public const string RequestId = "request.id";
+		public const string RequestId = "request.Id";
 	}
 }
