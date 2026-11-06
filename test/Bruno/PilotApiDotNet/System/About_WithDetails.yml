@@ -20,13 +20,16 @@ runtime:
         });
 
         test("should return object", function () {
+          // The cloud deployments set OpenApi:Title to <cloud>-cloud-api-dotnet-<db>; their
+          // environments set ApiTitle to the part of the name to expect.
+          const apiTitle = bru.getEnvVar("ApiTitle") || "PilotApi";
           const resBody = res.getBody();
           
           expect(resBody).to.have.property("apiVersion");
           expect(resBody).to.have.property("buildVersion");
           expect(resBody).to.have.property("deployDate");
           expect(resBody).to.have.property("name");
-          expect(resBody.name).to.contain("PilotApi");
+          expect(resBody.name).to.contain(apiTitle);
 
           expect(resBody).to.have.property("applicationConfiguration");
           const configuration = resBody?.applicationConfiguration;
@@ -40,7 +43,7 @@ runtime:
           expect(openapi).to.have.property("license");
           expect(openapi.license).to.equal("MIT");
           expect(openapi).to.have.property("title");
-          expect(openapi.title).to.contain("PilotApi");
+          expect(openapi.title).to.contain(apiTitle);
         });
 
 settings:

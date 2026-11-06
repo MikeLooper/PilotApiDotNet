@@ -1,0 +1,8 @@
+name: AWS - PostgreSQL
+variables:
+  - name: Host
+    value: http://116a256ba3.execute-api.localhost.floci.io:4566/
+    description: "The base URL for cloud-api-dotnet-postgres in the AWS emulator. It changes when the API is redeployed: Testing\\RunBrunoCloudTests-aws.bat overrides it on every run with the current URL from the Terraform state (Docker repository, Clouds\\terraform\\aws\\20-apis)."
+  - name: ApiTitle
+    value: cloud-api-dotnet
+    description: "Text the API name and OpenAPI title must contain. The cloud deployments set OpenApi:Title to <cloud>-cloud-api-dotnet-<db> (Clouds\\terraform\\modules\\api-env), so the default (PilotApi) does not apply."
