@@ -22,7 +22,7 @@ request:
     - name: ApiVersion
       value: "1"
     - name: X-Caller-Name
-      value: Bruno
+      value: PilotApiDotNet-Bruno
     - name: X-Correlation-Id
       value: "{{$guid}}"
   auth:

@@ -1,0 +1,8 @@
+name: Azure - PostgreSQL
+variables:
+  - name: Host
+    value: http://cloud-api-dotnet-postgres.cae-cloud-apis.b2cacca1063f3e329e67de69fa4e12cf.localhost:4577/
+    description: "The base URL for cloud-api-dotnet-postgres in the Azure emulator. It changes when the API is redeployed: Testing\\RunBrunoCloudTests-azure.bat overrides it on every run with the current URL from the Terraform state (Docker repository, Clouds\\terraform\\azure\\20-apis)."
+  - name: ApiTitle
+    value: cloud-api-dotnet
+    description: "Text the API name and OpenAPI title must contain. The cloud deployments set OpenApi:Title to <cloud>-cloud-api-dotnet-<db> (Clouds\\terraform\\modules\\api-env), so the default (PilotApi) does not apply."
